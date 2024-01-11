@@ -33,7 +33,7 @@ public class DefaultRobotConfig extends RobotConfig {
   private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 22;
   private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = -0.007324;
 
-  private static final int GYRO_ID = 18; //TODO: update gyro ID
+  private static final int GYRO_ID = 7;
 
   // FIXME: update robot dimensions
   private static final double TRACKWIDTH_METERS = 0.5715; // 22.5 inches
