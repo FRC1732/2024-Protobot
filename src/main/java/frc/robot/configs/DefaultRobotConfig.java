@@ -13,27 +13,27 @@ import frc.lib.team3061.drivetrain.swerve.SwerveConstants.SwerveType;
 public class DefaultRobotConfig extends RobotConfig {
 
   // FIXME: update all CAN IDs and steer offsets
-  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 7;
-  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 6;
-  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 8;
+  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 40;
+  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 41;
+  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 42;
   private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = -0.104004;
 
-  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 13;
-  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
-  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 14;
+  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 10;
+  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 11;
+  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 12;
   private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT = -0.284424;
 
-  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 10;
-  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 9;
-  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 11;
+  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 30;
+  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 31;
+  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 32;
   private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT = -0.732666;
 
-  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 16;
-  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 15;
-  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 17;
+  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 20;
+  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 21;
+  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 22;
   private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = -0.007324;
 
-  private static final int GYRO_ID = 18;
+  private static final int GYRO_ID = 18; //TODO: update gyro ID
 
   // FIXME: update robot dimensions
   private static final double TRACKWIDTH_METERS = 0.5715; // 22.5 inches
