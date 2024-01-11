@@ -112,13 +112,13 @@ public class RobotContainer {
     } else {
       drivetrain = new Drivetrain(new DrivetrainIO() {});
 
-      String[] cameraNames = config.getCameraNames();
-      VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      for (int i = 0; i < visionIOs.length; i++) {
-        visionIOs[i] = new VisionIO() {};
-      }
-      vision = new Vision(visionIOs);
-      subsystem = new Subsystem(new SubsystemIO() {});
+      // String[] cameraNames = config.getCameraNames(); TODO: update with actual data
+      // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+      // for (int i = 0; i < visionIOs.length; i++) {
+      //   visionIOs[i] = new VisionIO() {};
+      // }
+      // vision = new Vision(visionIOs);
+      // subsystem = new Subsystem(new SubsystemIO() {});
     }
 
     // disable all telemetry in the LiveWindow to reduce the processing during each iteration
@@ -230,19 +230,19 @@ public class RobotContainer {
                     RobotConfig.getInstance().getRobotToCameraTransforms()[0])
               });
     } else {
-      String[] cameraNames = config.getCameraNames();
-      Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
-      VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      AprilTagFieldLayout layout;
-      try {
-        layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
-      } catch (IOException e) {
-        layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-      }
-      for (int i = 0; i < visionIOs.length; i++) {
-        visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout, robotToCameraTransforms[i]);
-      }
-      vision = new Vision(visionIOs);
+    //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
+    //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
+    //   VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+    //   AprilTagFieldLayout layout;
+    //   try {
+    //     layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
+    //   } catch (IOException e) {
+    //     layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
+    //   }
+    //   for (int i = 0; i < visionIOs.length; i++) {
+    //     visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout, robotToCameraTransforms[i]);
+    //   }
+    //   vision = new Vision(visionIOs);
     }
   }
 
@@ -342,7 +342,7 @@ public class RobotContainer {
 
     configureSubsystemCommands();
 
-    configureVisionCommands();
+    //configureVisionCommands(); TODO:fix vision stuff
 
     // interrupt all commands by running a command that requires every subsystem. This is used to
     // recover to a known state if the robot becomes "stuck" in a command.
