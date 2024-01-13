@@ -16,22 +16,22 @@ public class DefaultRobotConfig extends RobotConfig {
   private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 10;
   private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
   private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12;
-  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = -0.104004-23.554;
+  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = -0.047119140625 + .5;
 
   private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 40;
   private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 41;
-  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 32;
-  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT = -0.284424+156.442;
+  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 42;
+  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT = 0.275146484375;
 
   private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 20;
   private static final int BACK_LEFT_MODULE_STEER_MOTOR = 21;
   private static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
-  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT = -0.732666-54.756;
+  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT = -0.35498046875 + .5;
 
   private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 30;
   private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 31;
-  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 42;
-  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = -0.007324+227.109;
+  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 32;
+  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = 0.1357421875;
 
   private static final int GYRO_ID = 7;
 
