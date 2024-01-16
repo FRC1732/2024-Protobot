@@ -4,14 +4,11 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.*;
-import static frc.robot.FieldRegionConstants.*;
-
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
-import com.pathplanner.lib.server.PathPlannerServer;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -20,14 +17,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.lib.team3061.RobotConfig;
+import frc.lib.team3061.drivetrain.Drivetrain;
+import frc.lib.team3061.drivetrain.DrivetrainIO;
+import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
+import frc.lib.team3061.drivetrain.DrivetrainIOGeneric;
+import frc.lib.team3061.drivetrain.swerve.SwerveModuleIO;
+import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
 import frc.lib.team3061.gyro.GyroIO;
 import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
 import frc.lib.team3061.pneumatics.Pneumatics;
-import frc.lib.team3061.pneumatics.PneumaticsIO;
 import frc.lib.team3061.pneumatics.PneumaticsIORev;
-import frc.lib.team3061.swerve.SwerveModule;
-import frc.lib.team3061.swerve.SwerveModuleIO;
-import frc.lib.team3061.swerve.SwerveModuleIOTalonFXPhoenix6;
 import frc.lib.team3061.vision.Vision;
 import frc.lib.team3061.vision.VisionConstants;
 import frc.lib.team3061.vision.VisionIO;
@@ -36,22 +35,19 @@ import frc.lib.team3061.vision.VisionIOSim;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.robot.commands.FollowPath;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.configs.DefaultRobotConfig;
-import frc.robot.configs.MK4IRobotConfig;
+import frc.robot.configs.NovaCTRERobotConfig;
+import frc.robot.configs.NovaCTRETCFRobotConfig;
 import frc.robot.configs.NovaRobotConfig;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
-import frc.robot.subsystems.drivetrain.Drivetrain;
 import frc.robot.subsystems.subsystem.Subsystem;
 import frc.robot.subsystems.subsystem.SubsystemIO;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -64,7 +60,7 @@ public class RobotContainer {
   private OperatorInterface oi = new OperatorInterface() {};
   private RobotConfig config;
   private Drivetrain drivetrain;
-  private Alliance lastAlliance = DriverStation.Alliance.Invalid;
+  private Alliance lastAlliance = DriverStation.Alliance.Red;
   private Vision vision;
   private Subsystem subsystem;
 
@@ -74,8 +70,6 @@ public class RobotContainer {
 
   // RobotContainer singleton
   private static RobotContainer robotContainer = new RobotContainer();
-
-  private final Map<String, Command> autoEventMap = new HashMap<>();
 
   /**
    * Create the container for the robot. Contains subsystems, operator interface (OI) devices, and
@@ -90,97 +84,24 @@ public class RobotContainer {
 
     // create real, simulated, or replay subsystems based on the mode and robot specified
     if (Constants.getMode() != Mode.REPLAY) {
-      int[] driveMotorCANIDs = config.getSwerveDriveMotorCANIDs();
-      int[] steerMotorCANDIDs = config.getSwerveSteerMotorCANIDs();
-      int[] steerEncoderCANDIDs = config.getSwerveSteerEncoderCANIDs();
-      double[] steerOffsets = config.getSwerveSteerOffsets();
-      SwerveModule flModule =
-          new SwerveModule(
-              new SwerveModuleIOTalonFXPhoenix6(
-                  0,
-                  driveMotorCANIDs[0],
-                  steerMotorCANDIDs[0],
-                  steerEncoderCANDIDs[0],
-                  steerOffsets[0]),
-              0,
-              config.getRobotMaxVelocity());
 
-      SwerveModule frModule =
-          new SwerveModule(
-              new SwerveModuleIOTalonFXPhoenix6(
-                  1,
-                  driveMotorCANIDs[1],
-                  steerMotorCANDIDs[1],
-                  steerEncoderCANDIDs[1],
-                  steerOffsets[1]),
-              1,
-              config.getRobotMaxVelocity());
-
-      SwerveModule blModule =
-          new SwerveModule(
-              new SwerveModuleIOTalonFXPhoenix6(
-                  2,
-                  driveMotorCANIDs[2],
-                  steerMotorCANDIDs[2],
-                  steerEncoderCANDIDs[2],
-                  steerOffsets[2]),
-              2,
-              config.getRobotMaxVelocity());
-
-      SwerveModule brModule =
-          new SwerveModule(
-              new SwerveModuleIOTalonFXPhoenix6(
-                  3,
-                  driveMotorCANIDs[3],
-                  steerMotorCANDIDs[3],
-                  steerEncoderCANDIDs[3],
-                  steerOffsets[3]),
-              3,
-              config.getRobotMaxVelocity());
       switch (Constants.getRobot()) {
-        case ROBOT_DEFAULT:
-        case ROBOT_2023_NOVA:
-        case ROBOT_2023_MK4I:
+        case ROBOT_2023_NOVA_CTRE:
+        case ROBOT_2023_NOVA_CTRE_FOC:
           {
-            GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
-
-            drivetrain = new Drivetrain(gyro, flModule, frModule, blModule, brModule);
-
-            String[] cameraNames = config.getCameraNames();
-            VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-            for (int i = 0; i < visionIOs.length; i++) {
-              visionIOs[i] = new VisionIOPhotonVision(cameraNames[i]);
-            }
-            vision = new Vision(visionIOs);
-            // subsystem = new Subsystem(new SubsystemIOTalonFX());
-            subsystem = new Subsystem(new SubsystemIO() {});
-
-            if (Constants.getRobot() == Constants.RobotType.ROBOT_DEFAULT) {
-              new Pneumatics(new PneumaticsIORev());
-            }
+            createCTRESubsystems();
             break;
           }
+        case ROBOT_DEFAULT:
+        case ROBOT_2023_NOVA:
         case ROBOT_SIMBOT:
           {
-            GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
-
-            drivetrain = new Drivetrain(gyro, flModule, frModule, blModule, brModule);
-            new Pneumatics(new PneumaticsIO() {});
-            AprilTagFieldLayout layout;
-            try {
-              layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
-            } catch (IOException e) {
-              layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-            }
-            vision =
-                new Vision(
-                    new VisionIO[] {
-                      new VisionIOSim(
-                          layout,
-                          drivetrain::getPose,
-                          RobotConfig.getInstance().getRobotToCameraTransforms()[0])
-                    });
-            subsystem = new Subsystem(new SubsystemIO() {});
+            createSubsystems();
+            break;
+          }
+        case ROBOT_SIMBOT_CTRE:
+          {
+            createCTRESimSubsystems();
 
             break;
           }
@@ -189,18 +110,7 @@ public class RobotContainer {
       }
 
     } else {
-      SwerveModule flModule =
-          new SwerveModule(new SwerveModuleIO() {}, 0, config.getRobotMaxVelocity());
-
-      SwerveModule frModule =
-          new SwerveModule(new SwerveModuleIO() {}, 1, config.getRobotMaxVelocity());
-
-      SwerveModule blModule =
-          new SwerveModule(new SwerveModuleIO() {}, 2, config.getRobotMaxVelocity());
-
-      SwerveModule brModule =
-          new SwerveModule(new SwerveModuleIO() {}, 3, config.getRobotMaxVelocity());
-      drivetrain = new Drivetrain(new GyroIO() {}, flModule, frModule, blModule, brModule);
+      drivetrain = new Drivetrain(new DrivetrainIO() {});
 
       String[] cameraNames = config.getCameraNames();
       VisionIO[] visionIOs = new VisionIO[cameraNames.length];
@@ -230,58 +140,145 @@ public class RobotContainer {
       case ROBOT_DEFAULT:
         config = new DefaultRobotConfig();
         break;
+      case ROBOT_2023_NOVA_CTRE:
+      case ROBOT_SIMBOT_CTRE:
+        config = new NovaCTRERobotConfig();
+        break;
+      case ROBOT_2023_NOVA_CTRE_FOC:
+        config = new NovaCTRETCFRobotConfig();
+        break;
       case ROBOT_2023_NOVA:
       case ROBOT_SIMBOT:
         config = new NovaRobotConfig();
         break;
-      case ROBOT_2023_MK4I:
-        config = new MK4IRobotConfig();
-        break;
     }
+  }
+
+  private void createCTRESubsystems() {
+    DrivetrainIO drivetrainIO = new DrivetrainIOCTRE();
+    drivetrain = new Drivetrain(drivetrainIO);
+
+    // String[] cameraNames = config.getCameraNames();
+    // Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
+    // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+    // AprilTagFieldLayout layout;
+    // try {
+    //   layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
+    // } catch (IOException e) {
+    //   layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
+    // }
+    // for (int i = 0; i < visionIOs.length; i++) {
+    //   visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout,
+    // robotToCameraTransforms[i]);
+    // }
+    // vision = new Vision(visionIOs);
+
+    String[] cameraNames = config.getCameraNames();
+    VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+    for (int i = 0; i < visionIOs.length; i++) {
+      visionIOs[i] = new VisionIO() {};
+    }
+    vision = new Vision(visionIOs);
+
+    // FIXME: create the hardware-specific subsystem class
+    subsystem = new Subsystem(new SubsystemIO() {});
+  }
+
+  private void createSubsystems() {
+    int[] driveMotorCANIDs = config.getSwerveDriveMotorCANIDs();
+    int[] steerMotorCANDIDs = config.getSwerveSteerMotorCANIDs();
+    int[] steerEncoderCANDIDs = config.getSwerveSteerEncoderCANIDs();
+    double[] steerOffsets = config.getSwerveSteerOffsets();
+    SwerveModuleIO flModule =
+        new SwerveModuleIOTalonFXPhoenix6(
+            0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0], steerOffsets[0]);
+
+    SwerveModuleIO frModule =
+        new SwerveModuleIOTalonFXPhoenix6(
+            1, driveMotorCANIDs[1], steerMotorCANDIDs[1], steerEncoderCANDIDs[1], steerOffsets[1]);
+
+    SwerveModuleIO blModule =
+        new SwerveModuleIOTalonFXPhoenix6(
+            2, driveMotorCANIDs[2], steerMotorCANDIDs[2], steerEncoderCANDIDs[2], steerOffsets[2]);
+
+    SwerveModuleIO brModule =
+        new SwerveModuleIOTalonFXPhoenix6(
+            3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
+
+    GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
+    DrivetrainIO drivetrainIO =
+        new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
+    drivetrain = new Drivetrain(drivetrainIO);
+
+    // FIXME: create the hardware-specific subsystem class
+    subsystem = new Subsystem(new SubsystemIO() {});
+
+    if (Constants.getRobot() == Constants.RobotType.ROBOT_DEFAULT) {
+      new Pneumatics(new PneumaticsIORev());
+    }
+
+    if (Constants.getRobot() == Constants.RobotType.ROBOT_SIMBOT) {
+      AprilTagFieldLayout layout;
+      try {
+        layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
+      } catch (IOException e) {
+        layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
+      }
+      vision =
+          new Vision(
+              new VisionIO[] {
+                new VisionIOSim(
+                    layout,
+                    drivetrain::getPose,
+                    RobotConfig.getInstance().getRobotToCameraTransforms()[0])
+              });
+    } else {
+      String[] cameraNames = config.getCameraNames();
+      Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
+      VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+      AprilTagFieldLayout layout;
+      try {
+        layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
+      } catch (IOException e) {
+        layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
+      }
+      for (int i = 0; i < visionIOs.length; i++) {
+        visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout, robotToCameraTransforms[i]);
+      }
+      vision = new Vision(visionIOs);
+    }
+  }
+
+  private void createCTRESimSubsystems() {
+    DrivetrainIO drivetrainIO = new DrivetrainIOCTRE();
+    drivetrain = new Drivetrain(drivetrainIO);
+
+    AprilTagFieldLayout layout;
+    try {
+      layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
+    } catch (IOException e) {
+      layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
+    }
+    vision =
+        new Vision(
+            new VisionIO[] {
+              new VisionIOSim(
+                  layout,
+                  drivetrain::getPose,
+                  RobotConfig.getInstance().getRobotToCameraTransforms()[0])
+            });
+
+    // FIXME: create the hardware-specific subsystem class
   }
 
   /**
    * Creates the field from the defined regions and transition points from one region to its
    * neighbor. The field is used to generate paths.
+   *
+   * <p>FIXME: update for 2024 regions
    */
   private void constructField() {
-    Field2d.getInstance()
-        .setRegions(
-            new Region2d[] {
-              COMMUNITY_REGION_1,
-              COMMUNITY_REGION_2,
-              COMMUNITY_REGION_3,
-              LOADING_ZONE_REGION_1,
-              LOADING_ZONE_REGION_2,
-              FIELD_ZONE_REGION_1,
-              FIELD_ZONE_REGION_2,
-              FIELD_ZONE_REGION_3,
-              FIELD_ZONE_REGION_4
-            });
-
-    COMMUNITY_REGION_1.addNeighbor(COMMUNITY_REGION_2, COMMUNITY_REGION_1_2_TRANSITION_POINT);
-    COMMUNITY_REGION_2.addNeighbor(COMMUNITY_REGION_1, COMMUNITY_REGION_2_1_TRANSITION_POINT);
-    COMMUNITY_REGION_1.addNeighbor(COMMUNITY_REGION_3, COMMUNITY_REGION_1_3_TRANSITION_POINT);
-    COMMUNITY_REGION_3.addNeighbor(COMMUNITY_REGION_1, COMMUNITY_REGION_3_1_TRANSITION_POINT);
-    COMMUNITY_REGION_2.addNeighbor(FIELD_ZONE_REGION_1, COMMUNITY_2_TO_FIELD_1_TRANSITION_POINT);
-    COMMUNITY_REGION_3.addNeighbor(FIELD_ZONE_REGION_2, COMMUNITY_3_TO_FIELD_2_TRANSITION_POINT);
-
-    LOADING_ZONE_REGION_1.addNeighbor(
-        LOADING_ZONE_REGION_2, LOADING_ZONE_REGION_1_2_TRANSITION_POINT);
-    LOADING_ZONE_REGION_2.addNeighbor(
-        LOADING_ZONE_REGION_1, LOADING_ZONE_REGION_2_1_TRANSITION_POINT);
-    LOADING_ZONE_REGION_2.addNeighbor(FIELD_ZONE_REGION_4, LOADING_2_TO_FIELD_4_TRANSITION_POINT);
-
-    FIELD_ZONE_REGION_1.addNeighbor(FIELD_ZONE_REGION_2, FIELD_ZONE_REGION_1_2_TRANSITION_POINT);
-    FIELD_ZONE_REGION_2.addNeighbor(FIELD_ZONE_REGION_1, FIELD_ZONE_REGION_2_1_TRANSITION_POINT);
-    FIELD_ZONE_REGION_1.addNeighbor(FIELD_ZONE_REGION_3, FIELD_ZONE_REGION_1_3_TRANSITION_POINT);
-    FIELD_ZONE_REGION_3.addNeighbor(FIELD_ZONE_REGION_1, FIELD_ZONE_REGION_3_1_TRANSITION_POINT);
-    FIELD_ZONE_REGION_1.addNeighbor(FIELD_ZONE_REGION_4, FIELD_ZONE_REGION_1_4_TRANSITION_POINT);
-    FIELD_ZONE_REGION_4.addNeighbor(FIELD_ZONE_REGION_1, FIELD_ZONE_REGION_4_1_TRANSITION_POINT);
-    FIELD_ZONE_REGION_1.addNeighbor(COMMUNITY_REGION_2, FIELD_1_TO_COMMUNITY_2_TRANSITION_POINT);
-    FIELD_ZONE_REGION_2.addNeighbor(COMMUNITY_REGION_3, FIELD_2_TO_COMMUNITY_3_TRANSITION_POINT);
-    FIELD_ZONE_REGION_3.addNeighbor(LOADING_ZONE_REGION_1, FIELD_3_TO_LOADING_1_TRANSITION_POINT);
-    FIELD_ZONE_REGION_4.addNeighbor(LOADING_ZONE_REGION_2, FIELD_4_TO_LOADING_2_TRANSITION_POINT);
+    Field2d.getInstance().setRegions(new Region2d[] {});
   }
 
   /**
@@ -329,8 +326,13 @@ public class RobotContainer {
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {
     // Waypoints
-    autoEventMap.put("event1", Commands.print("passed marker 1"));
-    autoEventMap.put("event2", Commands.print("passed marker 2"));
+    NamedCommands.registerCommand("command1", Commands.print("passed marker 1"));
+    NamedCommands.registerCommand("command2", Commands.print("passed marker 2"));
+    NamedCommands.registerCommand(
+        "enableXStance", Commands.runOnce(drivetrain::enableXstance, drivetrain));
+    NamedCommands.registerCommand(
+        "disableXStance", Commands.runOnce(drivetrain::disableXstance, drivetrain));
+    NamedCommands.registerCommand("wait5Seconds", Commands.waitSeconds(5.0));
 
     // build auto path commands
 
@@ -342,23 +344,8 @@ public class RobotContainer {
      * demonstration of PathPlanner path group with event markers
      *
      */
-    List<PathPlannerTrajectory> auto1Paths =
-        PathPlanner.loadPathGroup(
-            "TestPath", config.getAutoMaxSpeed(), config.getAutoMaxAcceleration());
-    Command autoTest =
-        Commands.sequence(
-            new FollowPathWithEvents(
-                new FollowPath(auto1Paths.get(0), drivetrain, true, true),
-                auto1Paths.get(0).getMarkers(),
-                autoEventMap),
-            Commands.runOnce(drivetrain::enableXstance, drivetrain),
-            Commands.waitSeconds(5.0),
-            Commands.runOnce(drivetrain::disableXstance, drivetrain),
-            new FollowPathWithEvents(
-                new FollowPath(auto1Paths.get(1), drivetrain, false, true),
-                auto1Paths.get(1).getMarkers(),
-                autoEventMap));
-    autoChooser.addOption("Test Path", autoTest);
+    Command autoTest = new PathPlannerAuto("TestAuto");
+    autoChooser.addOption("Test Auto", autoTest);
 
     /************ Start Point ************
      *
@@ -366,12 +353,12 @@ public class RobotContainer {
      *
      */
 
-    PathPlannerTrajectory startPointPath =
-        PathPlanner.loadPath(
-            "StartPoint", config.getAutoMaxSpeed(), config.getAutoMaxAcceleration());
     Command startPoint =
         Commands.runOnce(
-            () -> drivetrain.resetOdometry(startPointPath.getInitialState()), drivetrain);
+            () ->
+                drivetrain.resetPose(
+                    PathPlannerPath.fromPathFile("StartPoint").getPreviewStartingHolonomicPose()),
+            drivetrain);
     autoChooser.addOption("Start Point", startPoint);
 
     /************ Drive Characterization ************
@@ -409,8 +396,7 @@ public class RobotContainer {
      * used for empirically determining the wheel diameter
      *
      */
-    PathPlannerTrajectory distanceTestPath = PathPlanner.loadPath("DistanceTest", 2, 2);
-    Command distanceTestPathCommand = new FollowPath(distanceTestPath, drivetrain, true, true);
+    Command distanceTestPathCommand = new PathPlannerAuto("DistanceTest");
     autoChooser.addOption("Distance Path", distanceTestPathCommand);
 
     /************ Auto Tuning ************
@@ -418,8 +404,7 @@ public class RobotContainer {
      * useful for tuning the autonomous PID controllers
      *
      */
-    PathPlannerTrajectory tuningPath = PathPlanner.loadPath("Tuning", 2.0, 3.0);
-    Command tuningCommand = new FollowPath(tuningPath, drivetrain, true, true);
+    Command tuningCommand = new PathPlannerAuto("Tuning");
     autoChooser.addOption("Auto Tuning", tuningCommand);
 
     /************ Drive Velocity Tuning ************
@@ -443,7 +428,7 @@ public class RobotContainer {
                     Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
                 Commands.deadline(
                     Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(4.0, 0.0, 0.0, false, false), drivetrain)),
+                    Commands.run(() -> drivetrain.drive(3.0, 0.0, 0.0, false, false), drivetrain)),
                 Commands.deadline(
                     Commands.waitSeconds(2.0),
                     Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
@@ -452,7 +437,7 @@ public class RobotContainer {
                     Commands.run(() -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)),
                 Commands.deadline(
                     Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-4.0, 0.0, 0.0, false, false), drivetrain)),
+                    Commands.run(() -> drivetrain.drive(-3.0, 0.0, 0.0, false, false), drivetrain)),
                 Commands.deadline(
                     Commands.waitSeconds(2.0),
                     Commands.run(
@@ -483,11 +468,6 @@ public class RobotContainer {
                         () -> drivetrain.drive(0.1, -0.1, 0.0, true, false), drivetrain)))));
 
     Shuffleboard.getTab("MAIN").add(autoChooser.getSendableChooser());
-
-    // enable the path planner server so we can update paths without redeploying code
-    if (TUNING_MODE) {
-      PathPlannerServer.startServer(3061);
-    }
   }
 
   private void configureDrivetrainCommands() {
@@ -580,10 +560,10 @@ public class RobotContainer {
    * singleton.
    */
   public void checkAllianceColor() {
-    if (DriverStation.getAlliance() != lastAlliance) {
-      lastAlliance = DriverStation.getAlliance();
-      vision.updateAlliance(lastAlliance);
-      Field2d.getInstance().updateAlliance(lastAlliance);
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    if (alliance.isPresent() && alliance.get() != lastAlliance) {
+      this.lastAlliance = alliance.get();
+      this.drivetrain.updateAlliance(this.lastAlliance);
     }
   }
 

@@ -3,7 +3,7 @@ package frc.lib.team3061;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import frc.lib.team3061.swerve.SwerveModuleConstants.SwerveType;
+import frc.lib.team3061.drivetrain.swerve.SwerveConstants.SwerveType;
 
 @java.lang.SuppressWarnings({"java:S3010", "java:S3400"})
 public abstract class RobotConfig {
@@ -67,6 +67,8 @@ public abstract class RobotConfig {
 
   /*
    * Returns the voltage needed to overcome the swerve module's static friction. Defaults to 0.
+   * This constant will be provided directly to the hardware. Therefore, the units must be that
+   * as expected by the hardware.
    *
    * @return the voltage needed to overcome the swerve module's static friction
    */
@@ -76,6 +78,8 @@ public abstract class RobotConfig {
 
   /**
    * Returns the voltage needed to hold (or "cruise") at a given constant velocity. Defaults to 0.
+   * This constant will be provided directly to the hardware. Therefore, the units must be that as
+   * expected by the hardware.
    *
    * @return the voltage needed to hold (or "cruise") at a given constant velocity
    */
@@ -85,6 +89,8 @@ public abstract class RobotConfig {
 
   /**
    * Returns the voltage needed to induce a given acceleration in the motor shaft. Defaults to 0.
+   * This constant will be provided directly to the hardware. Therefore, the units must be that as
+   * expected by the hardware.
    *
    * @return the voltage needed to induce a given acceleration in the motor shaft
    */
@@ -124,7 +130,9 @@ public abstract class RobotConfig {
   }
 
   /**
-   * Returns the voltage needed to overcome the drivetrain's static friction. Defaults to 0.
+   * Returns the voltage needed to overcome the drivetrain's static friction. Defaults to 0. This
+   * constant will be provided directly to the hardware. Therefore, the units must be that as
+   * expected by the hardware.
    *
    * @return the voltage needed to overcome the drivetrain's static friction
    */
@@ -134,6 +142,8 @@ public abstract class RobotConfig {
 
   /**
    * Returns the voltage needed to hold (or "cruise") at a given constant velocity. Defaults to 0.
+   * This constant will be provided directly to the hardware. Therefore, the units must be that as
+   * expected by the hardware.
    *
    * @return the voltage needed to hold (or "cruise") at a given constant velocity
    */
@@ -143,6 +153,8 @@ public abstract class RobotConfig {
 
   /**
    * Returns the voltage needed to induce a given acceleration in the motor shaft. Defaults to 0.
+   * This constant will be provided directly to the hardware. Therefore, the units must be that as
+   * expected by the hardware.
    *
    * @return the voltage needed to induce a given acceleration in the motor shaft
    */
@@ -611,5 +623,36 @@ public abstract class RobotConfig {
    */
   public double getMoveToPathFinalVelocity() {
     return 0;
+  }
+
+  public double getOdometryUpdateFrequency() {
+    return 250.0;
+  }
+
+  /**
+   * Returns the swerve control mode for the steer motor. Defaults to voltage. For the
+   * DrivetrainIOGeneric class, only VOLTAGE is supported. For the DrivetrainIOCTRE class,
+   * TORQUE_CURRENT_FOC is also supported with Phoenix Pro.
+   *
+   * @return the swerve control mode
+   */
+  public SWERVE_CONTROL_MODE getSwerveSteerControlMode() {
+    return SWERVE_CONTROL_MODE.VOLTAGE;
+  }
+
+  /**
+   * Returns the drive control mode for the drive motor. Defaults to voltage. For the
+   * DrivetrainIOGeneric class, only VOLTAGE is supported. For the DrivetrainIOCTRE class,
+   * TORQUE_CURRENT_FOC is also supported with Phoenix Pro.
+   *
+   * @return the swerve control mode
+   */
+  public SWERVE_CONTROL_MODE getSwerveDriveControlMode() {
+    return SWERVE_CONTROL_MODE.VOLTAGE;
+  }
+
+  public enum SWERVE_CONTROL_MODE {
+    VOLTAGE,
+    TORQUE_CURRENT_FOC
   }
 }

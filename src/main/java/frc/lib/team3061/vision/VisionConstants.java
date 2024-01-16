@@ -12,7 +12,9 @@ public final class VisionConstants {
   }
 
   public static final Path APRILTAG_FIELD_LAYOUT_PATH =
-      new File(Filesystem.getDeployDirectory(), "2023-chargedup.json").toPath();
+      new File(Filesystem.getDeployDirectory(), "2024-crescendo.json").toPath();
+
+  public static final String SUBSYSTEM_NAME = "Vision";
 
   // the pose ambiguity must be less than this value for the target to be considered valid
   public static final double MAXIMUM_AMBIGUITY = 0.2;

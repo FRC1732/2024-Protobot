@@ -3,8 +3,6 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import frc.lib.team6328.util.FieldConstants;
 import java.awt.geom.*;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -18,7 +16,6 @@ import org.littletonrobotics.junction.Logger;
 public class Region2d {
   private Path2D shape;
   private HashMap<Region2d, Translation2d> transitionMap;
-  private DriverStation.Alliance alliance = DriverStation.Alliance.Invalid;
 
   /**
    * Create a Region2d, a polygon, from an array of Translation2d specifying vertices of a polygon.
@@ -45,50 +42,40 @@ public class Region2d {
   public void logPoints() {
     // log the bounding rectangle of the region
     Rectangle2D rect = this.shape.getBounds2D();
-    Logger.getInstance()
-        .recordOutput("Region2d/point0", new Pose2d(rect.getX(), rect.getY(), new Rotation2d()));
-    Logger.getInstance()
-        .recordOutput(
-            "Region2d/point1",
-            new Pose2d(rect.getX() + rect.getWidth(), rect.getY(), new Rotation2d()));
-    Logger.getInstance()
-        .recordOutput(
-            "Region2d/point2",
-            new Pose2d(rect.getX(), rect.getY() + rect.getHeight(), new Rotation2d()));
-    Logger.getInstance()
-        .recordOutput(
-            "Region2d/point3",
-            new Pose2d(
-                rect.getX() + rect.getWidth(), rect.getY() + rect.getHeight(), new Rotation2d()));
+    Logger.recordOutput("Region2d/point0", new Pose2d(rect.getX(), rect.getY(), new Rotation2d()));
+    Logger.recordOutput(
+        "Region2d/point1",
+        new Pose2d(rect.getX() + rect.getWidth(), rect.getY(), new Rotation2d()));
+    Logger.recordOutput(
+        "Region2d/point2",
+        new Pose2d(rect.getX(), rect.getY() + rect.getHeight(), new Rotation2d()));
+    Logger.recordOutput(
+        "Region2d/point3",
+        new Pose2d(
+            rect.getX() + rect.getWidth(), rect.getY() + rect.getHeight(), new Rotation2d()));
 
     // assume that there are at most 4 neighbors
     for (int i = 0; i < 4; i++) {
-      Logger.getInstance().recordOutput("Region2d/transition" + i, new Pose2d());
+      Logger.recordOutput("Region2d/transition" + i, new Pose2d());
     }
     int i = 0;
     for (Entry<Region2d, Translation2d> entry : transitionMap.entrySet()) {
       Translation2d point = entry.getValue();
-      Logger.getInstance()
-          .recordOutput(
-              "Region2d/transition" + i, new Pose2d(point.getX(), point.getY(), new Rotation2d()));
+      Logger.recordOutput(
+          "Region2d/transition" + i, new Pose2d(point.getX(), point.getY(), new Rotation2d()));
       i++;
     }
   }
 
   /**
-   * Returns true if the region contains a given Pose2d accounting for the alliance color.
+   * Returns true if the region contains a given Pose2d.
    *
    * @param other the given pose2d
    * @return if the pose is inside the region
    */
   public boolean contains(Pose2d other) {
 
-    if (this.alliance == DriverStation.Alliance.Red) {
-      return this.shape.contains(
-          new Point2D.Double(other.getX(), FieldConstants.fieldWidth - other.getY()));
-    } else {
-      return this.shape.contains(new Point2D.Double(other.getX(), other.getY()));
-    }
+    return this.shape.contains(new Point2D.Double(other.getX(), other.getY()));
   }
 
   /**
@@ -125,25 +112,10 @@ public class Region2d {
   public Translation2d getTransitionPoint(Region2d other) {
     if (getNeighbors().contains(other)) {
 
-      if (this.alliance == DriverStation.Alliance.Red) {
-        return new Translation2d(
-            transitionMap.get(other).getX(),
-            FieldConstants.fieldWidth - transitionMap.get(other).getY());
-      } else {
-        return transitionMap.get(other);
-      }
+      return transitionMap.get(other);
 
     } else {
       return null;
     }
-  }
-
-  /**
-   * Sets the current alliance color which is used to transform the coordinates of the region.
-   *
-   * @param newAlliance the new alliance color
-   */
-  public void updateAlliance(DriverStation.Alliance newAlliance) {
-    this.alliance = newAlliance;
   }
 }

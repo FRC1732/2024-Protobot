@@ -2,15 +2,15 @@
  * Initially from https://github.com/Team364/BaseFalconSwerve
  */
 
-package frc.lib.team3061.swerve;
+package frc.lib.team3061.drivetrain.swerve;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public final class SwerveModuleConstants {
+public final class SwerveConstants {
 
   private static final String CONSTRUCTOR_EXCEPTION = "constant class";
 
-  private SwerveModuleConstants() {
+  private SwerveConstants() {
     throw new IllegalStateException(CONSTRUCTOR_EXCEPTION);
   }
 
@@ -24,7 +24,8 @@ public final class SwerveModuleConstants {
   /*
   	Wheel diameter is best determined empirically. Refer to this document for more information: !!!
   */
-  public static final double MK4I_L2_WHEEL_DIAMETER_METERS = 0.096294;
+  public static final double MK4I_L2_WHEEL_DIAMETER_METERS = 0.09659072671;
+
   public static final double MK4I_L2_WHEEL_CIRCUMFERENCE = MK4I_L2_WHEEL_DIAMETER_METERS * Math.PI;
   public static final double MK4I_L2_DRIVE_GEAR_RATIO =
       1 / ((14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0));
@@ -47,7 +48,6 @@ public final class SwerveModuleConstants {
   public static final boolean MK4_L2_ANGLE_MOTOR_INVERTED = false;
   public static final boolean MK4_L2_CAN_CODER_INVERTED = false;
 
-  // FIXME: tune this; perhaps set to 0?
   public static final double OPEN_LOOP_RAMP = 0.25;
   public static final double CLOSED_LOOP_RAMP = 0.0;
 
