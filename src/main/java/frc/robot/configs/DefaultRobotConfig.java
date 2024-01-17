@@ -86,12 +86,12 @@ public class DefaultRobotConfig extends RobotConfig {
 
   private static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 2.0;
   private static final double AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.0;
-  private static final double AUTO_DRIVE_P_CONTROLLER = 6.0;
+  private static final double AUTO_DRIVE_P_CONTROLLER = 0.2402346041055719;
   private static final double AUTO_DRIVE_I_CONTROLLER = 0.0;
   private static final double AUTO_DRIVE_D_CONTROLLER = 0.0;
-  private static final double AUTO_TURN_P_CONTROLLER = 10.0;
+  private static final double AUTO_TURN_P_CONTROLLER = 14.414076246334309;
   private static final double AUTO_TURN_I_CONTROLLER = 0.0;
-  private static final double AUTO_TURN_D_CONTROLLER = 0.0;
+  private static final double AUTO_TURN_D_CONTROLLER = 0.28828152492668624;
 
   @Override
   public double getSwerveAngleKP() {

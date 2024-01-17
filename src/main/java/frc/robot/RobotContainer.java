@@ -377,7 +377,9 @@ public class RobotContainer {
      *
      */
     Command autoTest = new PathPlannerAuto("TestAuto");
+    Command testLine = new PathPlannerAuto("DistanceTest");
     autoChooser.addOption("Test Auto", autoTest);
+    autoChooser.addOption("Distance Test", testLine);
 
     /************ Start Point ************
      *

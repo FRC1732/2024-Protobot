@@ -28,7 +28,7 @@ public final class Constants {
   // set to true in order to change all Tunable values via Shuffleboard
   public static final boolean TUNING_MODE = false;
 
-  public static final double TRAINING_WHEELS = 0.20;
+  public static final double TRAINING_WHEELS = 0.50;
 
   private static final RobotType ROBOT = RobotType.ROBOT_DEFAULT;
 
