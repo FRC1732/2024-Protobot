@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.TRAINING_WHEELS;
+import static frc.robot.FieldRegionConstants.*;
+
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIO;
@@ -25,12 +28,12 @@ import frc.lib.team3061.drivetrain.swerve.SwerveModuleIO;
 import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
 import frc.lib.team3061.gyro.GyroIO;
 import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
+import frc.lib.team3061.leds.LEDs;
 import frc.lib.team3061.pneumatics.Pneumatics;
 import frc.lib.team3061.pneumatics.PneumaticsIORev;
 import frc.lib.team3061.vision.Vision;
 import frc.lib.team3061.vision.VisionConstants;
 import frc.lib.team3061.vision.VisionIO;
-import frc.lib.team3061.vision.VisionIOPhotonVision;
 import frc.lib.team3061.vision.VisionIOSim;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.FeedForwardCharacterization;
@@ -49,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -68,6 +72,11 @@ public class RobotContainer {
   private final LoggedDashboardChooser<Command> autoChooser =
       new LoggedDashboardChooser<>("Auto Routine");
 
+  private final LoggedDashboardNumber endgameAlert1 =
+      new LoggedDashboardNumber("Endgame Alert #1", 20.0);
+  private final LoggedDashboardNumber endgameAlert2 =
+      new LoggedDashboardNumber("Endgame Alert #2", 10.0);
+
   // RobotContainer singleton
   private static RobotContainer robotContainer = new RobotContainer();
 
@@ -81,6 +90,8 @@ public class RobotContainer {
      * that use it directly or indirectly. If this isn't done, a null pointer exception will result.
      */
     createRobotConfig();
+
+    LEDs.getInstance();
 
     // create real, simulated, or replay subsystems based on the mode and robot specified
     if (Constants.getMode() != Mode.REPLAY) {
@@ -112,13 +123,13 @@ public class RobotContainer {
     } else {
       drivetrain = new Drivetrain(new DrivetrainIO() {});
 
-      String[] cameraNames = config.getCameraNames();
-      VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      for (int i = 0; i < visionIOs.length; i++) {
-        visionIOs[i] = new VisionIO() {};
-      }
-      vision = new Vision(visionIOs);
-      subsystem = new Subsystem(new SubsystemIO() {});
+      // String[] cameraNames = config.getCameraNames(); TODO: update with actual data
+      // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+      // for (int i = 0; i < visionIOs.length; i++) {
+      //   visionIOs[i] = new VisionIO() {};
+      // }
+      // vision = new Vision(visionIOs);
+      // subsystem = new Subsystem(new SubsystemIO() {});
     }
 
     // disable all telemetry in the LiveWindow to reduce the processing during each iteration
@@ -205,6 +216,7 @@ public class RobotContainer {
         new SwerveModuleIOTalonFXPhoenix6(
             3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
 
+
     GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
     DrivetrainIO drivetrainIO =
         new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
@@ -233,19 +245,20 @@ public class RobotContainer {
                     RobotConfig.getInstance().getRobotToCameraTransforms()[0])
               });
     } else {
-      String[] cameraNames = config.getCameraNames();
-      Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
-      VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      AprilTagFieldLayout layout;
-      try {
-        layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
-      } catch (IOException e) {
-        layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-      }
-      for (int i = 0; i < visionIOs.length; i++) {
-        visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout, robotToCameraTransforms[i]);
-      }
-      vision = new Vision(visionIOs);
+      //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
+      //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
+      //   VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+      //   AprilTagFieldLayout layout;
+      //   try {
+      //     layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
+      //   } catch (IOException e) {
+      //     layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
+      //   }
+      //   for (int i = 0; i < visionIOs.length; i++) {
+      //     visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout,
+      // robotToCameraTransforms[i]);
+      //   }
+      //   vision = new Vision(visionIOs);
     }
   }
 
@@ -311,7 +324,31 @@ public class RobotContainer {
 
     configureSubsystemCommands();
 
-    configureVisionCommands();
+    // configureVisionCommands(); TODO:fix vision stuff
+
+    // Endgame alerts
+    new Trigger(
+            () ->
+                DriverStation.isTeleopEnabled()
+                    && DriverStation.getMatchTime() > 0.0
+                    && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
+        .onTrue(
+            Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
+                .withTimeout(1.5)
+                .andThen(
+                    Commands.run(() -> LEDs.getInstance().setEndgameAlert(false))
+                        .withTimeout(1.0)));
+    new Trigger(
+            () ->
+                DriverStation.isTeleopEnabled()
+                    && DriverStation.getMatchTime() > 0.0
+                    && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
+        .onTrue(
+            Commands.sequence(
+                Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
+                Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
+                Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
+                Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
 
     // interrupt all commands by running a command that requires every subsystem. This is used to
     // recover to a known state if the robot becomes "stuck" in a command.
@@ -345,7 +382,9 @@ public class RobotContainer {
      *
      */
     Command autoTest = new PathPlannerAuto("TestAuto");
+    Command testLine = new PathPlannerAuto("DistanceTest");
     autoChooser.addOption("Test Auto", autoTest);
+    autoChooser.addOption("Distance Test", testLine);
 
     /************ Start Point ************
      *
@@ -565,17 +604,5 @@ public class RobotContainer {
       this.lastAlliance = alliance.get();
       this.drivetrain.updateAlliance(this.lastAlliance);
     }
-  }
-
-  public void autonomousInit() {
-    // when the LED subsystem is pulled in, we will change the LEDs here
-  }
-
-  public void teleopInit() {
-    // when the LED subsystem is pulled in, we will change the LEDs here
-  }
-
-  public void disabledPeriodic() {
-    // when the LED subsystem is pulled in, we will change the LEDs here
   }
 }

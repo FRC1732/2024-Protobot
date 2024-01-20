@@ -4,6 +4,8 @@
 
 package frc.robot.operator_interface;
 
+import static frc.robot.Constants.TRAINING_WHEELS;
+
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -31,27 +33,27 @@ public class DualJoysticksOI implements OperatorInterface {
 
   @Override
   public double getTranslateX() {
-    return -translateJoystick.getY();
+    return -translateJoystick.getY()*TRAINING_WHEELS;
   }
 
   @Override
   public double getTranslateY() {
-    return -translateJoystick.getX();
+    return -translateJoystick.getX()*TRAINING_WHEELS;
   }
 
   @Override
   public double getRotate() {
-    return -rotateJoystick.getX();
+    return -rotateJoystick.getX()*TRAINING_WHEELS;
   }
 
   @Override
   public Trigger getFieldRelativeButton() {
-    return translateJoystickButtons[3];
+    return rotateJoystickButtons[3];
   }
 
   @Override
   public Trigger getResetGyroButton() {
-    return rotateJoystickButtons[3];
+    return translateJoystickButtons[3];
   }
 
   @Override

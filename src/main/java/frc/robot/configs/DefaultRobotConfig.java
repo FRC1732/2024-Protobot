@@ -12,28 +12,28 @@ import frc.lib.team3061.drivetrain.swerve.SwerveConstants.SwerveType;
  */
 public class DefaultRobotConfig extends RobotConfig {
 
-  // FIXME: update all CAN IDs and steer offsets
-  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 7;
-  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 6;
-  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 8;
-  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = -0.104004;
+  // REMINDER: offsets are in rotations
+  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 10;
+  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
+  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12;
+  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = -0.047119140625 + .5 + (0)/360*.01; //input degree values inside the parenthesis
 
-  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 13;
-  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 12;
-  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 14;
-  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT = -0.284424;
+  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 40;
+  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 41;
+  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 42;
+  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT = 0.275146484375 + (0)/360*.01; //input degree values inside the parenthesis
 
-  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 10;
-  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 9;
-  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 11;
-  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT = -0.732666;
+  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 20;
+  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 21;
+  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
+  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT = -0.35498046875 + .5 + (0)/360*.01; //input degree values inside the parenthesis
 
-  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 16;
-  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 15;
-  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 17;
-  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = -0.007324;
+  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 30;
+  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 31;
+  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 32;
+  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT = 0.1357421875 + (0)/360*.01; //input degree values inside the parenthesis
 
-  private static final int GYRO_ID = 18;
+  private static final int GYRO_ID = 7;
 
   // FIXME: update robot dimensions
   private static final double TRACKWIDTH_METERS = 0.5715; // 22.5 inches
@@ -70,14 +70,14 @@ public class DefaultRobotConfig extends RobotConfig {
   private static final String CAN_BUS_NAME = "";
 
   // FIXME: specify the name of the camera used for detecting AprilTags
-  private static final String CAMERA_NAME = "OV9281";
+  private static final String CAMERA_NAME = "";
 
   // FIXME: update this with the actual transform from the robot to the camera
   private static final Transform3d ROBOT_TO_CAMERA =
       new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
   // FIXME: specify the configuration for pneumatics
-  private static final int PNEUMATICS_HUB_ID = 20;
+  private static final int PNEUMATICS_HUB_ID = 3;
   private static final int FLOW_SENSOR_CHANNEL = 0;
   private static final int REV_HIGH_PRESSURE_SENSOR_CHANNEL = 0;
   private static final int REV_LOW_PRESSURE_SENSOR_CHANNEL = 1;
@@ -86,12 +86,12 @@ public class DefaultRobotConfig extends RobotConfig {
 
   private static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 2.0;
   private static final double AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.0;
-  private static final double AUTO_DRIVE_P_CONTROLLER = 6.0;
+  private static final double AUTO_DRIVE_P_CONTROLLER = 0.2402346041055719;
   private static final double AUTO_DRIVE_I_CONTROLLER = 0.0;
   private static final double AUTO_DRIVE_D_CONTROLLER = 0.0;
-  private static final double AUTO_TURN_P_CONTROLLER = 10.0;
+  private static final double AUTO_TURN_P_CONTROLLER = 14.414076246334309;
   private static final double AUTO_TURN_I_CONTROLLER = 0.0;
-  private static final double AUTO_TURN_D_CONTROLLER = 0.0;
+  private static final double AUTO_TURN_D_CONTROLLER = 0.28828152492668624;
 
   @Override
   public double getSwerveAngleKP() {
