@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.TRAINING_WHEELS;
-import static frc.robot.FieldRegionConstants.*;
-
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
