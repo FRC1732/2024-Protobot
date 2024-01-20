@@ -28,7 +28,7 @@ public class TeleopSwerve extends Command {
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
 
-  private static final double DEADBAND = 0.1;
+  private static final double DEADBAND = 0.05;
   private double lastAngularVelocity;
   private double lastXVelocity;
   private double lastYVelocity;
