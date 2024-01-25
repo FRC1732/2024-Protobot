@@ -213,7 +213,6 @@ public class RobotContainer {
         new SwerveModuleIOTalonFXPhoenix6(
             3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
 
-
     GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
     DrivetrainIO drivetrainIO =
         new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
