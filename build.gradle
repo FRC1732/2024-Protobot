@@ -117,7 +117,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**', '**/BuildConstants.java', '**/generated-sources/**'
         }
         toggleOffOn()
-        googleJavaFormat()
+        googleJavaFormat('1.19.2')
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

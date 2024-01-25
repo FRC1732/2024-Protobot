@@ -56,6 +56,7 @@ public class Robot extends LoggedRobot {
   public Robot() {
     super(Constants.LOOP_PERIOD_SECS);
   }
+
   /**
    * This method is executed when the code first starts running on the robot and should be used for
    * any initialization code.
