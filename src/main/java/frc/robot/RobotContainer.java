@@ -139,7 +139,17 @@ public class RobotContainer {
 
     configureAutoCommands();
 
-  
+    
+
+    NamedCommands.registerCommand("SpinShooter", new PrintCommand("Spin Shooter Command"));
+    NamedCommands.registerCommand("ShootNote", new PrintCommand("Shoot Note Command"));
+    NamedCommands.registerCommand("IntakeNote", new PrintCommand("Intake Note Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance115", new PrintCommand("Set Shooter Distance 115 Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance125", new PrintCommand("Set Shooter Distance 125 Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance150", new PrintCommand("Set Shooter Distance 150 Command"));
   }
 
   /**
