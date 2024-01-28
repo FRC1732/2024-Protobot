@@ -139,8 +139,6 @@ public class RobotContainer {
 
     configureAutoCommands();
 
-    
-
     NamedCommands.registerCommand("SpinShooter", new PrintCommand("Spin Shooter Command"));
     NamedCommands.registerCommand("ShootNote", new PrintCommand("Shoot Note Command"));
     NamedCommands.registerCommand("IntakeNote", new PrintCommand("Intake Note Command"));
