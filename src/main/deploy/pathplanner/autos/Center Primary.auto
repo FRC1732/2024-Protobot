@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": null,
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "S2-C2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C2-M2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "M2-N3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "N3-F2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F2-N4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "N4-F2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Center",
+  "choreoAuto": false
+}

@@ -33,17 +33,17 @@ public class DualJoysticksOI implements OperatorInterface {
 
   @Override
   public double getTranslateX() {
-    return -translateJoystick.getY()*TRAINING_WHEELS;
+    return -translateJoystick.getY() * TRAINING_WHEELS;
   }
 
   @Override
   public double getTranslateY() {
-    return -translateJoystick.getX()*TRAINING_WHEELS;
+    return -translateJoystick.getX() * TRAINING_WHEELS;
   }
 
   @Override
   public double getRotate() {
-    return -rotateJoystick.getX()*TRAINING_WHEELS;
+    return -rotateJoystick.getX() * TRAINING_WHEELS;
   }
 
   @Override

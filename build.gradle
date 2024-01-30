@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.1.1"
+    id "edu.wpi.first.GradleRIO" version "2024.2.1"
     id 'com.diffplug.spotless' version '6.11.0'
     id "com.peterabeles.gversion" version "1.10"
 }
@@ -117,10 +117,11 @@ spotless {
             exclude '**/build/**', '**/build-*/**', '**/BuildConstants.java', '**/generated-sources/**'
         }
         toggleOffOn()
-        googleJavaFormat()
+        googleJavaFormat('1.19.2')
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()
+        lineEndings 'UNIX'
     }
     groovyGradle {
         target fileTree('.') {
@@ -131,6 +132,7 @@ spotless {
         indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
+        lineEndings 'UNIX'
     }
     format 'xml', {
         target fileTree('.') {
@@ -141,6 +143,7 @@ spotless {
         trimTrailingWhitespace()
         indentWithSpaces(2)
         endWithNewline()
+        lineEndings 'UNIX'
     }
     format 'misc', {
         target fileTree('.') {
@@ -150,6 +153,7 @@ spotless {
         trimTrailingWhitespace()
         indentWithSpaces(2)
         endWithNewline()
+        lineEndings 'UNIX'
     }
 }
 

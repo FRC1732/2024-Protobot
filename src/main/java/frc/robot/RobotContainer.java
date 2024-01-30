@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
@@ -137,6 +138,16 @@ public class RobotContainer {
     updateOI();
 
     configureAutoCommands();
+
+    NamedCommands.registerCommand("SpinShooter", new PrintCommand("Spin Shooter Command"));
+    NamedCommands.registerCommand("ShootNote", new PrintCommand("Shoot Note Command"));
+    NamedCommands.registerCommand("IntakeNote", new PrintCommand("Intake Note Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance115", new PrintCommand("Set Shooter Distance 115 Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance125", new PrintCommand("Set Shooter Distance 125 Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance150", new PrintCommand("Set Shooter Distance 150 Command"));
   }
 
   /**
@@ -212,7 +223,6 @@ public class RobotContainer {
     SwerveModuleIO brModule =
         new SwerveModuleIOTalonFXPhoenix6(
             3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
-
 
     GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
     DrivetrainIO drivetrainIO =
