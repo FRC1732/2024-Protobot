@@ -15,9 +15,8 @@ public class Feeder extends SubsystemBase {
 
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
-  private final TunableNumber motorPower = new TunableNumber("Feeder/power", 0.0);
-  private final TunableNumber motorCurrent = new TunableNumber("Feeder/current", 0.0);
-  private final TunableNumber motorPosition = new TunableNumber("Feeder/position", 0.0);
+  private final TunableNumber leftMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
+  private final TunableNumber rightMotorSpeed = new TunableNumber("Feeder/rightSpeed", 0.0);
 
   public final CANSparkMax feederMotorLeft;
   public final CANSparkMax feederMotorRight;
@@ -25,17 +24,7 @@ public class Feeder extends SubsystemBase {
   public static Double FEEDER_MOTOR_LEFT_SPEED = .3;
   public static Double FEEDER_MOTOR_RIGHT_SPEED = .3;
 
-  private final FeederIOInputsAutoLogged inputs = new FeederIOInputsAutoLogged();
-  private FeederIO io;
-
-  /**
-   * Create a new subsystem with its associated hardware interface object.
-   *
-   * @param io the hardware interface object for this subsystem
-   */
-  public Feeder(FeederIO io) {
-
-    this.io = io;
+  public Feeder() {
 
     feederMotorLeft =
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_LEFT_CAN_ID, CANSparkMax.MotorType.kBrushed);
@@ -70,6 +59,15 @@ public class Feeder extends SubsystemBase {
   public void periodic() {
     //FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
     //FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
+    if (TESTING) {
+      if (leftMotorSpeed.get() != 0) {
+        feederMotorLeft.set(leftMotorSpeed.get());
+      }
+
+      if (rightMotorSpeed.get() != 0) {
+        feederMotorRight.set(rightMotorSpeed.get());
+      }
+    }
   }
 
 /*
