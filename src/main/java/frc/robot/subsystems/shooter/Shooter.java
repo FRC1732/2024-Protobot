@@ -23,9 +23,6 @@ public class Shooter extends SubsystemBase {
   private final TunableNumber motorCurrent = new TunableNumber("Shooter/current", 0.0);
   private final TunableNumber motorPosition = new TunableNumber("Shooter/position", 0.0);
 
-  private final SubsystemIOInputsAutoLogged inputs = new SubsystemIOInputsAutoLogged();
-  private ShooterIO io;
-
   private CANSparkFlex shooterMotorHigh;
   private CANSparkFlex shooterMotorLow;
   private GenericEntry speedEntryHigh;
@@ -39,14 +36,7 @@ public class Shooter extends SubsystemBase {
   public static Double SHOOTER_MOTOR_LOW_SPEED = 0.80;
   public static Double SHOOTER_MOTOR_TILT_SPEED = 0.50;
 
-  /**
-   * Create a new subsystem with its associated hardware interface object.
-   *
-   * @param io the hardware interface object for this subsystem
-   */
-  public Shooter(ShooterIO io) {
-
-    this.io = io;
+  public Shooter() {
 
     shooterMotorHigh =
         new CANSparkFlex(
