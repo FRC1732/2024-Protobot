@@ -10,18 +10,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
 
-/**
- * Models a generic subsystem for a rotational mechanism. The other subsystems defined in this
- * library aren't good examples for typical robot subsystems. This class can serve as an example or
- * be used for quick prototyping.
- */
+
 public class Shooter extends SubsystemBase {
 
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
-  private final TunableNumber motorPower = new TunableNumber("Shooter/power", 0.0);
-  private final TunableNumber motorCurrent = new TunableNumber("Shooter/current", 0.0);
-  private final TunableNumber motorPosition = new TunableNumber("Shooter/position", 0.0);
+  private final TunableNumber shooterHighSpeed = new TunableNumber("Shooter/highspeed", 0.0);
+  private final TunableNumber shooterLowSpeed = new TunableNumber("Shooter/lowspeed", 0.0);
+
 
   private CANSparkFlex shooterMotorHigh;
   private CANSparkFlex shooterMotorLow;
@@ -75,6 +71,8 @@ public class Shooter extends SubsystemBase {
   public void stopShooter() {
     shooterMotorHigh.set(0);
     shooterMotorLow.set(0);
+
+    
   }
 
   public void setUpShuffleboard() {
@@ -99,6 +97,17 @@ public class Shooter extends SubsystemBase {
     // SHOOTER_MOTOR_HIGH_SPEED = speedEntryHigh.getDouble(0);
     // SHOOTER_MOTOR_LOW_SPEED = speedEntryLow.getDouble(0);
     // SHOOTER_MOTOR_TILT_SPEED = speedEntryTilt.getDouble(0);
+
+    // when testing set speeds to the ones from the tunable numbers
+    if (TESTING) {
+      if (shooterHighSpeed.get() != 0) {
+        shooterMotorHigh.set(shooterHighSpeed.get());
+      }
+
+      if (shooterLowSpeed.get() != 0) {
+        shooterMotorLow.set(shooterLowSpeed.get());
+      }
+    }
   }
 
   /*
