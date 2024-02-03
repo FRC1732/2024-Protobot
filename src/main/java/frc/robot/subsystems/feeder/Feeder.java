@@ -5,10 +5,7 @@ import static frc.robot.subsystems.feeder.FeederConstants.*;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.team3015.subsystem.FaultReporter;
 import frc.lib.team6328.util.TunableNumber;
 
 /**
@@ -57,13 +54,12 @@ public class Feeder extends SubsystemBase {
       tab.add(SUBSYSTEM_NAME, this);
     }
 
-    //FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
+    // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
   }
 
   public void runFeederIn() {
     feederMotorLeft.set(FEEDER_MOTOR_LEFT_SPEED);
     feederMotorRight.set(FEEDER_MOTOR_RIGHT_SPEED);
-
   }
 
   public void stopFeederIn() {
@@ -73,40 +69,40 @@ public class Feeder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
-    //FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
+    // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
+    // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
   }
 
-/*
- *  private Command getSystemCheckCommand() { 
-    return Commands.sequence(
-            Commands.run(() -> io.setMotorPower(0.3)).withTimeout(1.0),
-            Commands.runOnce(
-                () -> {
-                  if (inputs.velocityRPM < 2.0) {
-                    FaultReporter.getInstance()
-                        .addFault(
-                            SUBSYSTEM_NAME,
-                            "[System Check] Subsystem motor not moving as fast as expected",
-                            false,
-                            true);
-                  }
-                }),
-            Commands.run(() -> io.setMotorPower(-0.2)).withTimeout(1.0),
-            Commands.runOnce(
-                () -> {
-                  if (inputs.velocityRPM > -2.0) {
-                    FaultReporter.getInstance()
-                        .addFault(
-                            SUBSYSTEM_NAME,
-                            "[System Check] Subsystem motor moving too slow or in the wrong direction",
-                            false,
-                            true);
-                  }
-                }))
-        .until(() -> !FaultReporter.getInstance().getFaults(SUBSYSTEM_NAME).isEmpty())
-        .andThen(Commands.runOnce(() -> io.setMotorPower(0.0)));
-  }
- */
+  /*
+  *  private Command getSystemCheckCommand() {
+     return Commands.sequence(
+             Commands.run(() -> io.setMotorPower(0.3)).withTimeout(1.0),
+             Commands.runOnce(
+                 () -> {
+                   if (inputs.velocityRPM < 2.0) {
+                     FaultReporter.getInstance()
+                         .addFault(
+                             SUBSYSTEM_NAME,
+                             "[System Check] Subsystem motor not moving as fast as expected",
+                             false,
+                             true);
+                   }
+                 }),
+             Commands.run(() -> io.setMotorPower(-0.2)).withTimeout(1.0),
+             Commands.runOnce(
+                 () -> {
+                   if (inputs.velocityRPM > -2.0) {
+                     FaultReporter.getInstance()
+                         .addFault(
+                             SUBSYSTEM_NAME,
+                             "[System Check] Subsystem motor moving too slow or in the wrong direction",
+                             false,
+                             true);
+                   }
+                 }))
+         .until(() -> !FaultReporter.getInstance().getFaults(SUBSYSTEM_NAME).isEmpty())
+         .andThen(Commands.runOnce(() -> io.setMotorPower(0.0)));
+   }
+  */
 
 }
