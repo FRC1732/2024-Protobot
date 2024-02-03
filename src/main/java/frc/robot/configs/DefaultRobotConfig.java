@@ -17,25 +17,25 @@ public class DefaultRobotConfig extends RobotConfig {
   private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
   private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12;
   private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT =
-      -0.047119140625 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.05517578125 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 40;
   private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 41;
   private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 42;
   private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT =
-      0.275146484375 + (0) / 360 * .01; // input degree values inside the parenthesis
+      0.267333984375 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 20;
   private static final int BACK_LEFT_MODULE_STEER_MOTOR = 21;
   private static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
   private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT =
-      -0.35498046875 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.338134765625 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 30;
   private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 31;
   private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 32;
   private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT =
-      0.1357421875 + (0) / 360 * .01; // input degree values inside the parenthesis
+      0.13818359375 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int GYRO_ID = 7;
 
@@ -48,12 +48,12 @@ public class DefaultRobotConfig extends RobotConfig {
   // FIXME: tune PID values for the angle and drive motors for the swerve modules
 
   /* Angle Motor PID Values */
-  private static final double ANGLE_KP = 14.414076246334309;
+  private static final double ANGLE_KP = 100;
   private static final double ANGLE_KI = 0.0;
-  private static final double ANGLE_KD = 0.28828152492668624;
+  private static final double ANGLE_KD = 0.2;
 
   /* Drive Motor PID Values */
-  private static final double DRIVE_KP = 0.2402346041055719;
+  private static final double DRIVE_KP = 3;
   private static final double DRIVE_KI = 0.0;
   private static final double DRIVE_KD = 0.0;
 
