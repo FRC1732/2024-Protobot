@@ -2,14 +2,13 @@ package frc.robot.subsystems.shooter;
 
 import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.team3015.subsystem.FaultReporter;
 import frc.lib.team6328.util.TunableNumber;
-import org.littletonrobotics.junction.Logger;
 
 /**
  * Models a generic subsystem for a rotational mechanism. The other subsystems defined in this
@@ -20,12 +19,25 @@ public class Shooter extends SubsystemBase {
 
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
-  private final TunableNumber motorPower = new TunableNumber("Subsystem/power", 0.0);
-  private final TunableNumber motorCurrent = new TunableNumber("Subsystem/current", 0.0);
-  private final TunableNumber motorPosition = new TunableNumber("Subsystem/position", 0.0);
+  private final TunableNumber motorPower = new TunableNumber("Shooter/power", 0.0);
+  private final TunableNumber motorCurrent = new TunableNumber("Shooter/current", 0.0);
+  private final TunableNumber motorPosition = new TunableNumber("Shooter/position", 0.0);
 
   private final SubsystemIOInputsAutoLogged inputs = new SubsystemIOInputsAutoLogged();
   private ShooterIO io;
+
+  private CANSparkFlex shooterMotorHigh;
+  private CANSparkFlex shooterMotorLow;
+  private GenericEntry speedEntryHigh;
+  private GenericEntry speedEntryLow;
+
+  // private GenericEntry speedEntryTilt;
+
+  /** Creates a new Shooter. */
+  public static Double SHOOTER_MOTOR_HIGH_SPEED = 0.80;
+
+  public static Double SHOOTER_MOTOR_LOW_SPEED = 0.80;
+  public static Double SHOOTER_MOTOR_TILT_SPEED = 0.50;
 
   /**
    * Create a new subsystem with its associated hardware interface object.
@@ -36,69 +48,71 @@ public class Shooter extends SubsystemBase {
 
     this.io = io;
 
+    shooterMotorHigh =
+        new CANSparkFlex(
+            ShooterConstants.SHOOTER_MOTOR_HIGH_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    shooterMotorLow =
+        new CANSparkFlex(
+            ShooterConstants.SHOOTER_MOTOR_LOW_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    // shooterMotorTilt = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_TILT_CAN_ID,
+    // CANSparkMax.MotorType.kBrushless);
+
+    shooterMotorHigh.setInverted(ShooterConstants.SHOOTER_MOTOR_HIGH_INVERTED);
+    shooterMotorLow.setInverted(ShooterConstants.SHOOTER_MOTOR_LOW_INVERTED);
+    // shooterMotorTilt.setInverted(ShooterConstants.SHOOTER_MOTOR_TILT_INVERTED);
+    // setUpShuffleboard();
+
     // Create a Shuffleboard tab for this subsystem if testing is enabled. Add additional indicators
     // and controls as needed.
+
     if (TESTING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
       tab.add(SUBSYSTEM_NAME, this);
     }
 
-    FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
+    // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
   }
 
   /**
    * The subsystem's periodic method needs to update and process the inputs from the hardware
    * interface object.
    */
+  public void runShooter() {
+    shooterMotorHigh.set(SHOOTER_MOTOR_HIGH_SPEED);
+    shooterMotorLow.set(SHOOTER_MOTOR_LOW_SPEED);
+  }
+
+  public void stopShooter() {
+    shooterMotorHigh.set(0);
+    shooterMotorLow.set(0);
+  }
+
+  public void setUpShuffleboard() {
+    /*ShuffleboardTab shooterMotors;
+      shooterMotors = Shuffleboard.getTab("Shooter Motors");
+      shooterMotors.addDouble("HighVelocity", () -> shooterMotorHigh.getEncoder().getVelocity());
+      shooterMotors.addDouble("LowVelocity", () -> shooterMotorLow.getEncoder().getVelocity());
+     // shooterMotors.addDouble("TiltVelocity", () -> shooterMotorTilt.getEncoder().getVelocity());
+      //shooterMotors.addDouble("TiltAngle", () -> shooterMotorTilt.getEncoder().getPosition());
+      //shooterMotors.addDouble("HighAcceleration", () -> getAcceleration());
+      //shooterMotors.addDouble("LowAcceleration", () -> getAcceleration());
+
+      speedEntryHigh = shooterMotors.add("MotorHighSpeed", SHOOTER_MOTOR_HIGH_SPEED ).getEntry();
+      speedEntryLow = shooterMotors.add("MotorLowSpeed", SHOOTER_MOTOR_LOW_SPEED ).getEntry();
+      //speedEntryTilt = shooterMotors.add("MotorTiltSpeed", SHOOTER_MOTOR_TILT_SPEED ).getEntry();
+    */
+  }
+
   @Override
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Subsystem", inputs);
-
-    // when testing, set the motor power, current, or position based on the Tunables (if non-zero)
-    if (TESTING) {
-      if (motorPower.get() != 0) {
-        this.setMotorPower(motorPower.get());
-      }
-
-      if (motorCurrent.get() != 0) {
-        this.setMotorCurrent(motorCurrent.get());
-      }
-
-      if (motorPosition.get() != 0) {
-        this.setMotorPosition(motorPosition.get());
-      }
-    }
+    // This method will be called once per scheduler run
+    // SHOOTER_MOTOR_HIGH_SPEED = speedEntryHigh.getDouble(0);
+    // SHOOTER_MOTOR_LOW_SPEED = speedEntryLow.getDouble(0);
+    // SHOOTER_MOTOR_TILT_SPEED = speedEntryTilt.getDouble(0);
   }
 
-  /**
-   * Set the motor power to the specified percentage of maximum power.
-   *
-   * @param power the percentage of maximum power to set the motor to
-   */
-  public void setMotorPower(double power) {
-    io.setMotorPower(power);
-  }
-
-  /**
-   * Set the motor current to the specified value in amps.
-   *
-   * @param power the current to set the motor to in amps
-   */
-  public void setMotorCurrent(double power) {
-    io.setMotorCurrent(power);
-  }
-
-  /**
-   * Set the motor position to the specified value in degrees.
-   *
-   * @param position the position to set the motor to in degrees
-   */
-  public void setMotorPosition(double position) {
-    io.setMotorPosition(position, POSITION_FEEDFORWARD);
-  }
-
-  private Command getSystemCheckCommand() {
+  /*
+    private Command getSystemCheckCommand() {
     return Commands.sequence(
             Commands.run(() -> io.setMotorPower(0.3)).withTimeout(1.0),
             Commands.runOnce(
@@ -127,4 +141,6 @@ public class Shooter extends SubsystemBase {
         .until(() -> !FaultReporter.getInstance().getFaults(SUBSYSTEM_NAME).isEmpty())
         .andThen(Commands.runOnce(() -> io.setMotorPower(0.0)));
   }
+   */
+
 }
