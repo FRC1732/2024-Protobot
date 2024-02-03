@@ -11,18 +11,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team3015.subsystem.FaultReporter;
 import frc.lib.team6328.util.TunableNumber;
 
-/**
- * Models a generic subsystem for a rotational mechanism. The other subsystems defined in this
- * library aren't good examples for typical robot subsystems. This class can serve as an example or
- * be used for quick prototyping.
- */
 public class Feeder extends SubsystemBase {
 
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
-  private final TunableNumber motorPower = new TunableNumber("Subsystem/power", 0.0);
-  private final TunableNumber motorCurrent = new TunableNumber("Subsystem/current", 0.0);
-  private final TunableNumber motorPosition = new TunableNumber("Subsystem/position", 0.0);
+  private final TunableNumber motorPower = new TunableNumber("Feeder/power", 0.0);
+  private final TunableNumber motorCurrent = new TunableNumber("Feeder/current", 0.0);
+  private final TunableNumber motorPosition = new TunableNumber("Feeder/position", 0.0);
 
   public final CANSparkMax feederMotorLeft;
   public final CANSparkMax feederMotorRight;
