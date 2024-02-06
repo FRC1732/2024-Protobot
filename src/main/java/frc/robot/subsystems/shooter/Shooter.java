@@ -4,148 +4,107 @@ import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.networktables.GenericEntry;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
 
 
-public class Shooter extends SubsystemBase {
-
-  // these Tunables are convenient when testing as they provide direct control of the subsystem's
-  // motor
-  private final TunableNumber shooterHighSpeed = new TunableNumber("Shooter/highspeed", 0.0);
-  private final TunableNumber shooterLowSpeed = new TunableNumber("Shooter/lowspeed", 0.0);
-
-
-  private CANSparkFlex shooterMotorHigh;
-  private CANSparkFlex shooterMotorLow;
+public class Shooter extends SubsystemBase { 
+  private CANSparkFlex shooterHighMotor;
+  private CANSparkFlex shooterLowMotor;
   private CANSparkMax shooterTiltMotor;
-  private GenericEntry speedEntryHigh;
-  private GenericEntry speedEntryLow;
-  private TunableNumber shooterTiltMotorP;
-  private TunableNumber shooterTiltMotorI;
-  private TunableNumber shooterTiltMotorD;
 
-  private PIDController shooterTiltMotorPID;
+  private ShooterSetpoint shooterSetpoint;
 
-  // private GenericEntry speedEntryTilt;
+  private PIDController shooterTiltPID;
 
-  /** Creates a new Shooter. */
-  public static Double SHOOTER_MOTOR_HIGH_SPEED = 0.80;
+  private TunableNumber shooterTiltP;
+  private TunableNumber shooterTiltI;
+  private TunableNumber shooterTiltD;
 
-  public static Double SHOOTER_MOTOR_LOW_SPEED = 0.80;
-  public static Double SHOOTER_MOTOR_TILT_SPEED = 0.50;
+  private ShuffleboardTab shooterTab;
 
   public Shooter() {
+    shooterHighMotor = new CANSparkFlex(ShooterConstants.SHOOTER_HIGH_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    shooterLowMotor = new CANSparkFlex(ShooterConstants.SHOOTER_LOW_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    shooterTiltMotor = new CANSparkMax(ShooterConstants.SHOOTER_TILT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
-    shooterMotorHigh =
-        new CANSparkFlex(
-            ShooterConstants.SHOOTER_MOTOR_HIGH_CAN_ID, CANSparkMax.MotorType.kBrushless);
-    shooterMotorLow =
-        new CANSparkFlex(
-            ShooterConstants.SHOOTER_MOTOR_LOW_CAN_ID, CANSparkMax.MotorType.kBrushless);
-    // shooterMotorTilt = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_TILT_CAN_ID,
-    // CANSparkMax.MotorType.kBrushless);
+    shooterHighMotor.setInverted(ShooterConstants.SHOOTER_HIGH_MOTOR_INVERTED);
+    shooterHighMotor.follow(shooterLowMotor);
 
-    shooterMotorHigh.setInverted(ShooterConstants.SHOOTER_MOTOR_HIGH_INVERTED);
-    shooterMotorLow.setInverted(ShooterConstants.SHOOTER_MOTOR_LOW_INVERTED);
-    // shooterMotorTilt.setInverted(ShooterConstants.SHOOTER_MOTOR_TILT_INVERTED);
-    // setUpShuffleboard();
+    shooterSetpoint = ShooterSetpoint.RANGE_115;
 
-    // Create a Shuffleboard tab for this subsystem if testing is enabled. Add additional indicators
-    // and controls as needed.
+    shooterTiltPID = new PIDController(ShooterConstants.SHOOTER_TILT_P, ShooterConstants.SHOOTER_TILT_I, ShooterConstants.SHOOTER_TILT_D);
 
     if (TESTING) {
-      ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
-      tab.add(SUBSYSTEM_NAME, this);
+      setUpShuffleBoard();
     }
-
-    // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
   }
 
-  /**
-   * The subsystem's periodic method needs to update and process the inputs from the hardware
-   * interface object.
-   */
-  public void runShooter() {
-    shooterMotorHigh.set(SHOOTER_MOTOR_HIGH_SPEED);
-    shooterMotorLow.set(SHOOTER_MOTOR_LOW_SPEED);
+  public void setShooterSpeed115() {
+    shooterSetpoint = ShooterSetpoint.RANGE_115;
+    shooterTiltPID.setSetpoint(ShooterConstants.SHOOTER_TILT_SPEAKER_115_SETPOINT);
   }
 
-  public void stopShooter() {
-    shooterMotorHigh.set(0);
-    shooterMotorLow.set(0);
-
-    
+  public void setShooterSpeed125() {
+    shooterSetpoint = ShooterSetpoint.RANGE_125;
+    shooterTiltPID.setSetpoint(ShooterConstants.SHOOTER_TILT_SPEAKER_125_SETPOINT);
   }
 
-  public void setUpShuffleboard() {
-    /*ShuffleboardTab shooterMotors;
-      shooterMotors = Shuffleboard.getTab("Shooter Motors");
-      shooterMotors.addDouble("HighVelocity", () -> shooterMotorHigh.getEncoder().getVelocity());
-      shooterMotors.addDouble("LowVelocity", () -> shooterMotorLow.getEncoder().getVelocity());
-     // shooterMotors.addDouble("TiltVelocity", () -> shooterMotorTilt.getEncoder().getVelocity());
-      //shooterMotors.addDouble("TiltAngle", () -> shooterMotorTilt.getEncoder().getPosition());
-      //shooterMotors.addDouble("HighAcceleration", () -> getAcceleration());
-      //shooterMotors.addDouble("LowAcceleration", () -> getAcceleration());
-
-      speedEntryHigh = shooterMotors.add("MotorHighSpeed", SHOOTER_MOTOR_HIGH_SPEED ).getEntry();
-      speedEntryLow = shooterMotors.add("MotorLowSpeed", SHOOTER_MOTOR_LOW_SPEED ).getEntry();
-      //speedEntryTilt = shooterMotors.add("MotorTiltSpeed", SHOOTER_MOTOR_TILT_SPEED ).getEntry();
-    */
+  public void setShooterSpeed150() {
+    shooterSetpoint = ShooterSetpoint.RANGE_150;
+    shooterTiltPID.setSetpoint(ShooterConstants.SHOOTER_TILT_SPEAKER_150_SETPOINT);
   }
 
-  @Override
+  public void rampUpShooter() {
+    switch (shooterSetpoint) {
+      case RANGE_115:
+        shooterHighMotor.set(ShooterConstants.SHOOTER_SPEED_115);
+        break;
+      case RANGE_125:
+        shooterHighMotor.set(ShooterConstants.SHOOTER_SPEED_125);
+        break;
+      case RANGE_150:
+        shooterHighMotor.set(ShooterConstants.SHOOTER_SPEED_150);
+        break;
+      default:
+        shooterHighMotor.set(0);
+        break;
+    }
+  }
+
+  public void rampDownShooter() {
+    shooterHighMotor.set(0);
+  }
+
+  public void setUpShuffleBoard() {
+    shooterTab = Shuffleboard.getTab(SUBSYSTEM_NAME);
+
+    shooterTiltP = new TunableNumber("Shooter Tilt P", ShooterConstants.SHOOTER_TILT_P);
+    shooterTiltI = new TunableNumber("Shooter Tilt I", ShooterConstants.SHOOTER_TILT_I);
+    shooterTiltD = new TunableNumber("Shooter Tilt D", ShooterConstants.SHOOTER_TILT_D);
+
+    shooterTab.add("Shooter Tilt P", shooterTiltP);
+    shooterTab.add("Shooter Tilt I", shooterTiltI);
+    shooterTab.add("Shooter Tilt D", shooterTiltD);
+  }
+
   public void periodic() {
-    // This method will be called once per scheduler run
-    // SHOOTER_MOTOR_HIGH_SPEED = speedEntryHigh.getDouble(0);
-    // SHOOTER_MOTOR_LOW_SPEED = speedEntryLow.getDouble(0);
-    // SHOOTER_MOTOR_TILT_SPEED = speedEntryTilt.getDouble(0);
-
-    // when testing set speeds to the ones from the tunable numbers
     if (TESTING) {
-      if (shooterHighSpeed.get() != 0) {
-        shooterMotorHigh.set(shooterHighSpeed.get());
-      }
-
-      if (shooterLowSpeed.get() != 0) {
-        shooterMotorLow.set(shooterLowSpeed.get());
-      }
+      shooterTiltPID.setP(shooterTiltP.get());
+      shooterTiltPID.setI(shooterTiltI.get());
+      shooterTiltPID.setD(shooterTiltD.get());
     }
-  }
 
-  /*
-    private Command getSystemCheckCommand() {
-    return Commands.sequence(
-            Commands.run(() -> io.setMotorPower(0.3)).withTimeout(1.0),
-            Commands.runOnce(
-                () -> {
-                  if (inputs.velocityRPM < 2.0) {
-                    FaultReporter.getInstance()
-                        .addFault(
-                            SUBSYSTEM_NAME,
-                            "[System Check] Subsystem motor not moving as fast as expected",
-                            false,
-                            true);
-                  }
-                }),
-            Commands.run(() -> io.setMotorPower(-0.2)).withTimeout(1.0),
-            Commands.runOnce(
-                () -> {
-                  if (inputs.velocityRPM > -2.0) {
-                    FaultReporter.getInstance()
-                        .addFault(
-                            SUBSYSTEM_NAME,
-                            "[System Check] Subsystem motor moving too slow or in the wrong direction",
-                            false,
-                            true);
-                  }
-                }))
-        .until(() -> !FaultReporter.getInstance().getFaults(SUBSYSTEM_NAME).isEmpty())
-        .andThen(Commands.runOnce(() -> io.setMotorPower(0.0)));
+    shooterTiltMotor.set(shooterTiltPID.calculate(shooterTiltMotor.getEncoder().getPosition(), shooterTiltPID.getSetpoint()));
   }
-   */
+}
 
+enum ShooterSetpoint {
+  RANGE_115,
+  RANGE_125,
+  RANGE_150
 }
