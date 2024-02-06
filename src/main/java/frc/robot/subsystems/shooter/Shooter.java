@@ -21,8 +21,14 @@ public class Shooter extends SubsystemBase {
 
   private CANSparkFlex shooterMotorHigh;
   private CANSparkFlex shooterMotorLow;
+  private CANSparkMax shooterTiltMotor;
   private GenericEntry speedEntryHigh;
   private GenericEntry speedEntryLow;
+  private TunableNumber shooterTiltMotorP;
+  private TunableNumber shooterTiltMotorI;
+  private TunableNumber shooterTiltMotorD;
+
+  private PIDController shooterTiltMotorPID;
 
   // private GenericEntry speedEntryTilt;
 

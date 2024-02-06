@@ -20,4 +20,14 @@ public class ShooterConstants {
   public static final boolean SHOOTER_MOTOR_TILT_INVERTED = false;
   public static final boolean SHOOTER_MOTOR_LEFT_INVERTED = false;
   public static final boolean SHOOTER_MOTOR_RIGHT_INVERTED = false;
+
+  public static final double SHOOTER_TILT_P = 0;
+  public static final double SHOOTER_TILT_I = 0;
+  public static final double SHOOTER_TILT_D = 0;
+
+  public static final double SHOOTER_TILT_SPEAKER_SETPOINT = 0;
+  public static final double SHOOTER_TILT_AMP_SETPOINT = 0;
+  public static final double SHOOTER_TILT_TRAP_SETPOINT = 0;
+
+  public static final int SHOOTER_TILT_MOTOR_CAN_ID = 1;
 }
