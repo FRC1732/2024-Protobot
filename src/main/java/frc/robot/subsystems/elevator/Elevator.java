@@ -1,70 +1,84 @@
 package frc.robot.subsystems.elevator;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
 
-public class Elevator extends SubsystemBase{
+public class Elevator extends SubsystemBase {
 
-    private CANSparkMax ElevatorLeftMotor;
-    private CANSparkMax ElevatorRightMotor;
+  private CANSparkMax ElevatorLeftMotor;
+  private CANSparkMax ElevatorRightMotor;
 
-    private PIDController ElevatorLeftMotorPID;
-    private PIDController ElevatorRightMotorPID;
+  private PIDController ElevatorRightMotorPID;
 
-    private ShuffleboardTab ElevatorTab;
-    
-    private TunableNumber ElevatorLeftMotorP;
-    private TunableNumber ElevatorLeftMotorI;
-    private TunableNumber ElevatorLeftMotorD;
+  private ShuffleboardTab ElevatorTab;
 
-    private TunableNumber ElevatorRightMotorP;
-    private TunableNumber ElevatorRightMotorI;
-    private TunableNumber ElevatorRightMotorD;
+  private TunableNumber ElevatorRightMotorP;
+  private TunableNumber ElevatorRightMotorI;
+  private TunableNumber ElevatorRightMotorD;
 
-    public Elevator() {
-        ElevatorLeftMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
-        ElevatorRightMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
+  public Elevator() {
+    ElevatorLeftMotor =
+        new CANSparkMax(ElevatorConstants.ELEVATOR_LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
+    ElevatorRightMotor =
+        new CANSparkMax(ElevatorConstants.ELEVATOR_RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
 
-        ElevatorLeftMotorP = new TunableNumber("Elevator Left Motor P", ElevatorConstants.ELEVATOR_LEFT_MOTOR_P);
-        ElevatorLeftMotorI = new TunableNumber("Elevator Left Motor I", ElevatorConstants.ELEVATOR_LEFT_MOTOR_I);
-        ElevatorLeftMotorD = new TunableNumber("Elevator Left Motor D", ElevatorConstants.ELEVATOR_LEFT_MOTOR_D);
+    ElevatorLeftMotor.setInverted(true);
+    ElevatorLeftMotor.follow(ElevatorRightMotor);
 
-        ElevatorRightMotorP = new TunableNumber("Elevator Right Motor P", ElevatorConstants.ELEVATOR_RIGHT_MOTOR_P);
-        ElevatorRightMotorI = new TunableNumber("Elevator Right Motor I", ElevatorConstants.ELEVATOR_RIGHT_MOTOR_I);
-        ElevatorRightMotorD = new TunableNumber("Elevator Right Motor D", ElevatorConstants.ELEVATOR_RIGHT_MOTOR_D);
+    ElevatorRightMotorPID =
+        new PIDController(
+            ElevatorConstants.ELEVATOR_RIGHT_MOTOR_P,
+            ElevatorConstants.ELEVATOR_RIGHT_MOTOR_I,
+            ElevatorConstants.ELEVATOR_RIGHT_MOTOR_D);
 
-        ElevatorLeftMotorPID = new PIDController(ElevatorLeftMotorP.get(), ElevatorLeftMotorI.get(), ElevatorLeftMotorD.get());
-        ElevatorRightMotorPID = new PIDController(ElevatorRightMotorP.get(), ElevatorRightMotorI.get(), ElevatorRightMotorD.get());
+    ElevatorRightMotorPID.setSetpoint(ElevatorConstants.ELEVATOR_SPEAKER_SETPOINT);
 
-        
-        
-        if(ElevatorConstants.ELEVATOR_TESTING) {
-            setUpShuffleboard();
-        }
+    if (ElevatorConstants.ELEVATOR_TESTING) {
+      setUpShuffleboard();
     }
+  }
 
+  public void setElevatorSetpointSpeaker() {
+    ElevatorRightMotorPID.setSetpoint(ElevatorConstants.ELEVATOR_SPEAKER_SETPOINT);
+  }
 
+  public void setElevatorSetpointAmp() {
+    ElevatorRightMotorPID.setSetpoint(ElevatorConstants.ELEVATOR_AMP_SETPOINT);
+  }
 
-    private void setUpShuffleboard() {
-        ElevatorTab = Shuffleboard.getTab("Elevator");
+  public void setElevatorSetpointTrap() {
+    ElevatorRightMotorPID.setSetpoint(ElevatorConstants.ELEVATOR_TRAP_SETPOINT);
+  }
 
-        ElevatorTab.add("Elevator Left Motor P", ElevatorLeftMotorP);
-        ElevatorTab.add("Elevator Left Motor I", ElevatorLeftMotorI);
-        ElevatorTab.add("Elevator Left Motor D", ElevatorLeftMotorD);
+  private void setUpShuffleboard() {
+    ElevatorRightMotorP =
+        new TunableNumber("Elevator Right Motor P", ElevatorConstants.ELEVATOR_RIGHT_MOTOR_P);
+    ElevatorRightMotorI =
+        new TunableNumber("Elevator Right Motor I", ElevatorConstants.ELEVATOR_RIGHT_MOTOR_I);
+    ElevatorRightMotorD =
+        new TunableNumber("Elevator Right Motor D", ElevatorConstants.ELEVATOR_RIGHT_MOTOR_D);
 
-        ElevatorTab.add("Elevator Right Motor P", ElevatorRightMotorP);
-        ElevatorTab.add("Elevator Right Motor I", ElevatorRightMotorI);
-        ElevatorTab.add("Elevator Right Motor D", ElevatorRightMotorD);
+    ElevatorTab = Shuffleboard.getTab("Elevator");
+
+    ElevatorTab.add("Elevator Right Motor P", ElevatorRightMotorP);
+    ElevatorTab.add("Elevator Right Motor I", ElevatorRightMotorI);
+    ElevatorTab.add("Elevator Right Motor D", ElevatorRightMotorD);
+  }
+
+  public void periodic() {
+    ElevatorRightMotor.set(
+        ElevatorRightMotorPID.calculate(
+            ElevatorRightMotor.getEncoder().getPosition(), ElevatorRightMotorPID.getSetpoint()));
+
+    if (ElevatorConstants.ELEVATOR_TESTING) {
+      ElevatorRightMotorPID.setP(ElevatorRightMotorP.get());
+      ElevatorRightMotorPID.setI(ElevatorRightMotorI.get());
+      ElevatorRightMotorPID.setD(ElevatorRightMotorD.get());
     }
-
-    public void periodic() {
-        // TODO Auto-generated method stub
-        super.periodic();
-    }
+  }
 }
