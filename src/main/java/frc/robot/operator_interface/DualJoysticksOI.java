@@ -4,8 +4,6 @@
 
 package frc.robot.operator_interface;
 
-import static frc.robot.Constants.TRAINING_WHEELS;
-
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -33,42 +31,26 @@ public class DualJoysticksOI implements OperatorInterface {
 
   @Override
   public double getTranslateX() {
-    return -translateJoystick.getY() * TRAINING_WHEELS;
+    return -translateJoystick.getY();
   }
 
   @Override
   public double getTranslateY() {
-    return -translateJoystick.getX() * TRAINING_WHEELS;
+    return -translateJoystick.getX();
   }
 
   @Override
   public double getRotate() {
-    return -rotateJoystick.getX() * TRAINING_WHEELS;
+    return -rotateJoystick.getX();
   }
 
   @Override
-  public Trigger getFieldRelativeButton() {
+  public Trigger fieldCentricButton() {
     return rotateJoystickButtons[3];
   }
 
   @Override
-  public Trigger getResetGyroButton() {
+  public Trigger resetGyroButton() {
     return translateJoystickButtons[3];
-  }
-
-  @Override
-  public Trigger getXStanceButton() {
-    return rotateJoystickButtons[4];
-  }
-
-  @Override
-  public Trigger getVisionIsEnabledSwitch() {
-    // vision is always enabled with dual joysticks as there is no switch to disable
-    return new Trigger(() -> true);
-  }
-
-  @Override
-  public Trigger getTurboButton() {
-    return translateJoystickButtons[1];
   }
 }

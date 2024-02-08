@@ -292,7 +292,7 @@ public abstract class RobotConfig {
    * @return the multiplier for when the robot is in slow mode
    */
   public double getRobotSlowModeMultiplier() {
-    return 1.0;
+    return 0.5;
   }
 
   /**

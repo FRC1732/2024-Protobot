@@ -36,7 +36,6 @@ import frc.lib.team3061.vision.VisionIOSim;
 import frc.robot.Constants.Mode;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
-import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.configs.NovaCTRERobotConfig;
@@ -331,8 +330,6 @@ public class RobotContainer {
 
     configureSubsystemCommands();
 
-    // configureVisionCommands(); TODO:fix vision stuff
-
     // Endgame alerts
     new Trigger(
             () ->
@@ -356,15 +353,6 @@ public class RobotContainer {
                 Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
                 Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
                 Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
-
-    // interrupt all commands by running a command that requires every subsystem. This is used to
-    // recover to a known state if the robot becomes "stuck" in a command.
-    oi.getInterruptAll()
-        .onTrue(
-            Commands.parallel(
-                Commands.runOnce(drivetrain::disableXstance),
-                Commands.runOnce(() -> subsystem.setMotorPower(0)),
-                new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate)));
   }
 
   /** Use this method to define your commands for autonomous mode. */
@@ -530,21 +518,22 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate));
 
+    // @reference code
     // lock rotation to the nearest 180° while driving
-    oi.getLock180Button()
-        .onTrue(
-            new RotateToAngle(
-                drivetrain,
-                oi::getTranslateX,
-                oi::getTranslateY,
-                () ->
-                    (drivetrain.getPose().getRotation().getDegrees() > -90
-                            && drivetrain.getPose().getRotation().getDegrees() < 90)
-                        ? 0.0
-                        : 180.0));
+    // oi.getLock180Button()
+    //     .onTrue(
+    //         new RotateToAngle(
+    //             drivetrain,
+    //             oi::getTranslateX,
+    //             oi::getTranslateY,
+    //             () ->
+    //                 (drivetrain.getPose().getRotation().getDegrees() > -90
+    //                         && drivetrain.getPose().getRotation().getDegrees() < 90)
+    //                     ? 0.0
+    //                     : 180.0));
 
     // field-relative toggle
-    oi.getFieldRelativeButton()
+    oi.fieldCentricButton()
         .toggleOnTrue(
             Commands.either(
                 Commands.runOnce(drivetrain::disableFieldRelative, drivetrain),
@@ -552,45 +541,34 @@ public class RobotContainer {
                 drivetrain::getFieldRelative));
 
     // slow-mode toggle
-    oi.getTranslationSlowModeButton()
-        .onTrue(Commands.runOnce(drivetrain::enableTranslationSlowMode, drivetrain));
-    oi.getTranslationSlowModeButton()
+    oi.slowModeSwitch().onTrue(Commands.runOnce(drivetrain::enableTranslationSlowMode, drivetrain));
+    oi.slowModeSwitch()
         .onFalse(Commands.runOnce(drivetrain::disableTranslationSlowMode, drivetrain));
-    oi.getRotationSlowModeButton()
-        .onTrue(Commands.runOnce(drivetrain::enableRotationSlowMode, drivetrain));
-    oi.getRotationSlowModeButton()
-        .onFalse(Commands.runOnce(drivetrain::disableRotationSlowMode, drivetrain));
 
     // reset gyro to 0 degrees
-    oi.getResetGyroButton().onTrue(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain));
+    oi.resetGyroButton().onTrue(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain));
 
+    // @reference code
     // reset pose based on vision
-    oi.getResetPoseToVisionButton()
-        .onTrue(
-            Commands.runOnce(() -> drivetrain.resetPoseToVision(() -> vision.getBestRobotPose())));
-
-    // x-stance
-    oi.getXStanceButton().onTrue(Commands.runOnce(drivetrain::enableXstance, drivetrain));
-    oi.getXStanceButton().onFalse(Commands.runOnce(drivetrain::disableXstance, drivetrain));
-
-    // turbo
-    oi.getTurboButton().onTrue(Commands.runOnce(drivetrain::enableTurbo, drivetrain));
-    oi.getTurboButton().onFalse(Commands.runOnce(drivetrain::disableTurbo, drivetrain));
+    // oi.resetPoseToVisionButton()
+    //     .onTrue(
+    //         Commands.runOnce(() -> drivetrain.resetPoseToVision(() ->
+    // vision.getBestRobotPose())));
   }
 
   private void configureSubsystemCommands() {
     // FIXME: add commands for the subsystem
   }
 
-  private void configureVisionCommands() {
-    // enable/disable vision
-    oi.getVisionIsEnabledSwitch().onTrue(Commands.runOnce(() -> vision.enable(true)));
-    oi.getVisionIsEnabledSwitch()
-        .onFalse(
-            Commands.parallel(
-                Commands.runOnce(() -> vision.enable(false), vision),
-                Commands.runOnce(drivetrain::resetPoseRotationToGyro)));
-  }
+  // private void configureVisionCommands() {
+  //   // enable/disable vision
+  //   oi.getVisionIsEnabledSwitch().onTrue(Commands.runOnce(() -> vision.enable(true)));
+  //   oi.getVisionIsEnabledSwitch()
+  //       .onFalse(
+  //           Commands.parallel(
+  //               Commands.runOnce(() -> vision.enable(false), vision),
+  //               Commands.runOnce(drivetrain::resetPoseRotationToGyro)));
+  // }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

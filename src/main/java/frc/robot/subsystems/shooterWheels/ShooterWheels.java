@@ -4,14 +4,12 @@ import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
 
-
-public class ShooterWheels extends SubsystemBase { 
+public class ShooterWheels extends SubsystemBase {
   private CANSparkFlex shooterHighMotor;
   private CANSparkFlex shooterLowMotor;
 
@@ -24,18 +22,25 @@ public class ShooterWheels extends SubsystemBase {
   private TunableNumber shooterSpeed150;
 
   public ShooterWheels() {
-    shooterHighMotor = new CANSparkFlex(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
-    shooterLowMotor = new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    shooterHighMotor =
+        new CANSparkFlex(
+            ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    shooterLowMotor =
+        new CANSparkFlex(
+            ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     shooterHighMotor.setInverted(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_INVERTED);
     shooterHighMotor.follow(shooterLowMotor);
 
     shooterSetpoint = ShooterSetpoint.RANGE_115;
 
-    shooterSpeed115 = new TunableNumber("Shooter Speed 115",  ShooterWheelsConstants.SHOOTER_SPEED_115);
-    shooterSpeed125 = new TunableNumber("Shooter Speed 125",  ShooterWheelsConstants.SHOOTER_SPEED_125);
-    shooterSpeed150 = new TunableNumber("Shooter Speed 150",  ShooterWheelsConstants.SHOOTER_SPEED_150);
-    
+    shooterSpeed115 =
+        new TunableNumber("Shooter Speed 115", ShooterWheelsConstants.SHOOTER_SPEED_115);
+    shooterSpeed125 =
+        new TunableNumber("Shooter Speed 125", ShooterWheelsConstants.SHOOTER_SPEED_125);
+    shooterSpeed150 =
+        new TunableNumber("Shooter Speed 150", ShooterWheelsConstants.SHOOTER_SPEED_150);
+
     if (TESTING) {
       setUpShuffleBoard();
     }
@@ -54,7 +59,7 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void rampUpShooter() {
-    if(ShooterWheelsConstants.TESTING) {
+    if (ShooterWheelsConstants.TESTING) {
       switch (shooterSetpoint) {
         case RANGE_115:
           shooterHighMotor.set(shooterSpeed115.get());
@@ -100,7 +105,6 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void periodic() {}
-
 }
 
 enum ShooterSetpoint {

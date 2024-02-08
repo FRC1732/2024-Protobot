@@ -4,9 +4,6 @@
 
 package frc.robot.operator_interface;
 
-import static frc.robot.Constants.TRAINING_WHEELS;
-
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -21,8 +18,6 @@ public class FullOperatorConsoleOI implements OperatorInterface {
   private final CommandJoystick rotateJoystick;
   private final Trigger[] rotateJoystickButtons;
 
-  private final XboxController operatorController;
-
   private final CommandJoystick operatorPanel;
   private final Trigger[] operatorPanelButtons;
 
@@ -30,7 +25,6 @@ public class FullOperatorConsoleOI implements OperatorInterface {
       int translatePort, int rotatePort, int operatorControllerPort, int operatorPanelPort) {
     translateJoystick = new CommandJoystick(translatePort);
     rotateJoystick = new CommandJoystick(rotatePort);
-    operatorController = new XboxController(operatorControllerPort);
     operatorPanel = new CommandJoystick(operatorPanelPort);
 
     // buttons use 1-based indexing such that the index matches the button number; leave index 0 set
@@ -51,56 +45,77 @@ public class FullOperatorConsoleOI implements OperatorInterface {
   // Translate Joystick
   @Override
   public double getTranslateX() {
-    return -translateJoystick.getY() * TRAINING_WHEELS;
+    return -translateJoystick.getY();
   }
 
   @Override
   public double getTranslateY() {
-    return -translateJoystick.getX() * TRAINING_WHEELS;
+    return -translateJoystick.getX();
   }
 
   @Override
-  public Trigger getLock180Button() {
+  public Trigger aimSpeakerButton() {
+    return translateJoystickButtons[1];
+  }
+
+  @Override
+  public Trigger ampScoreButton() {
+    return translateJoystickButtons[2];
+  }
+
+  @Override
+  public Trigger sourceLoadButton() {
     return translateJoystickButtons[3];
   }
 
   @Override
-  public Trigger getResetGyroButton() {
-    return translateJoystickButtons[4];
+  public Trigger feedThroughButton() {
+    return translateJoystickButtons[6];
   }
 
   @Override
-  public Trigger getFieldRelativeButton() {
-    return translateJoystickButtons[9];
+  public Trigger ejectButton() {
+    return translateJoystickButtons[7];
   }
 
   // Rotate Joystick
-
   @Override
   public double getRotate() {
-    return -rotateJoystick.getX() * TRAINING_WHEELS;
+    return -rotateJoystick.getX();
   }
 
   @Override
-  public Trigger getXStanceButton() {
-    return rotateJoystickButtons[4];
+  public Trigger groundIntakeButton() {
+    return rotateJoystickButtons[1];
   }
 
   @Override
-  public Trigger getResetPoseToVisionButton() {
-    return rotateJoystickButtons[5];
+  public Trigger smartFeedButton() {
+    return rotateJoystickButtons[2];
   }
 
-  // Operator Controller
   @Override
-  public Trigger getInterruptAll() {
-    return new Trigger(operatorController::getStartButton);
+  public Trigger manualFeedButton() {
+    return rotateJoystickButtons[3];
+  }
+
+  @Override
+  public Trigger resetGyroButton() {
+    return rotateJoystickButtons[6];
+  }
+
+  @Override
+  public Trigger robotCentricButton() {
+    return rotateJoystickButtons[10];
+  }
+
+  @Override
+  public Trigger fieldCentricButton() {
+    return rotateJoystickButtons[11];
   }
 
   // Operator Panel
-
-  @Override
-  public Trigger getVisionIsEnabledSwitch() {
-    return operatorPanelButtons[10];
+  public Trigger slowModeSwitch() {
+    return operatorPanelButtons[1];
   }
 }

@@ -14,7 +14,7 @@ public class ShooterPose extends SubsystemBase {
   private CANSparkMax shooterPoseRightMotor;
 
   private CANSparkMax shooterTiltMotor;
-  
+
   private PIDController shooterPoseRightMotorPID;
   private PIDController shooterTiltPID;
 
@@ -34,10 +34,15 @@ public class ShooterPose extends SubsystemBase {
     shooterPoseRightMotor =
         new CANSparkMax(ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
 
-    shooterTiltMotor = new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
+    shooterTiltMotor =
+        new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 
-    shooterTiltPID = new PIDController(ShooterPoseConstants.SHOOTER_TILT_P, ShooterPoseConstants.SHOOTER_TILT_I, ShooterPoseConstants.SHOOTER_TILT_D);
-    
+    shooterTiltPID =
+        new PIDController(
+            ShooterPoseConstants.SHOOTER_TILT_P,
+            ShooterPoseConstants.SHOOTER_TILT_I,
+            ShooterPoseConstants.SHOOTER_TILT_D);
+
     shooterPoseLeftMotor.setInverted(true);
     shooterPoseLeftMotor.follow(shooterPoseRightMotor);
 
@@ -84,11 +89,14 @@ public class ShooterPose extends SubsystemBase {
 
   private void setUpShuffleboard() {
     shooterPoseRightMotorP =
-        new TunableNumber("Elevator Right Motor P", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_P);
+        new TunableNumber(
+            "Elevator Right Motor P", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_P);
     shooterPoseRightMotorI =
-        new TunableNumber("Elevator Right Motor I", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_I);
+        new TunableNumber(
+            "Elevator Right Motor I", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_I);
     shooterPoseRightMotorD =
-        new TunableNumber("Elevator Right Motor D", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_D);
+        new TunableNumber(
+            "Elevator Right Motor D", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_D);
 
     shooterTiltP = new TunableNumber("Shooter Tilt P", ShooterPoseConstants.SHOOTER_TILT_P);
     shooterTiltI = new TunableNumber("Shooter Tilt I", ShooterPoseConstants.SHOOTER_TILT_I);
@@ -108,8 +116,11 @@ public class ShooterPose extends SubsystemBase {
   public void periodic() {
     shooterPoseRightMotor.set(
         shooterPoseRightMotorPID.calculate(
-            shooterPoseRightMotor.getEncoder().getPosition(), shooterPoseRightMotorPID.getSetpoint()));
-    shooterTiltMotor.set(shooterTiltPID.calculate(shooterTiltMotor.getEncoder().getPosition(), shooterTiltPID.getSetpoint()));
+            shooterPoseRightMotor.getEncoder().getPosition(),
+            shooterPoseRightMotorPID.getSetpoint()));
+    shooterTiltMotor.set(
+        shooterTiltPID.calculate(
+            shooterTiltMotor.getEncoder().getPosition(), shooterTiltPID.getSetpoint()));
 
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
       shooterPoseRightMotorPID.setP(shooterPoseRightMotorP.get());

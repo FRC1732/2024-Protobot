@@ -25,43 +25,51 @@ public interface OperatorInterface {
     return 0.0;
   }
 
-  public default Trigger getFieldRelativeButton() {
+  public default Trigger fieldCentricButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getResetGyroButton() {
+  public default Trigger robotCentricButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getResetPoseToVisionButton() {
+  public default Trigger resetGyroButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getXStanceButton() {
+  public default Trigger slowModeSwitch() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getTranslationSlowModeButton() {
+  public default Trigger aimSpeakerButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getRotationSlowModeButton() {
+  public default Trigger ampScoreButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getLock180Button() {
+  public default Trigger sourceLoadButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getVisionIsEnabledSwitch() {
+  public default Trigger feedThroughButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getTurboButton() {
+  public default Trigger ejectButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger getInterruptAll() {
+  public default Trigger groundIntakeButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger smartFeedButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger manualFeedButton() {
     return new Trigger(() -> false);
   }
 }

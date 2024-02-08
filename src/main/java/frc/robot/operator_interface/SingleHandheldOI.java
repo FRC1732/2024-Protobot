@@ -31,33 +31,57 @@ public class SingleHandheldOI implements OperatorInterface {
   }
 
   @Override
-  public Trigger getFieldRelativeButton() {
-    return new Trigger(controller::getBButton);
+  public Trigger fieldCentricButton() {
+    return new Trigger(controller::getLeftStickButton);
   }
 
   @Override
-  public Trigger getResetGyroButton() {
+  public Trigger resetGyroButton() {
     return new Trigger(controller::getStartButton);
   }
 
   @Override
-  public Trigger getXStanceButton() {
-    return new Trigger(controller::getYButton);
+  public Trigger robotCentricButton() {
+    return new Trigger(controller::getBackButton);
   }
 
   @Override
-  public Trigger getTranslationSlowModeButton() {
+  public Trigger aimSpeakerButton() {
+    return new Trigger(() -> controller.getLeftTriggerAxis() >= 0.5);
+  }
+
+  @Override
+  public Trigger ampScoreButton() {
     return new Trigger(controller::getLeftBumper);
   }
 
   @Override
-  public Trigger getRotationSlowModeButton() {
+  public Trigger sourceLoadButton() {
+    return new Trigger(controller::getAButton);
+  }
+
+  @Override
+  public Trigger feedThroughButton() {
+    return new Trigger(controller::getXButton);
+  }
+
+  @Override
+  public Trigger ejectButton() {
+    return new Trigger(controller::getBButton);
+  }
+
+  @Override
+  public Trigger groundIntakeButton() {
+    return new Trigger(() -> controller.getRightTriggerAxis() >= 0.5);
+  }
+
+  @Override
+  public Trigger smartFeedButton() {
     return new Trigger(controller::getRightBumper);
   }
 
   @Override
-  public Trigger getVisionIsEnabledSwitch() {
-    // vision is always enabled with Xbox as there is no switch to disable
-    return new Trigger(() -> true);
+  public Trigger manualFeedButton() {
+    return new Trigger(controller::getYButton);
   }
 }

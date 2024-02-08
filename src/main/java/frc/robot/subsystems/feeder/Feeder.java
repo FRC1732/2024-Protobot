@@ -53,8 +53,8 @@ public class Feeder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
-    //FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
+    // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
+    // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
     if (TESTING) {
       if (leftMotorSpeed.get() != 0) {
         feederMotorLeft.set(leftMotorSpeed.get());
