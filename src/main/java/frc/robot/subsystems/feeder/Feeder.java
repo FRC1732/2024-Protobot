@@ -3,6 +3,8 @@ package frc.robot.subsystems.feeder;
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
 import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,6 +26,8 @@ public class Feeder extends SubsystemBase {
   public static Double FEEDER_MOTOR_LEFT_SPEED = .3;
   public static Double FEEDER_MOTOR_RIGHT_SPEED = .3;
 
+  private final AnalogInput analog;
+
   public Feeder() {
 
     feederMotorLeft =
@@ -33,6 +37,8 @@ public class Feeder extends SubsystemBase {
 
     feederMotorLeft.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
     feederMotorRight.setInverted(FeederConstants.SHOOTER_MOTOR_RIGHT_INVERTED);
+
+    analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
 
     // Create a Shuffleboard tab for this subsystem if testing is enabled. Add additional indicators
     // and controls as needed.
@@ -53,6 +59,10 @@ public class Feeder extends SubsystemBase {
   public void stopFeederIn() {
     feederMotorLeft.set(0);
     feederMotorRight.set(0);
+  }
+
+  public boolean hasNote() {
+    return analog.getValue() > 700;
   }
 
   @Override
