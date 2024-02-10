@@ -72,4 +72,8 @@ public interface OperatorInterface {
   public default Trigger manualFeedButton() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger intakeButton() {
+    return new Trigger(() -> false);
+  }
 }
