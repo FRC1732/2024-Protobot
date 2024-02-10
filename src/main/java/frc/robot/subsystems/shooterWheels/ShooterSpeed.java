@@ -6,5 +6,6 @@ public enum ShooterSpeed {
   RANGE_115,
   RANGE_125,
   RANGE_150,
+  RANGE_BACKWARDS,
   STOPPED
 }

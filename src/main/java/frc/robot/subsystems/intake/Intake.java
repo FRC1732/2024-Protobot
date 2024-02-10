@@ -32,6 +32,11 @@ public class Intake extends SubsystemBase {
     intakeRCanSparkMax.set(intakeMotorRSpeed);
   }
 
+  public void runIntakeOut() {
+    intakeLCanSparkMax.set(intakeMotorLSpeed * -1);
+    intakeRCanSparkMax.set(intakeMotorRSpeed * -1);
+  }
+
   public void stopIntake() {
     intakeLCanSparkMax.set(0);
     intakeRCanSparkMax.set(0);

@@ -19,6 +19,7 @@ public class ShooterWheels extends SubsystemBase {
 
   private TunableNumber shooterSpeedAmp;
   private TunableNumber shooterSpeedTrap;
+  private TunableNumber shooterSpeedBackwards;
   private TunableNumber shooterSpeed115;
   private TunableNumber shooterSpeed125;
   private TunableNumber shooterSpeed150;
@@ -38,6 +39,7 @@ public class ShooterWheels extends SubsystemBase {
 
     shooterSpeedAmp = new TunableNumber("Shooter Speed Amp", ShooterWheelsConstants.SHOOTER_SPEED_AMP);
     shooterSpeedTrap = new TunableNumber("Shooter Speed Trap", ShooterWheelsConstants.SHOOTER_SPEED_TRAP);
+    shooterSpeedBackwards = new TunableNumber("Shooter Speed Backwards", ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
     shooterSpeed115 =
         new TunableNumber("Shooter Speed 115", ShooterWheelsConstants.SHOOTER_SPEED_115);
     shooterSpeed125 =
@@ -92,6 +94,9 @@ public class ShooterWheels extends SubsystemBase {
         case RANGE_TRAP:
           shooterHighMotor.set(shooterSpeedTrap.get());
           break;
+        case RANGE_BACKWARDS:
+          shooterHighMotor.set(shooterSpeedBackwards.get());
+          break;
         case STOPPED:
           shooterHighMotor.set(0);
           break;
@@ -112,6 +117,9 @@ public class ShooterWheels extends SubsystemBase {
           break;
         case RANGE_TRAP:
           shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_TRAP);
+          break;
+        case RANGE_BACKWARDS:
+          shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
           break;
         case STOPPED:
           shooterHighMotor.set(0);
