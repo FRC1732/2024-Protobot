@@ -1,6 +1,7 @@
 package frc.robot.commands.shooterCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.shooterWheels.ShooterSpeed;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class RunShooterSlow extends Command {
@@ -13,7 +14,7 @@ public class RunShooterSlow extends Command {
 
     }
     public void execute() {
-        shooterWheels.setShooterSpeedAmp();
+        shooterWheels.setShooterSpeed(ShooterSpeed.RANGE_AMP);
     }
     public void end(boolean isInterupted) {
 
