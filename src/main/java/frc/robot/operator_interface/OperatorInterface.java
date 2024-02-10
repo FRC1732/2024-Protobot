@@ -72,4 +72,8 @@ public interface OperatorInterface {
   public default Trigger manualFeedButton() {
     return new Trigger(() -> false);
   }
+
+  publc default Trigger shooterButton() {
+    return new Trigger(() -> false);
+  }
 }

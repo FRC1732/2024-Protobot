@@ -62,6 +62,7 @@ public class RobotContainer {
   private Alliance lastAlliance = DriverStation.Alliance.Red;
   private Vision vision;
   private Subsystem subsystem;
+  public ShooterPose shooterPose;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -120,7 +121,7 @@ public class RobotContainer {
 
       // String[] cameraNames = config.getCameraNames(); TODO: update with actual data
       // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      // for (int i = 0; i < visionIOs.length; i++) {
+      // for (int i = 0; i < visionIOs.length; i++) 
       //   visionIOs[i] = new VisionIO() {};
       // }
       // vision = new Vision(visionIOs);
@@ -323,6 +324,11 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
+    oi.shooterButton()
+    .onTrue(Commands.runOnce(shooterPose:: runShooterPose, shooterPose));
+    oi.shooterButton()
+    .onFalse(Commands.runOnce(shooterPose:: runShooterPose, shooterPose));
+
 
     configureDrivetrainCommands();
 
