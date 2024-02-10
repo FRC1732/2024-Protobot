@@ -21,4 +21,5 @@ public class ShooterWheelsConstants {
   public static final double SHOOTER_SPEED_115 = 0.0;
   public static final double SHOOTER_SPEED_125 = 0.0;
   public static final double SHOOTER_SPEED_150 = 0.0;
+  public static final double SHOOTER_SPEED_BACKWARDS = 0.0;
 }

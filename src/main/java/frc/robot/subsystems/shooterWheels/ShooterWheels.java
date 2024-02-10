@@ -64,6 +64,10 @@ public class ShooterWheels extends SubsystemBase {
     shooterSetpoint = ShooterSetpoint.RANGE_150;
   }
 
+  public void setShooterSpeedBackwards() {
+    shooterSetpoint = ShooterSetpoint.RANGE_BACKWARDS;
+  }
+
   public void rampUpShooter() {
     if (ShooterWheelsConstants.TESTING) {
       switch (shooterSetpoint) {
@@ -94,6 +98,9 @@ public class ShooterWheels extends SubsystemBase {
         case RANGE_150:
           shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_150);
           break;
+        case RANGE_BACKWARDS:
+          shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
+          break;
         default:
           shooterHighMotor.set(0);
           break;
@@ -121,5 +128,6 @@ enum ShooterSetpoint {
   RANGE_AMP,
   RANGE_115,
   RANGE_125,
-  RANGE_150
+  RANGE_150,
+  RANGE_BACKWARDS
 }

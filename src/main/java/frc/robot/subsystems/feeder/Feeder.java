@@ -52,6 +52,11 @@ public class Feeder extends SubsystemBase {
     feederMotorRight.set(FEEDER_MOTOR_RIGHT_SPEED);
   }
 
+  public void runFeederOut() {
+    feederMotorLeft.set(FEEDER_MOTOR_LEFT_SPEED * -1);
+    feederMotorRight.set(FEEDER_MOTOR_RIGHT_SPEED * -1);
+  }
+
   public void stopFeederIn() {
     feederMotorLeft.set(0);
     feederMotorRight.set(0);
