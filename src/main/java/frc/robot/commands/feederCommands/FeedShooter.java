@@ -4,7 +4,6 @@
 
 package frc.robot.commands.feederCommands;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
 
