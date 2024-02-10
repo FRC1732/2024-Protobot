@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.feederCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooterPose.ShooterPose;

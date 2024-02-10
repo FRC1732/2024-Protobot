@@ -28,6 +28,8 @@ public class ShooterPose extends SubsystemBase {
   private TunableNumber shooterTiltI;
   private TunableNumber shooterTiltD;
 
+  private Pose pose;
+
   public ShooterPose() {
     shooterPoseLeftMotor =
         new CANSparkMax(ShooterPoseConstants.SHOOTER_POSE_LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
@@ -36,6 +38,8 @@ public class ShooterPose extends SubsystemBase {
 
     shooterTiltMotor =
         new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
+
+    pose = Pose.NEUTRAL;
 
     shooterTiltPID =
         new PIDController(
@@ -59,31 +63,38 @@ public class ShooterPose extends SubsystemBase {
     }
   }
 
-  public void setElevatorSetpointSpeaker() {
+  public void setShooterPoseSetpointSpeaker() {
+    pose = Pose.SPEAKER;
     shooterPoseRightMotorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
   }
 
-  public void setElevatorSetpointAmp() {
+  public void setShooterPoseSetpointAmp() {
+    pose = Pose.AMP;
     shooterPoseRightMotorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_AMP_SETPOINT);
   }
 
-  public void setElevatorSetpointTrap() {
+  public void setShooterPoseSetpointTrap() {
+    pose = Pose.TRAP;
     shooterPoseRightMotorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_TRAP_SETPOINT);
   }
 
   public void setShooterTiltSetpointSpeaker115() {
+    pose = Pose.DISTANCE115;
     shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_115_SETPOINT);
   }
 
   public void setShooterTiltSetpointSpeaker125() {
+    pose = Pose.DISTANCE125;
     shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_125_SETPOINT);
   }
 
   public void setShooterTiltSetpointSpeaker150() {
+    pose = Pose.DISTANCE150;
     shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_150_SETPOINT);
   }
 
-  public void setShooterTiltAngle(double angle) {
+  public void setShooterTiltVision(double angle) {
+    pose = Pose.DISTANCE_VISION;
     shooterTiltPID.setSetpoint(angle);
   }
 
@@ -114,6 +125,8 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void periodic() {
+
+
     shooterPoseRightMotor.set(
         shooterPoseRightMotorPID.calculate(
             shooterPoseRightMotor.getEncoder().getPosition(),
@@ -132,4 +145,17 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltPID.setD(shooterTiltD.get());
     }
   }
+}
+
+enum Pose {
+  NEUTRAL,
+  SPEAKER,
+  AMP,
+  TRAP,
+  SOURCE,
+  DISTANCE_VISION,
+  DISTANCE115,
+  DISTANCE125,
+  DISTANCE150,
+  FEEDING
 }
