@@ -96,6 +96,11 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.set(0);
   }
 
+  public void stopShooter() {
+    shooterHighMotor.set(0);
+    shooterLowMotor.set(0);
+  }
+
   public void setUpShuffleBoard() {
     shooterWheelsTab = Shuffleboard.getTab("Shooter Wheels");
 
