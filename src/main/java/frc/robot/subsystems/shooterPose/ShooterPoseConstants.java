@@ -20,7 +20,8 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_TILT_I = 0;
   public static final double SHOOTER_TILT_D = 0;
 
-  public static final double SHOOTER_TILT_CONVERSION_FACTOR = 64;
+  public static final double SHOOTER_TILT_CONVERSION_FACTOR_DPR = 5.625; //degrees per revolution
+  public static final double SHOOTER_POSE_CONVERSION_FACTOR_IPR = 0.36673; //inches per revolution
 
   public static final double SHOOTER_TILT_SPEAKER_115_SETPOINT = 0;
   public static final double SHOOTER_TILT_SPEAKER_125_SETPOINT = 0;
