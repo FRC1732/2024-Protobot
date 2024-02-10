@@ -16,7 +16,7 @@ public class ClimberConstants {
   public static final double HIGH_SETPOINT_INCHES = 0;
   public static final double LOW_SETPOINT_INCHES = 0;
 
-  public static final double CONVERSION_FACTOR = 0;
+  public static final double CLIMBER_CONVERSION_FACTOR = 0;
 
   public static final boolean CLIMBER_TESTING = false;
 }
