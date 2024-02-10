@@ -85,5 +85,8 @@
     "WPILOG",
     "Xstance",
     "YUYV"
-  ]  
+  ],
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java"
+  }
 }
