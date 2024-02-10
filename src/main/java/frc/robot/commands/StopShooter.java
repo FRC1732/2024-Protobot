@@ -20,8 +20,7 @@ public class StopShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterWheels.stopShooter();
-    System.out.println("Shooter has Stopped");
+    shooterWheels.rampDownShooter();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

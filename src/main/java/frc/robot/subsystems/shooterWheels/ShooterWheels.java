@@ -17,6 +17,7 @@ public class ShooterWheels extends SubsystemBase {
 
   private ShuffleboardTab shooterWheelsTab;
 
+  private TunableNumber shooterSpeedAmp;
   private TunableNumber shooterSpeed115;
   private TunableNumber shooterSpeed125;
   private TunableNumber shooterSpeed150;
@@ -34,6 +35,7 @@ public class ShooterWheels extends SubsystemBase {
 
     shooterSetpoint = ShooterSetpoint.RANGE_115;
 
+    shooterSpeedAmp = new TunableNumber("Shooter Speed Amp", ShooterWheelsConstants.SHOOTER_SPEED_AMP);
     shooterSpeed115 =
         new TunableNumber("Shooter Speed 115", ShooterWheelsConstants.SHOOTER_SPEED_115);
     shooterSpeed125 =
@@ -44,6 +46,10 @@ public class ShooterWheels extends SubsystemBase {
     if (TESTING) {
       setUpShuffleBoard();
     }
+  }
+
+  public void setShooterSpeedAmp() {
+    shooterSetpoint = ShooterSetpoint.RANGE_AMP;
   }
 
   public void setShooterSpeed115() {
@@ -76,6 +82,9 @@ public class ShooterWheels extends SubsystemBase {
       }
     } else {
       switch (shooterSetpoint) {
+        case RANGE_AMP:
+          shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_AMP);
+          break;
         case RANGE_115:
           shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_115);
           break;
@@ -96,14 +105,10 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.set(0);
   }
 
-  public void stopShooter() {
-    shooterHighMotor.set(0);
-    shooterLowMotor.set(0);
-  }
-
   public void setUpShuffleBoard() {
     shooterWheelsTab = Shuffleboard.getTab("Shooter Wheels");
 
+    shooterWheelsTab.add("Shooter Speed Amp", shooterSpeedAmp);
     shooterWheelsTab.add("Shooter Speed 115", shooterSpeed115);
     shooterWheelsTab.add("Shooter Speed 125", shooterSpeed125);
     shooterWheelsTab.add("Shooter Speed 150", shooterSpeed150);
@@ -113,6 +118,7 @@ public class ShooterWheels extends SubsystemBase {
 }
 
 enum ShooterSetpoint {
+  RANGE_AMP,
   RANGE_115,
   RANGE_125,
   RANGE_150
