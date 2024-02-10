@@ -53,4 +53,9 @@ public class DualJoysticksOI implements OperatorInterface {
   public Trigger resetGyroButton() {
     return translateJoystickButtons[3];
   }
+
+  @Override
+  public Trigger intakeButton() {
+    return translateJoystickButtons[1];
+  }
 }

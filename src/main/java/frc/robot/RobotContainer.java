@@ -119,7 +119,7 @@ public class RobotContainer {
 
     } else {
       drivetrain = new Drivetrain(new DrivetrainIO() {});
-      intake = new Intake();
+      
 
       // String[] cameraNames = config.getCameraNames(); TODO: update with actual data
       // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
@@ -176,7 +176,6 @@ public class RobotContainer {
   private void createCTRESubsystems() {
     DrivetrainIO drivetrainIO = new DrivetrainIOCTRE();
     drivetrain = new Drivetrain(drivetrainIO);
-
     // String[] cameraNames = config.getCameraNames();
     // Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
     // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
@@ -228,6 +227,8 @@ public class RobotContainer {
     DrivetrainIO drivetrainIO =
         new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
     drivetrain = new Drivetrain(drivetrainIO);
+
+    intake = new Intake();
 
     // FIXME: create the hardware-specific subsystem class
     subsystem = new Subsystem(new SubsystemIO() {});
