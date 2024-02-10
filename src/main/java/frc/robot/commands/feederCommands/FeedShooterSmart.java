@@ -6,25 +6,31 @@ package frc.robot.commands.feederCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.shooterPose.Pose;
+import frc.robot.subsystems.shooterPose.ShooterPose;
 
 public class FeedShooterSmart extends Command {
-  private final Feeder feederSystem;
+  private final Feeder feeder;
+  private final ShooterPose shooter; 
 
   /**
    * Creates a new FeedShooterSmart.
    *
    * @param feeder feeder this command uses
    */
-  public FeedShooterSmart(Feeder feeder) {
+  public FeedShooterSmart(Feeder feeder, ShooterPose shooter) {
     addRequirements(feeder);
-    feederSystem = feeder;
+    this.feeder = feeder;
+    this.shooter = shooter;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // FIXME add conditions for this to actually start
-    feederSystem.runFeederIn();
+    // FIXME add conditions for this with limelight and speaker pose
+    if (feeder.checkStopped() && shooter.getCurrentPose() == Pose.AMP) {
+      feeder.runFeederIn();
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,8 +44,8 @@ public class FeedShooterSmart extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (feederSystem.hasNote()) {
-      feederSystem.stopFeederIn();
+    if (feeder.hasNote()) {
+      feeder.stopFeederIn();
       return true;
     } else {
       return false;

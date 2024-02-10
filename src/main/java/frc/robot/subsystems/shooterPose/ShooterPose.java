@@ -101,6 +101,10 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_150_SETPOINT);
   }
 
+  public Pose getCurrentPose() {
+    return pose;
+  }
+
   private void setToSetpointByPose() {
     switch (pose) {
       case NEUTRAL:

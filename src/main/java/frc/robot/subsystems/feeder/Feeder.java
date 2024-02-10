@@ -66,6 +66,10 @@ public class Feeder extends SubsystemBase {
     return analog.getValue() > 700;
   }
 
+  public boolean checkStopped() {
+    return feederMotorLeft.get() == 0 && feederMotorRight.get() == 0; 
+  }
+
   @Override
   public void periodic() {
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
