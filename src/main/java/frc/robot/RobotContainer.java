@@ -27,8 +27,6 @@ import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
 import frc.lib.team3061.gyro.GyroIO;
 import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
 import frc.lib.team3061.leds.LEDs;
-import frc.lib.team3061.pneumatics.Pneumatics;
-import frc.lib.team3061.pneumatics.PneumaticsIORev;
 import frc.lib.team3061.vision.Vision;
 import frc.lib.team3061.vision.VisionConstants;
 import frc.lib.team3061.vision.VisionIO;
@@ -231,9 +229,9 @@ public class RobotContainer {
     // FIXME: create the hardware-specific subsystem class
     subsystem = new Subsystem(new SubsystemIO() {});
 
-    if (Constants.getRobot() == Constants.RobotType.ROBOT_DEFAULT) {
-      new Pneumatics(new PneumaticsIORev());
-    }
+    // if (Constants.getRobot() == Constants.RobotType.ROBOT_DEFAULT) {
+    //   new Pneumatics(new PneumaticsIORev());
+    // }
 
     if (Constants.getRobot() == Constants.RobotType.ROBOT_SIMBOT) {
       AprilTagFieldLayout layout;

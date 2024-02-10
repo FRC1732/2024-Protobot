@@ -71,7 +71,7 @@ public class DefaultRobotConfig extends RobotConfig {
 
   // FIXME: specify the name of the CANivore CAN FD bus as appropriate (an empty string uses the
   // default CAN bus)
-  private static final String CAN_BUS_NAME = "";
+  private static final String CAN_BUS_NAME = "Monke";
 
   // FIXME: specify the name of the camera used for detecting AprilTags
   private static final String CAMERA_NAME = "";
