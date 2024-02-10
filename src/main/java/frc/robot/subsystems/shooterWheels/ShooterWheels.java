@@ -13,11 +13,12 @@ public class ShooterWheels extends SubsystemBase {
   private CANSparkFlex shooterHighMotor;
   private CANSparkFlex shooterLowMotor;
 
-  private ShooterSetpoint shooterSetpoint;
+  private ShooterSpeed shooterSpeed;
 
   private ShuffleboardTab shooterWheelsTab;
 
   private TunableNumber shooterSpeedAmp;
+  private TunableNumber shooterSpeedTrap;
   private TunableNumber shooterSpeed115;
   private TunableNumber shooterSpeed125;
   private TunableNumber shooterSpeed150;
@@ -33,9 +34,10 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.setInverted(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_INVERTED);
     shooterHighMotor.follow(shooterLowMotor);
 
-    shooterSetpoint = ShooterSetpoint.RANGE_115;
+    shooterSpeed = ShooterSpeed.RANGE_115;
 
     shooterSpeedAmp = new TunableNumber("Shooter Speed Amp", ShooterWheelsConstants.SHOOTER_SPEED_AMP);
+    shooterSpeedTrap = new TunableNumber("Shooter Speed Trap", ShooterWheelsConstants.SHOOTER_SPEED_TRAP);
     shooterSpeed115 =
         new TunableNumber("Shooter Speed 115", ShooterWheelsConstants.SHOOTER_SPEED_115);
     shooterSpeed125 =
@@ -48,25 +50,33 @@ public class ShooterWheels extends SubsystemBase {
     }
   }
 
+  public void setShooterSpeed(ShooterSpeed speed) {
+    shooterSpeed = speed;
+  }
+
+  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeedAmp() {
-    shooterSetpoint = ShooterSetpoint.RANGE_AMP;
+    shooterSpeed = ShooterSpeed.RANGE_AMP;
   }
 
+  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed115() {
-    shooterSetpoint = ShooterSetpoint.RANGE_115;
+    shooterSpeed = ShooterSpeed.RANGE_115;
   }
 
+  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed125() {
-    shooterSetpoint = ShooterSetpoint.RANGE_125;
+    shooterSpeed = ShooterSpeed.RANGE_125;
   }
 
+  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed150() {
-    shooterSetpoint = ShooterSetpoint.RANGE_150;
+    shooterSpeed = ShooterSpeed.RANGE_150;
   }
 
   public void rampUpShooter() {
     if (ShooterWheelsConstants.TESTING) {
-      switch (shooterSetpoint) {
+      switch (shooterSpeed) {
         case RANGE_115:
           shooterHighMotor.set(shooterSpeed115.get());
           break;
@@ -76,12 +86,18 @@ public class ShooterWheels extends SubsystemBase {
         case RANGE_150:
           shooterHighMotor.set(shooterSpeed150.get());
           break;
-        default:
+        case RANGE_AMP:
+          shooterHighMotor.set(shooterSpeedAmp.get());
+          break;
+        case RANGE_TRAP:
+          shooterHighMotor.set(shooterSpeedTrap.get());
+          break;
+        case STOPPED:
           shooterHighMotor.set(0);
           break;
       }
     } else {
-      switch (shooterSetpoint) {
+      switch (shooterSpeed) {
         case RANGE_AMP:
           shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_AMP);
           break;
@@ -94,13 +110,17 @@ public class ShooterWheels extends SubsystemBase {
         case RANGE_150:
           shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_150);
           break;
-        default:
+        case RANGE_TRAP:
+          shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_TRAP);
+          break;
+        case STOPPED:
           shooterHighMotor.set(0);
           break;
       }
     }
   }
 
+  @Deprecated (since = "use setShooterSpeed(STOPPED) instead")
   public void rampDownShooter() {
     shooterHighMotor.set(0);
   }
@@ -117,9 +137,3 @@ public class ShooterWheels extends SubsystemBase {
   public void periodic() {}
 }
 
-enum ShooterSetpoint {
-  RANGE_AMP,
-  RANGE_115,
-  RANGE_125,
-  RANGE_150
-}
