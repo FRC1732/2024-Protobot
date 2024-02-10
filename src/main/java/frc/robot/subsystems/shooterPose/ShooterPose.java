@@ -10,19 +10,19 @@ import frc.lib.team6328.util.TunableNumber;
 
 public class ShooterPose extends SubsystemBase {
 
-  private CANSparkMax shooterPoseLeftMotor;
-  private CANSparkMax shooterPoseRightMotor;
+  private CANSparkMax shooterElevatorLeftMotor;
+  private CANSparkMax shooterElevtorRightMotor;
 
   private CANSparkMax shooterTiltMotor;
 
-  private PIDController shooterPoseRightMotorPID;
+  private PIDController shooterElevatorPID;
   private PIDController shooterTiltPID;
 
   private ShuffleboardTab ShooterPoseTab;
 
-  private TunableNumber shooterPoseRightMotorP;
-  private TunableNumber shooterPoseRightMotorI;
-  private TunableNumber shooterPoseRightMotorD;
+  private TunableNumber shooterElevatorP;
+  private TunableNumber shooterElevtorI;
+  private TunableNumber shooterElevatorD;
 
   private TunableNumber shooterTiltP;
   private TunableNumber shooterTiltI;
@@ -31,83 +31,141 @@ public class ShooterPose extends SubsystemBase {
   private Pose pose;
 
   public ShooterPose() {
-    shooterPoseLeftMotor =
-        new CANSparkMax(ShooterPoseConstants.SHOOTER_POSE_LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
-    shooterPoseRightMotor =
-        new CANSparkMax(ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_CAN_ID, MotorType.kBrushless);
+    shooterElevatorLeftMotor = new CANSparkMax(ShooterPoseConstants.SHOOTER_POSE_LEFT_MOTOR_CAN_ID,
+        MotorType.kBrushless);
+    shooterElevtorRightMotor = new CANSparkMax(ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_CAN_ID,
+        MotorType.kBrushless);
 
-    shooterTiltMotor =
-        new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
+    shooterElevatorLeftMotor.setInverted(true);
+    shooterElevatorLeftMotor.follow(shooterElevtorRightMotor);
+
+    shooterTiltMotor = new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 
     pose = Pose.NEUTRAL;
 
-    shooterTiltPID =
-        new PIDController(
-            ShooterPoseConstants.SHOOTER_TILT_P,
-            ShooterPoseConstants.SHOOTER_TILT_I,
-            ShooterPoseConstants.SHOOTER_TILT_D);
+    shooterTiltPID = new PIDController(
+        ShooterPoseConstants.SHOOTER_TILT_P,
+        ShooterPoseConstants.SHOOTER_TILT_I,
+        ShooterPoseConstants.SHOOTER_TILT_D);
 
-    shooterPoseLeftMotor.setInverted(true);
-    shooterPoseLeftMotor.follow(shooterPoseRightMotor);
+    shooterElevatorPID = new PIDController(
+        ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_P,
+        ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_I,
+        ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_D);
 
-    shooterPoseRightMotorPID =
-        new PIDController(
-            ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_P,
-            ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_I,
-            ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_D);
-
-    shooterPoseRightMotorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
+    shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
 
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
       setUpShuffleboard();
     }
   }
 
+  public void setShooterPose(Pose pose) {
+    this.pose = pose;
+    setToSetpointByPose();
+  }
+
+  @Deprecated ( since = "Use setShooterPose(Pose pose) instead")
   public void setShooterPoseSetpointSpeaker() {
     pose = Pose.SPEAKER;
-    shooterPoseRightMotorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
+    shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
   }
 
+  @Deprecated ( since = "Use setShooterPose(Pose pose) instead")
   public void setShooterPoseSetpointAmp() {
     pose = Pose.AMP;
-    shooterPoseRightMotorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_AMP_SETPOINT);
+    shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_AMP_SETPOINT);
   }
 
+  @Deprecated   ( since = "Use setShooterPose(Pose pose) instead")
   public void setShooterPoseSetpointTrap() {
     pose = Pose.TRAP;
-    shooterPoseRightMotorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_TRAP_SETPOINT);
+    shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_TRAP_SETPOINT);
   }
 
+  @Deprecated  ( since = "Use setShooterPose(Pose pose) instead")
   public void setShooterTiltSetpointSpeaker115() {
-    pose = Pose.DISTANCE115;
+    pose = Pose.DISTANCE_115;
     shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_115_SETPOINT);
   }
 
+  @Deprecated   ( since = "Use setShooterPose(Pose pose) instead")
   public void setShooterTiltSetpointSpeaker125() {
-    pose = Pose.DISTANCE125;
+    pose = Pose.DISTANCE_125;
     shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_125_SETPOINT);
   }
 
+  @Deprecated  ( since = "Use setShooterPose(Pose pose) instead")
   public void setShooterTiltSetpointSpeaker150() {
-    pose = Pose.DISTANCE150;
+    pose = Pose.DISTANCE_150;
     shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_150_SETPOINT);
   }
 
-  public void setShooterTiltVision(double angle) {
+  private void setToSetpointByPose() {
+    switch (pose) {
+      case NEUTRAL:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_NEUTRAL_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_NEUTRAL_SETPOINT);
+        break;
+
+      case SPEAKER:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_115_SETPOINT);
+        break;
+
+      case AMP:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_AMP_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_AMP_SETPOINT);
+        break;
+
+      case TRAP:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_TRAP_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_TRAP_SETPOINT);
+        break;
+
+      case SOURCE:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SOURCE_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SOURCE_SETPOINT);
+        break;
+
+      case DISTANCE_VISION:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
+        break;
+
+      case DISTANCE_115:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_115_SETPOINT);
+        break;
+
+      case DISTANCE_125:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_125_SETPOINT);
+        break;
+
+      case DISTANCE_150:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_SPEAKER_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_SPEAKER_150_SETPOINT);
+        break;
+
+      case FEEDING:
+        shooterElevatorPID.setSetpoint(ShooterPoseConstants.SHOOTER_POSE_FEEDING_SETPOINT);
+        shooterTiltPID.setSetpoint(ShooterPoseConstants.SHOOTER_TILT_FEEDING_SETPOINT);
+        break;
+    }
+  }
+
+  public void setShooterTiltVision(double angle) { // Don't change the setpoint of tilt behavior
     pose = Pose.DISTANCE_VISION;
     shooterTiltPID.setSetpoint(angle);
   }
 
   private void setUpShuffleboard() {
-    shooterPoseRightMotorP =
-        new TunableNumber(
-            "Elevator Right Motor P", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_P);
-    shooterPoseRightMotorI =
-        new TunableNumber(
-            "Elevator Right Motor I", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_I);
-    shooterPoseRightMotorD =
-        new TunableNumber(
-            "Elevator Right Motor D", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_D);
+    shooterElevatorP = new TunableNumber(
+        "Elevator Right Motor P", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_P);
+    shooterElevtorI = new TunableNumber(
+        "Elevator Right Motor I", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_I);
+    shooterElevatorD = new TunableNumber(
+        "Elevator Right Motor D", ShooterPoseConstants.SHOOTER_POSE_RIGHT_MOTOR_D);
 
     shooterTiltP = new TunableNumber("Shooter Tilt P", ShooterPoseConstants.SHOOTER_TILT_P);
     shooterTiltI = new TunableNumber("Shooter Tilt I", ShooterPoseConstants.SHOOTER_TILT_I);
@@ -115,9 +173,9 @@ public class ShooterPose extends SubsystemBase {
 
     ShooterPoseTab = Shuffleboard.getTab("Elevator");
 
-    ShooterPoseTab.add("Elevator Right Motor P", shooterPoseRightMotorP);
-    ShooterPoseTab.add("Elevator Right Motor I", shooterPoseRightMotorI);
-    ShooterPoseTab.add("Elevator Right Motor D", shooterPoseRightMotorD);
+    ShooterPoseTab.add("Elevator Right Motor P", shooterElevatorP);
+    ShooterPoseTab.add("Elevator Right Motor I", shooterElevtorI);
+    ShooterPoseTab.add("Elevator Right Motor D", shooterElevatorD);
 
     ShooterPoseTab.add("Shooter Tilt P", shooterTiltP);
     ShooterPoseTab.add("Shooter Tilt I", shooterTiltI);
@@ -126,36 +184,22 @@ public class ShooterPose extends SubsystemBase {
 
   public void periodic() {
 
-
-    shooterPoseRightMotor.set(
-        shooterPoseRightMotorPID.calculate(
-            shooterPoseRightMotor.getEncoder().getPosition(),
-            shooterPoseRightMotorPID.getSetpoint()));
+    shooterElevtorRightMotor.set(
+        shooterElevatorPID.calculate(
+            shooterElevtorRightMotor.getEncoder().getPosition(),
+            shooterElevatorPID.getSetpoint()));
     shooterTiltMotor.set(
         shooterTiltPID.calculate(
             shooterTiltMotor.getEncoder().getPosition(), shooterTiltPID.getSetpoint()));
 
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
-      shooterPoseRightMotorPID.setP(shooterPoseRightMotorP.get());
-      shooterPoseRightMotorPID.setI(shooterPoseRightMotorI.get());
-      shooterPoseRightMotorPID.setD(shooterPoseRightMotorD.get());
+      shooterElevatorPID.setP(shooterElevatorP.get());
+      shooterElevatorPID.setI(shooterElevtorI.get());
+      shooterElevatorPID.setD(shooterElevatorD.get());
 
       shooterTiltPID.setP(shooterTiltP.get());
       shooterTiltPID.setI(shooterTiltI.get());
       shooterTiltPID.setD(shooterTiltD.get());
     }
   }
-}
-
-enum Pose {
-  NEUTRAL,
-  SPEAKER,
-  AMP,
-  TRAP,
-  SOURCE,
-  DISTANCE_VISION,
-  DISTANCE115,
-  DISTANCE125,
-  DISTANCE150,
-  FEEDING
 }
