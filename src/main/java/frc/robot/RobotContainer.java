@@ -119,6 +119,7 @@ public class RobotContainer {
 
     } else {
       drivetrain = new Drivetrain(new DrivetrainIO() {});
+      intake = new Intake();
 
       // String[] cameraNames = config.getCameraNames(); TODO: update with actual data
       // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
