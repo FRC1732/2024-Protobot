@@ -16,13 +16,18 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_TILT_I = 0;
   public static final double SHOOTER_TILT_D = 0;
 
-  public static final double SHOOTER_TILT_CONVERSION_FACTOR_DPR = 5.625; //degrees per motor revolution
-  public static final double SHOOTER_POSE_CONVERSION_FACTOR_IPR = 0.36673; //inches per motor revolution
+  public static final double SHOOTER_TILT_CONVERSION_FACTOR_DPR =
+      5.625; // degrees per motor revolution
+  public static final double SHOOTER_POSE_CONVERSION_FACTOR_IPR =
+      0.36673; // inches per motor revolution
 
   public static final double SHOOTER_TILT_NEUTRAL_SETPOINT = 0 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
-  public static final double SHOOTER_TILT_SPEAKER_115_SETPOINT = 30 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
-  public static final double SHOOTER_TILT_SPEAKER_125_SETPOINT = 0 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
-  public static final double SHOOTER_TILT_SPEAKER_150_SETPOINT = 50 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
+  public static final double SHOOTER_TILT_SPEAKER_115_SETPOINT =
+      30 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
+  public static final double SHOOTER_TILT_SPEAKER_125_SETPOINT =
+      0 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
+  public static final double SHOOTER_TILT_SPEAKER_150_SETPOINT =
+      50 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
   public static final double SHOOTER_TILT_AMP_SETPOINT = 0 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
   public static final double SHOOTER_TILT_TRAP_SETPOINT = 0 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
   public static final double SHOOTER_TILT_SOURCE_SETPOINT = 0 * SHOOTER_TILT_CONVERSION_FACTOR_DPR;
@@ -34,5 +39,4 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_POSE_TRAP_SETPOINT = 0 * SHOOTER_POSE_CONVERSION_FACTOR_IPR;
   public static final double SHOOTER_POSE_SOURCE_SETPOINT = 0 * SHOOTER_POSE_CONVERSION_FACTOR_IPR;
   public static final double SHOOTER_POSE_FEEDING_SETPOINT = 0 * SHOOTER_POSE_CONVERSION_FACTOR_IPR;
-
 }

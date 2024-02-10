@@ -41,6 +41,7 @@ import frc.robot.configs.NovaCTRETCFRobotConfig;
 import frc.robot.configs.NovaRobotConfig;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.subsystem.Subsystem;
 import frc.robot.subsystems.subsystem.SubsystemIO;
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class RobotContainer {
   private Alliance lastAlliance = DriverStation.Alliance.Red;
   private Vision vision;
   private Subsystem subsystem;
-  public ShooterPose shooterPose;
+  public Intake intake;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -121,7 +122,7 @@ public class RobotContainer {
 
       // String[] cameraNames = config.getCameraNames(); TODO: update with actual data
       // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      // for (int i = 0; i < visionIOs.length; i++) 
+      // for (int i = 0; i < visionIOs.length; i++)
       //   visionIOs[i] = new VisionIO() {};
       // }
       // vision = new Vision(visionIOs);
@@ -324,11 +325,8 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.shooterButton()
-    .onTrue(Commands.runOnce(shooterPose:: runShooterPose, shooterPose));
-    oi.shooterButton()
-    .onFalse(Commands.runOnce(shooterPose:: runShooterPose, shooterPose));
-
+    oi.intakeButton().onTrue(Commands.runOnce(intake::runIntake, intake));
+    oi.intakeButton().onFalse(Commands.runOnce(intake::stopIntake, intake));
 
     configureDrivetrainCommands();
 

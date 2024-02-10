@@ -13,6 +13,7 @@ import frc.robot.subsystems.shooterWheels.ShooterWheels;
 public class Eject extends Command {
   /** Creates a new Eject. */
   private final Feeder feeder;
+
   private final Intake intake;
   private final ShooterWheels shooter;
 
@@ -21,7 +22,6 @@ public class Eject extends Command {
     this.feeder = feeder;
     this.intake = intake;
     this.shooter = shooter;
-
   }
 
   // Called when the command is initially scheduled.

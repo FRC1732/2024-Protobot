@@ -11,7 +11,7 @@ import frc.robot.subsystems.shooterPose.ShooterPose;
 
 public class FeedShooterSmart extends Command {
   private final Feeder feeder;
-  private final ShooterPose shooter; 
+  private final ShooterPose shooter;
 
   /**
    * Creates a new FeedShooterSmart.

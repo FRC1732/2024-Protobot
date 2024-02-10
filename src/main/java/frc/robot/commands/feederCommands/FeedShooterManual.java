@@ -10,6 +10,7 @@ import frc.robot.subsystems.feeder.Feeder;
 public class FeedShooterManual extends Command {
   /** Creates a new FeedShooterManual. */
   private Feeder feeder;
+
   public FeedShooterManual(Feeder feeder) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(feeder);

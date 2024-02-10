@@ -10,10 +10,11 @@ import frc.robot.subsystems.feeder.Feeder;
 public class FeedShooter extends Command {
   private final Feeder feederSystem;
 
-  /** Creates a new FeedShooter. 
-    * @param feeder the drivetrain subsystem required by this command
-  */
-  
+  /**
+   * Creates a new FeedShooter.
+   *
+   * @param feeder the drivetrain subsystem required by this command
+   */
   public FeedShooter(Feeder feeder) {
     addRequirements(feeder);
     feederSystem = feeder;
@@ -42,6 +43,5 @@ public class FeedShooter extends Command {
     } else {
       return false;
     }
-    }
   }
-
+}

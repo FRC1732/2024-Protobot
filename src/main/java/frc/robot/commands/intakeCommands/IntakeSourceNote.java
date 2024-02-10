@@ -10,11 +10,14 @@ import frc.robot.subsystems.shooterPose.ShooterPose;
 
 public class IntakeSourceNote extends Command {
   private final Feeder feeder;
-    private final ShooterPose shooterPose;
-  /** Creates a new IntakeSourceNote. 
+  private final ShooterPose shooterPose;
+
+  /**
+   * Creates a new IntakeSourceNote.
+   *
    * @param feeder feeder subsystem for this command
    * @param shooterPose shooterPose subsystem for this command
-  */
+   */
   public IntakeSourceNote(Feeder feeder, ShooterPose shooterPose) {
     addRequirements(feeder, shooterPose);
     this.feeder = feeder;

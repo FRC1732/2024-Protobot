@@ -5,23 +5,21 @@ import frc.robot.subsystems.shooterWheels.ShooterSpeed;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class RunShooterSlow extends Command {
-    private final ShooterWheels shooterWheels;
+  private final ShooterWheels shooterWheels;
 
-    public RunShooterSlow(ShooterWheels shooterWheels) {
-        this.shooterWheels = shooterWheels;
-    }
-    public void initialize() {
+  public RunShooterSlow(ShooterWheels shooterWheels) {
+    this.shooterWheels = shooterWheels;
+  }
 
-    }
-    public void execute() {
-        shooterWheels.setShooterSpeed(ShooterSpeed.RANGE_AMP);
-    }
-    public void end(boolean isInterupted) {
+  public void initialize() {}
 
-    }
-    public boolean isFinnished() {
-        return true;
-    }
-    
+  public void execute() {
+    shooterWheels.setShooterSpeed(ShooterSpeed.RANGE_AMP);
+  }
 
+  public void end(boolean isInterupted) {}
+
+  public boolean isFinnished() {
+    return true;
+  }
 }

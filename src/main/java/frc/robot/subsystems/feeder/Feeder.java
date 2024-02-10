@@ -3,7 +3,6 @@ package frc.robot.subsystems.feeder;
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
 import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -67,7 +66,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public boolean checkStopped() {
-    return feederMotorLeft.get() == 0 && feederMotorRight.get() == 0; 
+    return feederMotorLeft.get() == 0 && feederMotorRight.get() == 0;
   }
 
   @Override

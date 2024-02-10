@@ -5,7 +5,6 @@
 package frc.robot.commands.shooterCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterWheels.ShooterSpeed;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 

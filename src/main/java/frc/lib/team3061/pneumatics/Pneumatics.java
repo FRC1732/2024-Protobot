@@ -95,7 +95,8 @@
 //         > (inputs.compressorActive ? COMPRESSOR_AVERAGING_TAPS : NORMAL_AVERAGING_TAPS)) {
 //       filterData.remove(0);
 //     }
-//     pressureSmoothedPsi = filterData.stream().mapToDouble(a -> a).summaryStatistics().getAverage();
+//     pressureSmoothedPsi = filterData.stream().mapToDouble(a ->
+// a).summaryStatistics().getAverage();
 //   }
 
 //   private double averagePressures(double limitedPressure) {

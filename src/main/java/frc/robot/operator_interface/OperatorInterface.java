@@ -76,6 +76,7 @@ public interface OperatorInterface {
   public default Trigger intakeButton() {
     return new Trigger(() -> false);
   }
+
   public default Trigger shooterButton() {
     return new Trigger(() -> false);
   }

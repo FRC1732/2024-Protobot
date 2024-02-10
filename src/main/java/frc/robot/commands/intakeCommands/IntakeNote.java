@@ -11,9 +11,10 @@ import frc.robot.subsystems.shooterPose.ShooterPose;
 
 public class IntakeNote extends Command {
   /** Creates a new IntakeNote. */
-private Intake intake;
-private Feeder feeder;
-private ShooterPose shooterPose;
+  private Intake intake;
+
+  private Feeder feeder;
+  private ShooterPose shooterPose;
 
   public IntakeNote(Intake intake, Feeder feeder, ShooterPose shooterPose) {
     addRequirements(intake, feeder, shooterPose);
@@ -26,7 +27,6 @@ private ShooterPose shooterPose;
     intake.runIntake();
     feeder.runFeederIn();
     System.out.println("Intake and Feeder running in");
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.

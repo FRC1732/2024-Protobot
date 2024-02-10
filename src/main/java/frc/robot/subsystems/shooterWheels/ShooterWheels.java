@@ -37,9 +37,13 @@ public class ShooterWheels extends SubsystemBase {
 
     shooterSpeed = ShooterSpeed.RANGE_115;
 
-    shooterSpeedAmp = new TunableNumber("Shooter Speed Amp", ShooterWheelsConstants.SHOOTER_SPEED_AMP);
-    shooterSpeedTrap = new TunableNumber("Shooter Speed Trap", ShooterWheelsConstants.SHOOTER_SPEED_TRAP);
-    shooterSpeedBackwards = new TunableNumber("Shooter Speed Backwards", ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
+    shooterSpeedAmp =
+        new TunableNumber("Shooter Speed Amp", ShooterWheelsConstants.SHOOTER_SPEED_AMP);
+    shooterSpeedTrap =
+        new TunableNumber("Shooter Speed Trap", ShooterWheelsConstants.SHOOTER_SPEED_TRAP);
+    shooterSpeedBackwards =
+        new TunableNumber(
+            "Shooter Speed Backwards", ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
     shooterSpeed115 =
         new TunableNumber("Shooter Speed 115", ShooterWheelsConstants.SHOOTER_SPEED_115);
     shooterSpeed125 =
@@ -56,22 +60,22 @@ public class ShooterWheels extends SubsystemBase {
     shooterSpeed = speed;
   }
 
-  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
+  @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeedAmp() {
     shooterSpeed = ShooterSpeed.RANGE_AMP;
   }
 
-  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
+  @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed115() {
     shooterSpeed = ShooterSpeed.RANGE_115;
   }
 
-  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
+  @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed125() {
     shooterSpeed = ShooterSpeed.RANGE_125;
   }
 
-  @Deprecated (since = "use setShooterSpeed(ShooterSpeed speed) instead")
+  @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed150() {
     shooterSpeed = ShooterSpeed.RANGE_150;
   }
@@ -128,7 +132,7 @@ public class ShooterWheels extends SubsystemBase {
     }
   }
 
-  @Deprecated (since = "use setShooterSpeed(STOPPED) instead")
+  @Deprecated(since = "use setShooterSpeed(STOPPED) instead")
   public void rampDownShooter() {
     shooterHighMotor.set(0);
   }
@@ -144,4 +148,3 @@ public class ShooterWheels extends SubsystemBase {
 
   public void periodic() {}
 }
-
