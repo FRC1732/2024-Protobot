@@ -9,34 +9,36 @@ import frc.robot.subsystems.feeder.Feeder;
 
 public class WaitForPieceUnstaged extends Command {
   private final Feeder feederSystem;
+
   /** Creates a new WaitForPieceUnstaged. */
   public WaitForPieceUnstaged(Feeder feeder) {
     addRequirements(feeder);
-    feederSystem=feeder;
-    
-    }
-  
+    feederSystem = feeder;
+
+  }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-      if (feederSystem.hasNote()) {
-        return false;
-      } else {
-        return true;
-      }
+    if (feederSystem.hasNote()) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }
-
