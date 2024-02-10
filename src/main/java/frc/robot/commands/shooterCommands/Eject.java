@@ -7,6 +7,7 @@ package frc.robot.commands.shooterCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooterWheels.ShooterSpeed;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class Eject extends Command {
@@ -28,7 +29,7 @@ public class Eject extends Command {
   public void initialize() {
     feeder.runFeederOut();
     intake.runIntakeOut();
-    shooter.setShooterSpeedBackwards();
+    shooter.setShooterSpeed(ShooterSpeed.RANGE_BACKWARDS);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

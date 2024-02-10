@@ -18,6 +18,7 @@ public class ShooterWheelsConstants {
   public static final boolean SHOOTER_HIGH_MOTOR_INVERTED = true;
 
   public static final double SHOOTER_SPEED_AMP = 0.0;
+  public static final double SHOOTER_SPEED_TRAP = 0.0;
   public static final double SHOOTER_SPEED_115 = 0.0;
   public static final double SHOOTER_SPEED_125 = 0.0;
   public static final double SHOOTER_SPEED_150 = 0.0;
