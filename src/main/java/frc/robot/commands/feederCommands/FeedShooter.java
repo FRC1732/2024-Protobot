@@ -42,5 +42,13 @@ public class FeedShooter extends Command {
     } else {
       return false;
     }
+    }
+    public boolean WaitForPieceUnstaged() {
+    if (feederSystem.hasNote()) {
+      return false;
+    } else {
+      return true;
+    }
+    }
   }
-}
+
