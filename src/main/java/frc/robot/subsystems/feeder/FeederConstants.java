@@ -12,7 +12,7 @@ public class FeederConstants {
   public static final boolean TESTING = false;
   public static final String SUBSYSTEM_NAME = "Feeder";
 
-  public static final int FEEDER_MOTOR_LEFT_CAN_ID = 51;
+  public static final int FEEDER_MOTOR_LEFT_CAN_ID = 50;//TODO: remove the other
   public static final int FEEDER_MOTOR_RIGHT_CAN_ID = 54;
   public static final boolean SHOOTER_MOTOR_LEFT_INVERTED = true;
   public static final boolean SHOOTER_MOTOR_RIGHT_INVERTED = false;

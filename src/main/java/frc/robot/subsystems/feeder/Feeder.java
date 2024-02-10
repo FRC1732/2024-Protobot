@@ -16,23 +16,23 @@ public class Feeder extends SubsystemBase {
   private final TunableNumber leftMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
   private final TunableNumber rightMotorSpeed = new TunableNumber("Feeder/rightSpeed", 0.0);
 
-  public final CANSparkMax feederMotorLeft;
-  public final CANSparkMax feederMotorRight;
+  public final CANSparkMax feederMotor;
+  public final CANSparkMax feederMotorCenterer;
 
-  public static Double FEEDER_MOTOR_LEFT_SPEED = .3;
-  public static Double FEEDER_MOTOR_RIGHT_SPEED = .3;
+  public static Double FEEDER_MOTOR_LEFT_SPEED = .8;
+  public static Double FEEDER_MOTOR_RIGHT_SPEED = .8;
 
   private final AnalogInput analog;
 
   public Feeder() {
 
-    feederMotorLeft =
+    feederMotor =
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_LEFT_CAN_ID, CANSparkMax.MotorType.kBrushed);
-    feederMotorRight =
+    feederMotorCenterer =
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_RIGHT_CAN_ID, CANSparkMax.MotorType.kBrushed);
 
-    feederMotorLeft.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
-    feederMotorRight.setInverted(FeederConstants.SHOOTER_MOTOR_RIGHT_INVERTED);
+    feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
+    feederMotorCenterer.setInverted(FeederConstants.SHOOTER_MOTOR_RIGHT_INVERTED);
 
     analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
 
@@ -47,18 +47,18 @@ public class Feeder extends SubsystemBase {
   }
 
   public void runFeederIn() {
-    feederMotorLeft.set(FEEDER_MOTOR_LEFT_SPEED);
-    feederMotorRight.set(FEEDER_MOTOR_RIGHT_SPEED);
+    feederMotor.set(FEEDER_MOTOR_LEFT_SPEED);
+    feederMotorCenterer.set(FEEDER_MOTOR_RIGHT_SPEED);
   }
 
   public void runFeederOut() {
-    feederMotorLeft.set(FEEDER_MOTOR_LEFT_SPEED * -1);
-    feederMotorRight.set(FEEDER_MOTOR_RIGHT_SPEED * -1);
+    feederMotor.set(FEEDER_MOTOR_LEFT_SPEED * -1);
+    feederMotorCenterer.set(FEEDER_MOTOR_RIGHT_SPEED * -1);
   }
 
   public void stopFeederIn() {
-    feederMotorLeft.set(0);
-    feederMotorRight.set(0);
+    feederMotor.set(0);
+    feederMotorCenterer.set(0);
   }
 
   public boolean hasNote() {
@@ -66,7 +66,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public boolean checkStopped() {
-    return feederMotorLeft.get() == 0 && feederMotorRight.get() == 0;
+    return feederMotor.get() == 0 && feederMotorCenterer.get() == 0;
   }
 
   @Override
@@ -75,11 +75,11 @@ public class Feeder extends SubsystemBase {
     // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
     if (TESTING) {
       if (leftMotorSpeed.get() != 0) {
-        feederMotorLeft.set(leftMotorSpeed.get());
+        feederMotor.set(leftMotorSpeed.get());
       }
 
       if (rightMotorSpeed.get() != 0) {
-        feederMotorRight.set(rightMotorSpeed.get());
+        feederMotorCenterer.set(rightMotorSpeed.get());
       }
     }
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);

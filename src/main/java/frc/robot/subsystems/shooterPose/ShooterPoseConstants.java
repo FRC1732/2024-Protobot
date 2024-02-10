@@ -4,8 +4,8 @@ public class ShooterPoseConstants {
 
   public static final boolean SHOOTER_POSE_TESTING = false;
 
-  public static final int SHOOTER_POSE_LEFT_MOTOR_CAN_ID = 1; // TODO: assign correct CAN IDs
-  public static final int SHOOTER_POSE_RIGHT_MOTOR_CAN_ID = 2; // TODO: assign correct CAN IDs
+  public static final int SHOOTER_POSE_LEFT_MOTOR_CAN_ID = 61; // TODO: assign correct CAN IDs
+  public static final int SHOOTER_POSE_RIGHT_MOTOR_CAN_ID = 60; // TODO: assign correct CAN IDs
   public static final int SHOOTER_TILT_MOTOR_CAN_ID = 3; // TODO: assign correct CAN IDs
 
   public static final double SHOOTER_POSE_RIGHT_MOTOR_P = 0;

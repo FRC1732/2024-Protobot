@@ -4,22 +4,22 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private CANSparkMax intakeLCanSparkMax;
-  private CANSparkMax intakeRCanSparkMax;
+  private CANSparkMax intakeCanSparkMax;
+  private CANSparkMax centererCanSparkMax;
 
-  public static Double intakeMotorLSpeed = 0.40;
-  public static Double intakeMotorRSpeed = 0.40;
+  public static Double intakeMotorLSpeed = 0.80;
+  public static Double intakeMotorRSpeed = 0.80;
 
   /** Creates a new Intake. */
   public Intake() {
 
-    intakeLCanSparkMax =
+    intakeCanSparkMax =
         new CANSparkMax(IntakeConstants.INTAKE_MOTOR_L_CAN_ID, CANSparkMax.MotorType.kBrushless);
-    intakeRCanSparkMax =
+    centererCanSparkMax =
         new CANSparkMax(IntakeConstants.INTAKE_MOTOR_R_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
-    intakeLCanSparkMax.setInverted(IntakeConstants.INTAKE_MOTOR_L_INVERTED);
-    intakeRCanSparkMax.setInverted(IntakeConstants.INTAKE_MOTOR_R_INVERTED);
+    intakeCanSparkMax.setInverted(IntakeConstants.INTAKE_MOTOR_L_INVERTED);
+    centererCanSparkMax.setInverted(IntakeConstants.INTAKE_MOTOR_R_INVERTED);
   }
 
   @Override
@@ -28,17 +28,17 @@ public class Intake extends SubsystemBase {
   }
 
   public void runIntake() {
-    intakeLCanSparkMax.set(intakeMotorLSpeed);
-    intakeRCanSparkMax.set(intakeMotorRSpeed);
+    intakeCanSparkMax.set(intakeMotorLSpeed);
+    centererCanSparkMax.set(intakeMotorRSpeed);
   }
 
   public void runIntakeOut() {
-    intakeLCanSparkMax.set(intakeMotorLSpeed * -1);
-    intakeRCanSparkMax.set(intakeMotorRSpeed * -1);
+    intakeCanSparkMax.set(intakeMotorLSpeed * -1);
+    centererCanSparkMax.set(intakeMotorRSpeed * -1);
   }
 
   public void stopIntake() {
-    intakeLCanSparkMax.set(0);
-    intakeRCanSparkMax.set(0);
+    intakeCanSparkMax.set(0);
+    centererCanSparkMax.set(0);
   }
 }
