@@ -7,23 +7,19 @@ package frc.robot.commands.feederCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
 
-public class FeedShooter extends Command {
+public class WaitForPieceUnstaged extends Command {
   private final Feeder feederSystem;
-
-  /** Creates a new FeedShooter. 
-    * @param feeder the drivetrain subsystem required by this command
-  */
-  
-  public FeedShooter(Feeder feeder) {
+  /** Creates a new WaitForPieceUnstaged. */
+  public WaitForPieceUnstaged(Feeder feeder) {
     addRequirements(feeder);
-    feederSystem = feeder;
-  }
+    feederSystem=feeder;
+    
+    }
+  
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    feederSystem.runFeederIn();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -36,12 +32,11 @@ public class FeedShooter extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (feederSystem.hasNote()) {
-      feederSystem.stopFeederIn();
-      return true;
-    } else {
-      return false;
-    }
-    }
+      if (feederSystem.hasNote()) {
+        return false;
+      } else {
+        return true;
+      }
   }
+}
 
