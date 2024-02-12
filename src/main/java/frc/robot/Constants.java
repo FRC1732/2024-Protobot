@@ -8,7 +8,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.RobotBase;
 import frc.lib.team6328.util.Alert;
 import frc.lib.team6328.util.Alert.AlertType;
 
@@ -28,59 +27,8 @@ public final class Constants {
   // set to true in order to change all Tunable values via Shuffleboard
   public static final boolean TUNING_MODE = false;
 
-  private static final RobotType ROBOT = RobotType.ROBOT_DEFAULT;
-
   private static final Alert invalidRobotAlert =
       new Alert("Invalid robot selected, using competition robot as default.", AlertType.ERROR);
-
-  // FIXME: update for various robots
-  public enum RobotType {
-    ROBOT_2023_NOVA_CTRE,
-    ROBOT_2023_NOVA_CTRE_FOC,
-    ROBOT_2023_NOVA,
-    ROBOT_DEFAULT,
-    ROBOT_SIMBOT,
-    ROBOT_SIMBOT_CTRE
-  }
-
-  // FIXME: update for various robots
-  public static RobotType getRobot() {
-    if (RobotBase.isReal()) {
-      if (ROBOT == RobotType.ROBOT_SIMBOT
-          || ROBOT == RobotType.ROBOT_SIMBOT_CTRE) { // Invalid robot selected
-        invalidRobotAlert.set(true);
-        return RobotType.ROBOT_DEFAULT;
-      } else {
-        return ROBOT;
-      }
-    } else {
-      return ROBOT;
-    }
-  }
-
-  // FIXME: update for various robots
-  public static Mode getMode() {
-    switch (getRobot()) {
-      case ROBOT_DEFAULT:
-      case ROBOT_2023_NOVA_CTRE:
-      case ROBOT_2023_NOVA_CTRE_FOC:
-      case ROBOT_2023_NOVA:
-        return RobotBase.isReal() ? Mode.REAL : Mode.REPLAY;
-
-      case ROBOT_SIMBOT:
-      case ROBOT_SIMBOT_CTRE:
-        return Mode.SIM;
-
-      default:
-        return Mode.REAL;
-    }
-  }
-
-  public enum Mode {
-    REAL,
-    REPLAY,
-    SIM
-  }
 
   public static final double LOOP_PERIOD_SECS = 0.02;
 }

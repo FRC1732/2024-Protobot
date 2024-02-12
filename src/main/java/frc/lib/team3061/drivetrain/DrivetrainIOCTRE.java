@@ -298,10 +298,6 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
 
     inputs.drivetrain.rotation = this.getState().Pose.getRotation();
 
-    if (Constants.getMode() == Constants.Mode.SIM) {
-      updateSimState(Constants.LOOP_PERIOD_SECS, 12.0);
-    }
-
     // update tunables
     if (driveKp.hasChanged()
         || driveKi.hasChanged()
@@ -609,9 +605,7 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
   }
 
   private static ClosedLoopOutputType getSteerClosedLoopOutputType() {
-    if (Constants.getMode() == Constants.Mode.SIM) {
-      return ClosedLoopOutputType.Voltage;
-    } else if (RobotConfig.getInstance().getSwerveSteerControlMode()
+    if (RobotConfig.getInstance().getSwerveSteerControlMode()
         == RobotConfig.SWERVE_CONTROL_MODE.TORQUE_CURRENT_FOC) {
       return ClosedLoopOutputType.TorqueCurrentFOC;
     } else {
@@ -620,9 +614,7 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
   }
 
   private static ClosedLoopOutputType getDriveClosedLoopOutputType() {
-    if (Constants.getMode() == Constants.Mode.SIM) {
-      return ClosedLoopOutputType.Voltage;
-    } else if (RobotConfig.getInstance().getSwerveDriveControlMode()
+    if (RobotConfig.getInstance().getSwerveDriveControlMode()
         == RobotConfig.SWERVE_CONTROL_MODE.TORQUE_CURRENT_FOC) {
       return ClosedLoopOutputType.TorqueCurrentFOC;
     } else {

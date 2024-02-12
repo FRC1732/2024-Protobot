@@ -14,7 +14,8 @@ public class Intake extends SubsystemBase {
   public Intake() {
 
     intakeCanSparkMax =
-        new CANSparkMax(IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+        new CANSparkMax(
+            IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
     centererCanSparkMax =
         new CANSparkMax(IntakeConstants.INTAKE_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 

@@ -7,13 +7,11 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.team3061.leds.LEDs;
@@ -22,12 +20,10 @@ import frc.lib.team6328.util.Alert.AlertType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
@@ -72,7 +68,6 @@ public class Robot extends LoggedRobot {
     // (https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/docs/START-LOGGING.md#robot-configuration)
 
     // Set a metadata value
-    Logger.recordMetadata("Robot", Constants.getRobot().toString());
     Logger.recordMetadata("TuningMode", Boolean.toString(Constants.TUNING_MODE));
     Logger.recordMetadata("RuntimeType", getRuntimeType().toString());
     Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
@@ -91,38 +86,17 @@ public class Robot extends LoggedRobot {
         Logger.recordMetadata(GIT_DIRTY, "Unknown");
         break;
     }
+    Logger.addDataReceiver(new WPILOGWriter("/media/sda1"));
 
-    switch (Constants.getMode()) {
-      case REAL:
-        Logger.addDataReceiver(new WPILOGWriter("/media/sda1"));
+    // Provide log data over the network, viewable in Advantage Scope.
+    Logger.addDataReceiver(new NT4Publisher());
 
-        // Provide log data over the network, viewable in Advantage Scope.
-        Logger.addDataReceiver(new NT4Publisher());
+    LoggedPowerDistribution.getInstance();
 
-        LoggedPowerDistribution.getInstance();
+    SignalLogger.setPath("/media/sda1");
+    SignalLogger.start();
 
-        SignalLogger.setPath("/media/sda1");
-        SignalLogger.start();
-        break;
-
-      case SIM:
-        Logger.addDataReceiver(new NT4Publisher());
-        break;
-
-      case REPLAY:
-        // Prompt the user for a file path on the command line (if not open in AdvantageScope)
-        String path = LogFileUtil.findReplayLog();
-
-        // Read log file for replay
-        Logger.setReplaySource(new WPILOGReader(path));
-
-        // Save replay results to a new log with the "_sim" suffix
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(path, "_sim")));
-        break;
-    }
-
-    // Run as fast as possible during replay
-    setUseTiming(Constants.getMode() != Constants.Mode.REPLAY);
+    setUseTiming(true);
 
     // Start logging! No more data receivers, replay sources, or metadata values may be added.
     Logger.start();
@@ -146,11 +120,6 @@ public class Robot extends LoggedRobot {
         .onCommandFinish((Command command) -> logCommandFunction.accept(command, false));
     CommandScheduler.getInstance()
         .onCommandInterrupt((Command command) -> logCommandFunction.accept(command, false));
-
-    // Default to blue alliance in sim
-    if (Constants.getMode() == Constants.Mode.SIM) {
-      DriverStationSim.setAllianceStationId(AllianceStationID.Blue1);
-    }
 
     // Logging of autonomous paths
     // Logging callback for current robot pose

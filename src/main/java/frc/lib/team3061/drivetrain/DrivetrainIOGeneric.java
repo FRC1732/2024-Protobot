@@ -148,7 +148,7 @@ public class DrivetrainIOGeneric implements DrivetrainIO {
 
     // if the gyro is not connected, use the swerve module positions to estimate the robot's
     // rotation
-    if (!inputs.gyro.connected || Constants.getMode() == Constants.Mode.SIM) {
+    if (!inputs.gyro.connected) {
       SwerveModulePosition[] moduleDeltas = new SwerveModulePosition[4];
       for (int index = 0; index < moduleDeltas.length; index++) {
         SwerveModulePosition current = swerveModulePositions[index];
