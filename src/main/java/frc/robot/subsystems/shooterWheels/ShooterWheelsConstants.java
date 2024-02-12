@@ -11,9 +11,8 @@ public class ShooterWheelsConstants {
   public static final boolean TESTING = false;
   public static final String SUBSYSTEM_NAME = "Shooter";
 
-  public static final int SHOOTER_TILT_MOTOR_CAN_ID = 1; // TODO: set to comp bot values
-  public static final int SHOOTER_HIGH_MOTOR_CAN_ID = 2; // TODO: set to comp bot values
-  public static final int SHOOTER_LOW_MOTOR_CAN_ID = 3; // TODO: set to comp bot values
+  public static final int SHOOTER_HIGH_MOTOR_CAN_ID = 58; // TODO: set to comp bot values
+  public static final int SHOOTER_LOW_MOTOR_CAN_ID = 59; // TODO: set to comp bot values
 
   public static final boolean SHOOTER_HIGH_MOTOR_INVERTED = true;
 

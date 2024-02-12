@@ -13,13 +13,11 @@ public class Feeder extends SubsystemBase {
 
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
-  private final TunableNumber leftMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
-  private final TunableNumber rightMotorSpeed = new TunableNumber("Feeder/rightSpeed", 0.0);
+  private final TunableNumber CentererMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
 
   public final CANSparkMax feederMotor;
-  public final CANSparkMax feederMotorCenterer;
 
-  public static Double FEEDER_MOTOR_LEFT_SPEED = .8;
+  public static Double FEEDER_MOTOR_SPEED = .8;
   public static Double FEEDER_MOTOR_RIGHT_SPEED = .8;
 
   private final AnalogInput analog;
@@ -27,12 +25,9 @@ public class Feeder extends SubsystemBase {
   public Feeder() {
 
     feederMotor =
-        new CANSparkMax(FeederConstants.FEEDER_MOTOR_LEFT_CAN_ID, CANSparkMax.MotorType.kBrushed);
-    feederMotorCenterer =
-        new CANSparkMax(FeederConstants.FEEDER_MOTOR_RIGHT_CAN_ID, CANSparkMax.MotorType.kBrushed);
+        new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushed);
 
     feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
-    feederMotorCenterer.setInverted(FeederConstants.SHOOTER_MOTOR_RIGHT_INVERTED);
 
     analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
 
@@ -47,18 +42,15 @@ public class Feeder extends SubsystemBase {
   }
 
   public void runFeederIn() {
-    feederMotor.set(FEEDER_MOTOR_LEFT_SPEED);
-    feederMotorCenterer.set(FEEDER_MOTOR_RIGHT_SPEED);
+    feederMotor.set(FEEDER_MOTOR_SPEED);
   }
 
   public void runFeederOut() {
-    feederMotor.set(FEEDER_MOTOR_LEFT_SPEED * -1);
-    feederMotorCenterer.set(FEEDER_MOTOR_RIGHT_SPEED * -1);
+    feederMotor.set(FEEDER_MOTOR_SPEED * -1);
   }
 
   public void stopFeederIn() {
     feederMotor.set(0);
-    feederMotorCenterer.set(0);
   }
 
   public boolean hasNote() {
@@ -66,7 +58,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public boolean checkStopped() {
-    return feederMotor.get() == 0 && feederMotorCenterer.get() == 0;
+    return feederMotor.get() == 0;
   }
 
   @Override
@@ -74,12 +66,8 @@ public class Feeder extends SubsystemBase {
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
     // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
     if (TESTING) {
-      if (leftMotorSpeed.get() != 0) {
-        feederMotor.set(leftMotorSpeed.get());
-      }
-
-      if (rightMotorSpeed.get() != 0) {
-        feederMotorCenterer.set(rightMotorSpeed.get());
+      if (CentererMotorSpeed.get() != 0) {
+        feederMotor.set(CentererMotorSpeed.get());
       }
     }
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
