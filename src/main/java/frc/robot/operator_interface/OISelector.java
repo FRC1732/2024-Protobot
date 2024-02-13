@@ -78,14 +78,22 @@ public class OISelector {
       }
     }
 
-    if (xBoxPort != null) {
+    if (firstPort != null && secondPort != null && xBoxPort != null && thirdPort != null) {
+      noOperatorInterfaceWarning.set(false);
+      nonCompetitionOperatorInterfaceWarning.set(false);
+      return new FullOperatorConsoleOI(firstPort, secondPort, xBoxPort, thirdPort);
+    } else if (firstPort != null && secondPort != null) {
+      noOperatorInterfaceWarning.set(false);
+      nonCompetitionOperatorInterfaceWarning.set(true);
+      return new DualJoysticksOI(firstPort, secondPort);
+    } else if (xBoxPort != null) {
       noOperatorInterfaceWarning.set(false);
       nonCompetitionOperatorInterfaceWarning.set(true);
       return new SingleHandheldOI(xBoxPort);
     } else {
-      noOperatorInterfaceWarning.set(false);
-      nonCompetitionOperatorInterfaceWarning.set(false);
-      return new FullOperatorConsoleOI(firstPort, secondPort, thirdPort);
+      noOperatorInterfaceWarning.set(true);
+      nonCompetitionOperatorInterfaceWarning.set(true);
+      return new OperatorInterface() {};
     }
   }
 }
