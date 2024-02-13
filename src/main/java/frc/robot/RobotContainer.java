@@ -54,6 +54,7 @@ public class RobotContainer {
   private Subsystem subsystem;
   public Intake intake;
   public Feeder feeder;
+  public ShooterWheels shooterWheels;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -138,6 +139,7 @@ public class RobotContainer {
 
     intake = new Intake();
     feeder = new Feeder();
+    shooterWheels = new ShooterWheels ();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -195,6 +197,9 @@ public class RobotContainer {
 
     oi.feederButton().onTrue(Commands.runOnce(feeder::runFeederIn, feeder));
     oi.feederButton().onFalse(Commands.runOnce(feeder::stopFeederIn, feeder));
+
+    oi.shooterButton().onTrue(Commands.runOnce(shooterWheels::runShooterIn, shooterWheels));
+    oi.shooterButton().onFalse(Commands.runOnce(shooterWheels::stopShooterIn, shooterWheels));
 
     configureDrivetrainCommands();
 
