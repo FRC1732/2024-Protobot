@@ -80,4 +80,8 @@ public interface OperatorInterface {
   public default Trigger feederButton() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger shooterButton() {
+    return new Trigger(() -> false);
+  }
 }

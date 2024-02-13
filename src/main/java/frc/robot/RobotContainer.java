@@ -34,6 +34,7 @@ import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.subsystem.Subsystem;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -139,7 +140,7 @@ public class RobotContainer {
 
     intake = new Intake();
     feeder = new Feeder();
-    shooterWheels = new ShooterWheels ();
+    shooterWheels = new ShooterWheels();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -198,8 +199,8 @@ public class RobotContainer {
     oi.feederButton().onTrue(Commands.runOnce(feeder::runFeederIn, feeder));
     oi.feederButton().onFalse(Commands.runOnce(feeder::stopFeederIn, feeder));
 
-    oi.shooterButton().onTrue(Commands.runOnce(shooterWheels::runShooterIn, shooterWheels));
-    oi.shooterButton().onFalse(Commands.runOnce(shooterWheels::stopShooterIn, shooterWheels));
+    oi.shooterButton().onTrue(Commands.runOnce(shooterWheels::rampUpShooter, shooterWheels));
+    oi.shooterButton().onFalse(Commands.runOnce(shooterWheels::rampDownShooter, shooterWheels));
 
     configureDrivetrainCommands();
 
