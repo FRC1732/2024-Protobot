@@ -32,6 +32,7 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
+import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.subsystem.Subsystem;
 import java.util.Optional;
@@ -52,6 +53,7 @@ public class RobotContainer {
   private Vision vision;
   private Subsystem subsystem;
   public Intake intake;
+  public Feeder feeder;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -135,6 +137,7 @@ public class RobotContainer {
     drivetrain = new Drivetrain(drivetrainIO);
 
     intake = new Intake();
+    feeder = new Feeder();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -189,6 +192,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
     oi.intakeButton().onTrue(Commands.runOnce(intake::runIntake, intake));
     oi.intakeButton().onFalse(Commands.runOnce(intake::stopIntake, intake));
+
+    oi.feederButton().onTrue(Commands.runOnce(feeder::runFeederIn, feeder));
+    oi.feederButton().onFalse(Commands.runOnce(feeder::stopFeederIn, feeder));
 
     configureDrivetrainCommands();
 

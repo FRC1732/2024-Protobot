@@ -122,4 +122,9 @@ public class FullOperatorConsoleOI implements OperatorInterface {
   public Trigger intakeButton() {
     return translateJoystickButtons[0];
   }
+
+  @Override
+  public Trigger feederButton() {
+    return rotateJoystickButtons[1];
+  }
 }
