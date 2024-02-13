@@ -4,6 +4,8 @@ import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,13 +29,13 @@ public class ShooterWheels extends SubsystemBase {
   public ShooterWheels() {
     shooterHighMotor =
         new CANSparkFlex(
-            ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+            ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
     shooterLowMotor =
         new CANSparkFlex(
-            ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+            ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
-    shooterHighMotor.setInverted(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_INVERTED);
-    shooterHighMotor.follow(shooterLowMotor);
+    shooterLowMotor.follow(shooterHighMotor, true);
+    
 
     shooterSpeed = ShooterSpeed.RANGE_115;
 
@@ -57,27 +59,40 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void setShooterSpeed(ShooterSpeed speed) {
+    shooterHighMotor.set(SHOOTER_SPEED_115);
     shooterSpeed = speed;
+  }
+
+   public void setShooterSpeedTesting() {
+    shooterHighMotor.set(-SHOOTER_SPEED_115);
+  }
+
+   public void setShooterSpeedTesting2() {
+    shooterLowMotor.set(-SHOOTER_SPEED_115);
   }
 
   @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeedAmp() {
     shooterSpeed = ShooterSpeed.RANGE_AMP;
+    rampUpShooter();
   }
 
   @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed115() {
     shooterSpeed = ShooterSpeed.RANGE_115;
+    rampUpShooter();
   }
 
   @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed125() {
     shooterSpeed = ShooterSpeed.RANGE_125;
+    rampUpShooter();
   }
 
   @Deprecated(since = "use setShooterSpeed(ShooterSpeed speed) instead")
   public void setShooterSpeed150() {
     shooterSpeed = ShooterSpeed.RANGE_150;
+    rampUpShooter();
   }
 
   public void rampUpShooter() {
