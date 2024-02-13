@@ -21,8 +21,7 @@ public class FullOperatorConsoleOI implements OperatorInterface {
   private final CommandJoystick operatorPanel;
   private final Trigger[] operatorPanelButtons;
 
-  public FullOperatorConsoleOI(
-      int translatePort, int rotatePort, int operatorControllerPort, int operatorPanelPort) {
+  public FullOperatorConsoleOI(int translatePort, int rotatePort, int operatorPanelPort) {
     translateJoystick = new CommandJoystick(translatePort);
     rotateJoystick = new CommandJoystick(rotatePort);
     operatorPanel = new CommandJoystick(operatorPanelPort);
