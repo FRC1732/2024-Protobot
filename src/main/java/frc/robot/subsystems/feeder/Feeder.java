@@ -25,7 +25,7 @@ public class Feeder extends SubsystemBase {
   public Feeder() {
 
     feederMotor =
-        new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushed);
+        new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
 
