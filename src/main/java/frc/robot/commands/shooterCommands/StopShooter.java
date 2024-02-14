@@ -5,7 +5,6 @@
 package frc.robot.commands.shooterCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.shooterWheels.ShooterSpeed;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class StopShooter extends Command {
@@ -21,7 +20,7 @@ public class StopShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterWheels.setShooterSpeed(ShooterSpeed.STOPPED);
+    shooterWheels.stopShooter();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

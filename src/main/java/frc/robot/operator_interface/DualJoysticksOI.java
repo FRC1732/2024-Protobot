@@ -55,17 +55,7 @@ public class DualJoysticksOI implements OperatorInterface {
   }
 
   @Override
-  public Trigger intakeButton() {
+  public Trigger groundIntakeButton() {
     return translateJoystickButtons[1];
-  }
-
-  @Override
-  public Trigger feederButton() {
-    return rotateJoystickButtons[1];
-  }
-
-  @Override
-  public Trigger shooterButton() {
-    return rotateJoystickButtons[2];
   }
 }

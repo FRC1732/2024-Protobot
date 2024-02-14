@@ -29,11 +29,15 @@ import frc.lib.team3061.vision.Vision;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.feederCommands.FeedShooterManual;
+import frc.robot.commands.intakeCommands.IntakeNote;
+import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.subsystem.Subsystem;
 import java.util.Optional;
@@ -56,6 +60,7 @@ public class RobotContainer {
   public Intake intake;
   public Feeder feeder;
   public ShooterWheels shooterWheels;
+  public ShooterPose shooterPose;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -141,6 +146,7 @@ public class RobotContainer {
     intake = new Intake();
     feeder = new Feeder();
     shooterWheels = new ShooterWheels();
+    shooterPose = new ShooterPose();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -193,17 +199,10 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.intakeButton().onTrue(Commands.runOnce(intake::runIntake, intake));
-    oi.intakeButton().onFalse(Commands.runOnce(intake::stopIntake, intake));
-
-    oi.feederButton().onTrue(Commands.runOnce(feeder::runFeederIn, feeder));
-    oi.feederButton().onFalse(Commands.runOnce(feeder::stopFeederIn, feeder));
-
-    oi.shooterButton()
-        .onTrue(Commands.runOnce(shooterWheels::setShooterSpeedTesting, shooterWheels));
-    // oi.shooterButton().onTrue(Commands.runOnce(shooterWheels::setShooterSpeedTesting2,
-    // shooterWheels));
-    oi.shooterButton().onFalse(Commands.runOnce(shooterWheels::rampDownShooter, shooterWheels));
+    oi.groundIntakeButton()
+        .whileTrue(
+            new IntakeNote(intake, feeder, shooterPose).andThen(new RunShooterFast(shooterWheels)));
+    oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 
     configureDrivetrainCommands();
 

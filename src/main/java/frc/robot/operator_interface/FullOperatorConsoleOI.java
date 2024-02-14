@@ -118,14 +118,4 @@ public class FullOperatorConsoleOI implements OperatorInterface {
   public Trigger slowModeSwitch() {
     return operatorPanelButtons[1];
   }
-
-  @Override
-  public Trigger intakeButton() {
-    return translateJoystickButtons[0];
-  }
-
-  @Override
-  public Trigger feederButton() {
-    return rotateJoystickButtons[1];
-  }
 }
