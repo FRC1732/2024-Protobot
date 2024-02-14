@@ -146,7 +146,7 @@ public class RobotContainer {
     intake = new Intake();
     feeder = new Feeder();
     shooterWheels = new ShooterWheels();
-    shooterPose = new ShooterPose();
+    // shooterPose = new ShooterPose();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -200,8 +200,7 @@ public class RobotContainer {
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
     oi.groundIntakeButton()
-        .whileTrue(
-            new IntakeNote(intake, feeder, shooterPose).andThen(new RunShooterFast(shooterWheels)));
+        .whileTrue(new IntakeNote(intake, feeder, null).andThen(new RunShooterFast(shooterWheels)));
     oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 
     configureDrivetrainCommands();

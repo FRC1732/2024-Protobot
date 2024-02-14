@@ -2,7 +2,6 @@ package frc.robot.subsystems.shooterPose;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -62,12 +61,12 @@ public class ShooterPose extends SubsystemBase {
 
     shooterHeightLeftMotor.follow(shooterHeightRightMotor, true);
 
-    shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    shooterHeightRightMotor.setSoftLimit(
-        SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
-    shooterHeightRightMotor.setSoftLimit(
-        SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
+    // shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    // shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    // shooterHeightRightMotor.setSoftLimit(
+    //     SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
+    // shooterHeightRightMotor.setSoftLimit(
+    //     SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
 
     shooterHeightEncoder = shooterHeightRightMotor.getEncoder();
     shooterHeightEncoder.setPositionConversionFactor(
@@ -81,12 +80,12 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltMotor.enableVoltageCompensation(12);
     shooterTiltMotor.setIdleMode(IdleMode.kBrake);
 
-    shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    shooterTiltMotor.setSoftLimit(
-        SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES);
-    shooterTiltMotor.setSoftLimit(
-        SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
+    // shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    // shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    // shooterTiltMotor.setSoftLimit(
+    //     SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES);
+    // shooterTiltMotor.setSoftLimit(
+    //     SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
 
     shooterTiltAbsoluteEncoder =
         shooterTiltMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -199,11 +198,11 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void periodic() {
-    if (shooterHeightLimitSwitch.isPressed()) {
-      shooterHeightEncoder.setPosition(0);
-    } else if (shooterHeightPID.atGoal() && shooterHeightPID.getGoal().position == 0) {
-      // move elevator manually
-    }
+    // if (shooterHeightLimitSwitch.isPressed()) {
+    //   shooterHeightEncoder.setPosition(0);
+    // } else if (shooterHeightPID.atGoal() && shooterHeightPID.getGoal().position == 0) {
+    //   // move elevator manually
+    // }
 
     shooterHeightRightMotor.set(
         shooterHeightPID.calculate(

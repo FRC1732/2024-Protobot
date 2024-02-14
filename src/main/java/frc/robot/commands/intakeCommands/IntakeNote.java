@@ -17,7 +17,7 @@ public class IntakeNote extends Command {
   private ShooterPose shooterPose;
 
   public IntakeNote(Intake intake, Feeder feeder, ShooterPose shooterPose) {
-    addRequirements(intake, feeder, shooterPose);
+    addRequirements(intake, feeder); // TODO: fix ShooterPose shooterPose
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -43,6 +43,6 @@ public class IntakeNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !feeder.hasNote();
+    return feeder.hasNote();
   }
 }
