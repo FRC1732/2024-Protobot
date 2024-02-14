@@ -48,7 +48,7 @@ public class Feeder extends SubsystemBase {
     feederMotor.set(FEEDER_MOTOR_SPEED);
   }
 
-   public void runFeederIntakeSpeedIn() {
+  public void runFeederIntakeSpeedIn() {
     feederMotor.set(FEEDER_MOTOR_SPEED);
   }
 

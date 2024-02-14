@@ -32,7 +32,7 @@ public class ShooterPose extends SubsystemBase {
   private ProfiledPIDController shooterTiltPID;
   private ArmFeedforward shooterTiltFeedforward;
 
-  private ShuffleboardTab ShooterPoseTab;
+  private ShuffleboardTab shooterPoseTab;
 
   private TunableNumber shooterHeightP;
   private TunableNumber shooterHeightI;
@@ -56,8 +56,12 @@ public class ShooterPose extends SubsystemBase {
     shooterHeightRightMotor.enableVoltageCompensation(12);
     shooterHeightLeftMotor.enableVoltageCompensation(12);
 
-    shooterHeightRightMotor.setIdleMode(IdleMode.kBrake);
-    shooterHeightLeftMotor.setIdleMode(IdleMode.kBrake);
+    // shooterHeightRightMotor.setIdleMode(IdleMode.kBrake);
+    // shooterHeightLeftMotor.setIdleMode(IdleMode.kBrake);
+
+    // testing only
+    shooterHeightRightMotor.setIdleMode(IdleMode.kCoast);
+    shooterHeightLeftMotor.setIdleMode(IdleMode.kCoast);
 
     shooterHeightLeftMotor.follow(shooterHeightRightMotor, true);
 
@@ -78,7 +82,8 @@ public class ShooterPose extends SubsystemBase {
 
     shooterTiltMotor.restoreFactoryDefaults();
     shooterTiltMotor.enableVoltageCompensation(12);
-    shooterTiltMotor.setIdleMode(IdleMode.kBrake);
+    // shooterTiltMotor.setIdleMode(IdleMode.kBrake);
+    shooterTiltMotor.setIdleMode(IdleMode.kCoast);
 
     // shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     // shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -186,15 +191,15 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltI = new TunableNumber("Shooter Tilt I", ShooterPoseConstants.SHOOTER_TILT_KI);
     shooterTiltD = new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
 
-    ShooterPoseTab = Shuffleboard.getTab("Elevator");
+    shooterPoseTab = Shuffleboard.getTab("Elevator");
 
-    ShooterPoseTab.add("Elevator Height P", shooterHeightP);
-    ShooterPoseTab.add("Elevator Height I", shooterHeightI);
-    ShooterPoseTab.add("Elevator Height D", shooterHeightD);
+    //ShooterPoseTab.add("Elevator Height P", shooterHeightP);
+    //ShooterPoseTab.add("Elevator Height I", shooterHeightI);
+    //ShooterPoseTab.add("Elevator Height D", shooterHeightD);
 
-    ShooterPoseTab.add("Shooter Tilt P", shooterTiltP);
-    ShooterPoseTab.add("Shooter Tilt I", shooterTiltI);
-    ShooterPoseTab.add("Shooter Tilt D", shooterTiltD);
+    //ShooterPoseTab.add("Shooter Tilt P", shooterTiltP);
+    //ShooterPoseTab.add("Shooter Tilt I", shooterTiltI);
+    //ShooterPoseTab.add("Shooter Tilt D", shooterTiltD);
   }
 
   public void periodic() {
@@ -204,7 +209,7 @@ public class ShooterPose extends SubsystemBase {
     //   // move elevator manually
     // }
 
-    shooterHeightRightMotor.set(
+    /*shooterHeightRightMotor.set(
         shooterHeightPID.calculate(
             shooterHeightRightMotor.getEncoder().getPosition(), shooterHeightPID.getSetpoint()));
     shooterTiltMotor.set(
@@ -219,6 +224,8 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltPID.setP(shooterTiltP.get());
       shooterTiltPID.setI(shooterTiltI.get());
       shooterTiltPID.setD(shooterTiltD.get());
+
     }
+    */
   }
 }

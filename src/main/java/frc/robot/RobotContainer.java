@@ -147,7 +147,7 @@ public class RobotContainer {
     intake = new Intake();
     feeder = new Feeder();
     shooterWheels = new ShooterWheels();
-    // shooterPose = new ShooterPose();
+    shooterPose = new ShooterPose();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();

@@ -25,7 +25,7 @@ import frc.lib.team6328.util.Alert.AlertType;
 public final class Constants {
 
   // set to true in order to change all Tunable values via Shuffleboard
-  public static final boolean TUNING_MODE = false;
+  public static final boolean TUNING_MODE = true;
 
   private static final Alert invalidRobotAlert =
       new Alert("Invalid robot selected, using competition robot as default.", AlertType.ERROR);
