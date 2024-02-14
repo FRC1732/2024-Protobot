@@ -36,6 +36,9 @@ public class Feeder extends SubsystemBase {
     if (TESTING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
       tab.add(SUBSYSTEM_NAME, this);
+
+      tab.addBoolean("Has Note", this::hasNote);
+      tab.addDouble("Sensor Value", () -> analog.getValue());
     }
 
     // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());

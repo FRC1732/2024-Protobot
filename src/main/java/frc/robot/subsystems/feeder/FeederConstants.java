@@ -9,7 +9,7 @@ public class FeederConstants {
   }
 
   public static final boolean DEBUGGING = false;
-  public static final boolean TESTING = false;
+  public static final boolean TESTING = true;
   public static final String SUBSYSTEM_NAME = "Feeder";
 
   public static final int FEEDER_MOTOR_CAN_ID = 50;
