@@ -19,6 +19,8 @@ public class IntakeNote extends Command {
   public IntakeNote(Intake intake, Feeder feeder, ShooterPose shooterPose) {
     addRequirements(intake, feeder); // TODO: fix ShooterPose shooterPose
     // Use addRequirements() here to declare subsystem dependencies.
+    this.intake = intake;
+    this.feeder = feeder;
   }
 
   // Called when the command is initially scheduled.

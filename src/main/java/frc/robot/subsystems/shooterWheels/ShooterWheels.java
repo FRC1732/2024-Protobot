@@ -26,6 +26,7 @@ public class ShooterWheels extends SubsystemBase {
     shooterLowMotor =
         new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
+    shooterHighMotor.setInverted(true);
     shooterLowMotor.follow(shooterHighMotor, true);
 
     shooterSpeedBackwards =

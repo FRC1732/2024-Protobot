@@ -17,7 +17,7 @@ public class Feeder extends SubsystemBase {
 
   public final CANSparkMax feederMotor;
 
-  public static Double FEEDER_MOTOR_SPEED = .8;
+  public static Double FEEDER_MOTOR_SPEED = .4;
   public static Double FEEDER_MOTOR_RIGHT_SPEED = .8;
 
   private final AnalogInput analog;
@@ -45,6 +45,10 @@ public class Feeder extends SubsystemBase {
   }
 
   public void runFeederIn() {
+    feederMotor.set(FEEDER_MOTOR_SPEED);
+  }
+
+   public void runFeederIntakeSpeedIn() {
     feederMotor.set(FEEDER_MOTOR_SPEED);
   }
 
