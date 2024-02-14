@@ -3,9 +3,7 @@ package frc.robot.subsystems.shooterWheels;
 import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,14 +26,11 @@ public class ShooterWheels extends SubsystemBase {
 
   public ShooterWheels() {
     shooterHighMotor =
-        new CANSparkFlex(
-            ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
+        new CANSparkFlex(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
     shooterLowMotor =
-        new CANSparkFlex(
-            ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
+        new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterLowMotor.follow(shooterHighMotor, true);
-    
 
     shooterSpeed = ShooterSpeed.RANGE_115;
 
@@ -63,11 +58,11 @@ public class ShooterWheels extends SubsystemBase {
     shooterSpeed = speed;
   }
 
-   public void setShooterSpeedTesting() {
+  public void setShooterSpeedTesting() {
     shooterHighMotor.set(-SHOOTER_SPEED_115);
   }
 
-   public void setShooterSpeedTesting2() {
+  public void setShooterSpeedTesting2() {
     shooterLowMotor.set(-SHOOTER_SPEED_115);
   }
 

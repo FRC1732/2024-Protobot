@@ -34,7 +34,6 @@ import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.shooterWheels.ShooterSpeed;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.subsystem.Subsystem;
 import java.util.Optional;
@@ -200,8 +199,10 @@ public class RobotContainer {
     oi.feederButton().onTrue(Commands.runOnce(feeder::runFeederIn, feeder));
     oi.feederButton().onFalse(Commands.runOnce(feeder::stopFeederIn, feeder));
 
-    oi.shooterButton().onTrue(Commands.runOnce(shooterWheels::setShooterSpeedTesting, shooterWheels));
-    //oi.shooterButton().onTrue(Commands.runOnce(shooterWheels::setShooterSpeedTesting2, shooterWheels));
+    oi.shooterButton()
+        .onTrue(Commands.runOnce(shooterWheels::setShooterSpeedTesting, shooterWheels));
+    // oi.shooterButton().onTrue(Commands.runOnce(shooterWheels::setShooterSpeedTesting2,
+    // shooterWheels));
     oi.shooterButton().onFalse(Commands.runOnce(shooterWheels::rampDownShooter, shooterWheels));
 
     configureDrivetrainCommands();
