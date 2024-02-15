@@ -31,20 +31,21 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_HEIGHT_KS = 0;
 
   public static final double SHOOTER_TILT_MAX_VELOCITY = 506.25; // deg/s
-  public static final double SHOOTER_TILT_MAX_ACCELERATION = 1000; // deg/s^2 25000 calculated max
+  public static final double SHOOTER_TILT_MAX_ACCELERATION = 1000; // deg/s^2 4500 calculated max
   public static final double SHOOTER_TILT_KP = 0;
   public static final double SHOOTER_TILT_KI = 0;
   public static final double SHOOTER_TILT_KD = 0;
-  public static final double SHOOTER_TILT_KG = 0.37; // V
-  public static final double SHOOTER_TILT_KV = 0.021777; // V*s/deg
-  public static final double SHOOTER_TILT_KA = 0.000083; // V*s^2/deg
+  public static final double SHOOTER_TILT_KG = 0.77; // V
+  public static final double SHOOTER_TILT_KV = 0.021778; // V*s/deg
+  public static final double SHOOTER_TILT_KA = 0.000361; // V*s^2/deg
   public static final double SHOOTER_TILT_KS = 0;
 
   public static final double SHOOTER_TILT_DEGREES_PER_ROTATION =
       5.625; // degrees per motor revolution (360 / reduction = 360 / 64)
+  public static final double SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND =
+      0.09375; // RPM to deg/sec (360 / reduction / 60 = 360 / 64 / 60)
   public static final double SHOOTER_HEIGHT_INCHES_PER_ROTATION =
-      0.366519; // inches per motor revolution (spool diam * 3.14159 / reduction = 1.75 * 3.14159 /
-  // 15)
+      0.366519; // inches per motor revolution (spool diam * 3.14 / reduction = 1.75 * 3.14 / 15)
 
   public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -37.5;
   public static final double SHOOTER_TILT_SUBWOOFER_SETPOINT = -60;
