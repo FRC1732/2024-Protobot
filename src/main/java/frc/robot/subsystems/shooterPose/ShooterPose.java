@@ -2,19 +2,19 @@ package frc.robot.subsystems.shooterPose;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkLimitSwitch;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.team6328.util.TunableNumber;
 
 public class ShooterPose extends SubsystemBase {
 
@@ -34,13 +34,24 @@ public class ShooterPose extends SubsystemBase {
 
   private ShuffleboardTab shooterPoseTab;
 
-  private TunableNumber shooterHeightP;
-  private TunableNumber shooterHeightI;
-  private TunableNumber shooterHeightD;
+  private GenericEntry goalEntry;
 
-  private TunableNumber shooterTiltP;
-  private TunableNumber shooterTiltI;
-  private TunableNumber shooterTiltD;
+  private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
+  private GenericEntry shooterTiltP, shooterTiltI, shooterTiltD;
+
+  // private final TunableNumber shooterHeightP =
+  //     new TunableNumber("Elevator Height P", ShooterPoseConstants.SHOOTER_HEIGHT_KP);
+  // private final TunableNumber shooterHeightI =
+  //     new TunableNumber("Elevator Height I", ShooterPoseConstants.SHOOTER_HEIGHT_KI);
+  // private final TunableNumber shooterHeightD =
+  //     new TunableNumber("Elevator Height D", ShooterPoseConstants.SHOOTER_HEIGHT_KD);
+
+  // private final TunableNumber shooterTiltP =
+  //     new TunableNumber("Shooter Tilt P", ShooterPoseConstants.SHOOTER_TILT_KP);
+  // private final TunableNumber shooterTiltP =
+  //     new TunableNumber("Shooter Tilt I", ShooterPoseConstants.SHOOTER_TILT_KI);
+  // private final TunableNumber shooterTiltD =
+  //     new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
 
   public ShooterPose() {
     shooterHeightLeftMotor =
@@ -52,6 +63,8 @@ public class ShooterPose extends SubsystemBase {
 
     shooterHeightRightMotor.restoreFactoryDefaults();
     shooterHeightLeftMotor.restoreFactoryDefaults();
+
+    shooterHeightRightMotor.setInverted(true);
 
     shooterHeightRightMotor.enableVoltageCompensation(12);
     shooterHeightLeftMotor.enableVoltageCompensation(12);
@@ -65,12 +78,14 @@ public class ShooterPose extends SubsystemBase {
 
     shooterHeightLeftMotor.follow(shooterHeightRightMotor, true);
 
-    // shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    // shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    // shooterHeightRightMotor.setSoftLimit(
-    //     SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
-    // shooterHeightRightMotor.setSoftLimit(
-    //     SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
+    shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    shooterHeightRightMotor.setSoftLimit(
+        // SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
+        SoftLimitDirection.kForward, 4);
+    shooterHeightRightMotor.setSoftLimit(
+        // SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
+        SoftLimitDirection.kReverse, -4);
 
     shooterHeightEncoder = shooterHeightRightMotor.getEncoder();
     shooterHeightEncoder.setPositionConversionFactor(
@@ -81,31 +96,32 @@ public class ShooterPose extends SubsystemBase {
         new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterTiltMotor.restoreFactoryDefaults();
+    shooterTiltMotor.setInverted(true);
     shooterTiltMotor.enableVoltageCompensation(12);
     // shooterTiltMotor.setIdleMode(IdleMode.kBrake);
     shooterTiltMotor.setIdleMode(IdleMode.kCoast);
 
-    // shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    // shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    // shooterTiltMotor.setSoftLimit(
-    //     SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES);
-    // shooterTiltMotor.setSoftLimit(
-    //     SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
+    shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    shooterTiltMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    shooterTiltMotor.setSoftLimit(
+        SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES);
+    shooterTiltMotor.setSoftLimit(
+        SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
 
-    shooterTiltAbsoluteEncoder =
-        shooterTiltMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-    shooterTiltAbsoluteEncoder.setPositionConversionFactor(
-        ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
-    shooterTiltAbsoluteEncoder.setVelocityConversionFactor(
-        ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    shooterTiltAbsoluteEncoder.setZeroOffset(ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET);
+    // shooterTiltAbsoluteEncoder =
+    //     shooterTiltMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+    // shooterTiltAbsoluteEncoder.setPositionConversionFactor(
+    //     ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
+    // // shooterTiltAbsoluteEncoder.setVelocityConversionFactor(
+    // //     ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
+    // shooterTiltAbsoluteEncoder.setZeroOffset(ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET);
 
     shooterTiltEncoder = shooterTiltMotor.getEncoder();
     shooterTiltEncoder.setPositionConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
     shooterTiltEncoder.setVelocityConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    shooterTiltEncoder.setPosition(shooterTiltAbsoluteEncoder.getPosition());
+    shooterTiltEncoder.setPosition(-32);
 
     shooterTiltPID =
         new ProfiledPIDController(
@@ -148,6 +164,9 @@ public class ShooterPose extends SubsystemBase {
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
       setUpShuffleboard();
     }
+
+    shooterHeightRightMotor.stopMotor();
+    shooterTiltMotor.stopMotor();
   }
 
   public void setShooterDistance(double distanceInches) {
@@ -195,23 +214,27 @@ public class ShooterPose extends SubsystemBase {
   }
 
   private void setUpShuffleboard() {
-    shooterHeightP = new TunableNumber("Elevator Height P", ShooterPoseConstants.SHOOTER_HEIGHT_KP);
-    shooterHeightI = new TunableNumber("Elevator Height I", ShooterPoseConstants.SHOOTER_HEIGHT_KI);
-    shooterHeightD = new TunableNumber("Elevator Height D", ShooterPoseConstants.SHOOTER_HEIGHT_KD);
-
-    shooterTiltP = new TunableNumber("Shooter Tilt P", ShooterPoseConstants.SHOOTER_TILT_KP);
-    shooterTiltI = new TunableNumber("Shooter Tilt I", ShooterPoseConstants.SHOOTER_TILT_KI);
-    shooterTiltD = new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
-
     shooterPoseTab = Shuffleboard.getTab("Elevator");
 
-    // ShooterPoseTab.add("Elevator Height P", shooterHeightP);
-    // ShooterPoseTab.add("Elevator Height I", shooterHeightI);
-    // ShooterPoseTab.add("Elevator Height D", shooterHeightD);
+    // shooterPoseTab.addDouble("Tilt Absolute Angle", () ->
+    // shooterTiltAbsoluteEncoder.getPosition());
+    // shooterPoseTab.addDouble(
+    //     "Tilt Absolute Angle Velocity", () -> shooterTiltAbsoluteEncoder.getVelocity());
 
-    // ShooterPoseTab.add("Shooter Tilt P", shooterTiltP);
-    // ShooterPoseTab.add("Shooter Tilt I", shooterTiltI);
-    // ShooterPoseTab.add("Shooter Tilt D", shooterTiltD);
+    shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
+    shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
+
+    shooterPoseTab.addDouble("Elevator Height", () -> shooterHeightEncoder.getPosition());
+    shooterPoseTab.addDouble("Elevator Velocity", () -> shooterHeightEncoder.getVelocity());
+
+    shooterHeightP = shooterPoseTab.add("Shooter Height P", 0).getEntry();
+    shooterHeightI = shooterPoseTab.add("Shooter Height I", 0).getEntry();
+    shooterHeightD = shooterPoseTab.add("Shooter Height D", 0).getEntry();
+    shooterTiltP = shooterPoseTab.add("Shooter Tilt P", 0).getEntry();
+    shooterTiltI = shooterPoseTab.add("Shooter Tilt I", 0).getEntry();
+    shooterTiltD = shooterPoseTab.add("Shooter Tilt D", 0).getEntry();
+
+    goalEntry = shooterPoseTab.add("Goal", 0).getEntry();
   }
 
   public void periodic() {
@@ -221,29 +244,23 @@ public class ShooterPose extends SubsystemBase {
     //   // move elevator manually
     // }
 
-    /*
-    shooterTiltMotor.set(
-        shooterTiltPID.calculate(shooterTiltEncoder.getPosition())
-            + shooterTiltFeedforward.calculate(
-                shooterTiltEncoder.getPosition(), shooterTiltEncoder.getVelocity()));
+    // shooterTiltMotor.set(
+    //     shooterTiltPID.calculate(shooterTiltEncoder.getPosition())
+    //         + shooterTiltFeedforward.calculate(
+    //             shooterTiltEncoder.getPosition(), shooterTiltEncoder.getVelocity()));
 
     shooterHeightRightMotor.set(
-        shooterHeightPID.calculate(shooterHeightEncoder.getPosition())
+        shooterHeightPID.calculate(shooterHeightEncoder.getPosition(), goalEntry.getDouble(0))
             + shooterHeightFeedforward.calculate(
                 shooterHeightEncoder.getPosition(), shooterHeightEncoder.getVelocity()));
-    */
 
-    /*
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
-      shooterHeightPID.setP(shooterHeightP.get());
-      shooterHeightPID.setI(shooterHeightI.get());
-      shooterHeightPID.setD(shooterHeightD.get());
-
-      shooterTiltPID.setP(shooterTiltP.get());
-      shooterTiltPID.setI(shooterTiltI.get());
-      shooterTiltPID.setD(shooterTiltD.get());
-
+      shooterHeightPID.setP(shooterHeightP.getDouble(0));
+      shooterHeightPID.setI(shooterHeightI.getDouble(0));
+      shooterHeightPID.setD(shooterHeightD.getDouble(0));
+      shooterTiltPID.setP(shooterTiltP.getDouble(0));
+      shooterTiltPID.setI(shooterTiltI.getDouble(0));
+      shooterTiltPID.setD(shooterTiltD.getDouble(0));
     }
-    */
   }
 }
