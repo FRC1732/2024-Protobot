@@ -126,20 +126,16 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltMotor.setSoftLimit(
         SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
 
-    // shooterTiltAbsoluteEncoder =
-    //     shooterTiltMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-    // shooterTiltAbsoluteEncoder.setPositionConversionFactor(
-    //     ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
-    // // shooterTiltAbsoluteEncoder.setVelocityConversionFactor(
-    // //     ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    // shooterTiltAbsoluteEncoder.setZeroOffset(ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET);
+    shooterTiltAbsoluteEncoder = new DutyCycleEncoder(9);
+    shooterTiltAbsoluteEncoder.setDistancePerRotation(-360);
+    shooterTiltAbsoluteEncoder.setPositionOffset(ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET/360);
 
     shooterTiltEncoder = shooterTiltMotor.getEncoder();
     shooterTiltEncoder.setPositionConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
     shooterTiltEncoder.setVelocityConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    shooterTiltEncoder.setPosition(-32);
+    shooterTiltEncoder.setPosition(shooterTiltAbsoluteEncoder.getDistance());
 
     shooterTiltPID =
         new ProfiledPIDController(
@@ -234,9 +230,7 @@ public class ShooterPose extends SubsystemBase {
   private void setUpShuffleboard() {
     shooterPoseTab = Shuffleboard.getTab("Elevator");
 
-    shooterPoseTab.addDouble("Tilt Absolute Angle", () -> shooterTiltAbsoluteEncoder.get());
-    //  shooterPoseTab.addDouble(
-    //      "Tilt Absolute Angle Velocity", () -> shooterTiltAbsoluteEncoder.getVelocity());
+    shooterPoseTab.addDouble("Tilt Absolute Angle", () -> shooterTiltAbsoluteEncoder.getDistance());
 
     shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
     shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
@@ -285,7 +279,7 @@ public class ShooterPose extends SubsystemBase {
 
   public void updateLoggedIO() {
     loggedIO.Angle = shooterTiltEncoder.getPosition();
-    loggedIO.AbsoluteAngle = shooterTiltAbsoluteEncoder.get();
+    loggedIO.AbsoluteAngle = shooterTiltAbsoluteEncoder.getDistance();
     loggedIO.AngleGoal = shooterTiltPID.getGoal().position;
     loggedIO.AngleSpeed = shooterTiltMotor.get();
     loggedIO.AngleFeedforward =
