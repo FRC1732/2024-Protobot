@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooterPose;
 
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -12,6 +11,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,7 +41,7 @@ public class ShooterPose extends SubsystemBase {
 
   private CANSparkMax shooterTiltMotor;
   private RelativeEncoder shooterTiltEncoder;
-  private AbsoluteEncoder shooterTiltAbsoluteEncoder;
+  private DutyCycleEncoder shooterTiltAbsoluteEncoder;
 
   private ProfiledPIDController shooterHeightPID;
   private ElevatorFeedforward shooterHeightFeedforward;
@@ -234,10 +234,9 @@ public class ShooterPose extends SubsystemBase {
   private void setUpShuffleboard() {
     shooterPoseTab = Shuffleboard.getTab("Elevator");
 
-    // shooterPoseTab.addDouble("Tilt Absolute Angle", () ->
-    // shooterTiltAbsoluteEncoder.getPosition());
-    // shooterPoseTab.addDouble(
-    //     "Tilt Absolute Angle Velocity", () -> shooterTiltAbsoluteEncoder.getVelocity());
+    shooterPoseTab.addDouble("Tilt Absolute Angle", () -> shooterTiltAbsoluteEncoder.get());
+    //  shooterPoseTab.addDouble(
+    //      "Tilt Absolute Angle Velocity", () -> shooterTiltAbsoluteEncoder.getVelocity());
 
     shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
     shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
@@ -286,7 +285,7 @@ public class ShooterPose extends SubsystemBase {
 
   public void updateLoggedIO() {
     loggedIO.Angle = shooterTiltEncoder.getPosition();
-    loggedIO.AbsoluteAngle = shooterTiltAbsoluteEncoder.getPosition();
+    loggedIO.AbsoluteAngle = shooterTiltAbsoluteEncoder.get();
     loggedIO.AngleGoal = shooterTiltPID.getGoal().position;
     loggedIO.AngleSpeed = shooterTiltMotor.get();
     loggedIO.AngleFeedforward =

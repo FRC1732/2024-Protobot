@@ -6,18 +6,18 @@ package frc.robot.commands.feederCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.shooterPose.ShooterPose;
+import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class FeedShooterSmart extends Command {
   private final Feeder feeder;
-  private final ShooterPose shooter;
+  private final ShooterWheels shooter;
 
   /**
    * Creates a new FeedShooterSmart.
    *
    * @param feeder feeder this command uses
    */
-  public FeedShooterSmart(Feeder feeder, ShooterPose shooter) {
+  public FeedShooterSmart(Feeder feeder, ShooterWheels shooter) {
     addRequirements(feeder);
     this.feeder = feeder;
     this.shooter = shooter;
@@ -33,7 +33,10 @@ public class FeedShooterSmart extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    shooter.stopShooter();
+    feeder.stopFeederIn();
+  }
 
   // Returns true when the command should end.
   @Override

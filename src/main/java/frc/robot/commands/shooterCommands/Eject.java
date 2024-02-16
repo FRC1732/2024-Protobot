@@ -27,7 +27,6 @@ public class Eject extends Command {
   @Override
   public void initialize() {
     intake.runIntakeOut();
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.

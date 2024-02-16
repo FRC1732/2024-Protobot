@@ -1,12 +1,13 @@
-package frc.robot.commands.feederCommands;
+package frc.robot.commands.shooterCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 
-public class SetShooterPose extends Command {
+public class SetShooterDistance extends Command {
   private final ShooterPose shooterPose;
+  private double distanceInches;
 
-  public SetShooterPose(ShooterPose shooterPose, double distanceInches) {
+  public SetShooterDistance(ShooterPose shooterPose, double distanceInches) {
     this.shooterPose = shooterPose;
   }
 
