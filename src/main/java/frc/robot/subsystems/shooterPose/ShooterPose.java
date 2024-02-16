@@ -55,6 +55,8 @@ public class ShooterPose extends SubsystemBase {
   private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
   private GenericEntry shooterTiltP, shooterTiltI, shooterTiltD;
 
+  private boolean firstPeriod;
+
   // private final TunableNumber shooterHeightP =
   //     new TunableNumber("Elevator Height P", ShooterPoseConstants.SHOOTER_HEIGHT_KP);
   // private final TunableNumber shooterHeightI =
@@ -70,6 +72,7 @@ public class ShooterPose extends SubsystemBase {
   //     new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
 
   public ShooterPose() {
+    firstPeriod = true;
     shooterHeightLeftMotor =
         new CANSparkMax(
             ShooterPoseConstants.SHOOTER_HEIGHT_LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
@@ -128,14 +131,15 @@ public class ShooterPose extends SubsystemBase {
 
     shooterTiltAbsoluteEncoder = new DutyCycleEncoder(9);
     shooterTiltAbsoluteEncoder.setDistancePerRotation(-360);
-    shooterTiltAbsoluteEncoder.setPositionOffset(ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET/360);
+    shooterTiltAbsoluteEncoder.setPositionOffset(
+        ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET / 360.0);
 
     shooterTiltEncoder = shooterTiltMotor.getEncoder();
     shooterTiltEncoder.setPositionConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
     shooterTiltEncoder.setVelocityConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    shooterTiltEncoder.setPosition(shooterTiltAbsoluteEncoder.getDistance());
+    
 
     shooterTiltPID =
         new ProfiledPIDController(
@@ -230,6 +234,7 @@ public class ShooterPose extends SubsystemBase {
   private void setUpShuffleboard() {
     shooterPoseTab = Shuffleboard.getTab("Elevator");
 
+    double test = shooterTiltAbsoluteEncoder.getDistance();
     shooterPoseTab.addDouble("Tilt Absolute Angle", () -> shooterTiltAbsoluteEncoder.getDistance());
 
     shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
@@ -259,6 +264,11 @@ public class ShooterPose extends SubsystemBase {
     //     shooterTiltPID.calculate(shooterTiltEncoder.getPosition())
     //         + shooterTiltFeedforward.calculate(
     //             shooterTiltEncoder.getPosition(), shooterTiltEncoder.getVelocity()));
+
+    if(firstPeriod) {
+      shooterTiltEncoder.setPosition(shooterTiltAbsoluteEncoder.getDistance());
+      firstPeriod = false;
+    }
 
     shooterHeightRightMotor.set(
         shooterHeightPID.calculate(shooterHeightEncoder.getPosition(), goalEntry.getDouble(0))
