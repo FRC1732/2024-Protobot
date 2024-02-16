@@ -26,6 +26,9 @@ public class IntakeNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (feeder.hasNote()) {
+      return;
+    }
     intake.runIntake();
     feeder.runFeederIn();
     System.out.println("Intake and Feeder running in");

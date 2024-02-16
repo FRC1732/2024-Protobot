@@ -15,8 +15,24 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLog;
 
 public class ShooterPose extends SubsystemBase {
+
+  @AutoLog
+  public static class ShooterPoseLoggedIO {
+    double Angle = 0.0;
+    double AbsoluteAngle = 0.0;
+    double AngleGoal = 0.0;
+    double AngleSpeed = 0.0;
+    double AngleFeedforward = 0.0;
+    double Height = 0.0;
+    double HeightGoal = 0.0;
+    double HeightSpeed = 0.0;
+    double HeightFeedforward = 0.0;
+  }
+
+  private final ShooterPoseLoggedIO loggedIO = new ShooterPoseLoggedIO();
 
   private CANSparkMax shooterHeightLeftMotor;
   private CANSparkMax shooterHeightRightMotor;
@@ -90,6 +106,8 @@ public class ShooterPose extends SubsystemBase {
     shooterHeightEncoder = shooterHeightRightMotor.getEncoder();
     shooterHeightEncoder.setPositionConversionFactor(
         ShooterPoseConstants.SHOOTER_HEIGHT_INCHES_PER_ROTATION);
+    shooterHeightEncoder.setVelocityConversionFactor(
+        ShooterPoseConstants.SHOOTER_HEIGHT_RPM_TO_INCHES_PER_SECOND);
     shooterHeightEncoder.setPosition(0);
 
     shooterTiltMotor =
@@ -262,5 +280,23 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltPID.setI(shooterTiltI.getDouble(0));
       shooterTiltPID.setD(shooterTiltD.getDouble(0));
     }
+
+    updateLoggedIO();
+  }
+
+  public void updateLoggedIO() {
+    loggedIO.Angle = shooterTiltEncoder.getPosition();
+    loggedIO.AbsoluteAngle = shooterTiltAbsoluteEncoder.getPosition();
+    loggedIO.AngleGoal = shooterTiltPID.getGoal().position;
+    loggedIO.AngleSpeed = shooterTiltMotor.get();
+    loggedIO.AngleFeedforward =
+        shooterTiltFeedforward.calculate(
+            shooterTiltEncoder.getPosition(), shooterTiltEncoder.getVelocity());
+    loggedIO.Height = shooterHeightEncoder.getPosition();
+    loggedIO.HeightGoal = shooterHeightPID.getGoal().position;
+    loggedIO.HeightSpeed = shooterHeightRightMotor.get();
+    loggedIO.HeightFeedforward =
+        shooterHeightFeedforward.calculate(
+            shooterHeightEncoder.getPosition(), shooterHeightEncoder.getVelocity());
   }
 }
