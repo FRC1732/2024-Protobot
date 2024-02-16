@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.AutoLog;
 public class ShooterPose extends SubsystemBase {
 
   @AutoLog
-  public static class ShooterPoseLoggedIO {
+  public static class ShooterPoseIOInput {
     double Angle = 0.0;
     double AbsoluteAngle = 0.0;
     double AngleGoal = 0.0;
@@ -32,7 +32,7 @@ public class ShooterPose extends SubsystemBase {
     double HeightFeedforward = 0.0;
   }
 
-  private final ShooterPoseLoggedIO loggedIO = new ShooterPoseLoggedIO();
+  private final ShooterPoseIOInput loggedIO = new ShooterPoseIOInputAutoLogged();
 
   private CANSparkMax shooterHeightLeftMotor;
   private CANSparkMax shooterHeightRightMotor;
