@@ -31,6 +31,7 @@ import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizatio
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.intakeCommands.IntakeNote;
+import frc.robot.commands.shooterCommands.Eject;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
@@ -204,6 +205,7 @@ public class RobotContainer {
         .whileTrue(new IntakeNote(intake, feeder, null).andThen(new RunShooterFast(shooterWheels)));
     oi.manualFeedButton().onFalse(new StopShooter(shooterWheels));
     oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
+    oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
 
     configureDrivetrainCommands();
 

@@ -26,9 +26,8 @@ public class Eject extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.runFeederOut();
     intake.runIntakeOut();
-    shooter.setShooterSpeedBackwards();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,7 +36,9 @@ public class Eject extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intake.stopIntake();
+  }
 
   // Returns true when the command should end.
   @Override
