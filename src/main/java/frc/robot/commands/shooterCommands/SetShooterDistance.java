@@ -17,7 +17,7 @@ public class SetShooterDistance extends Command {
 
   public void end(boolean isInterupted) {}
 
-  public boolean isFinnished() {
-    return true;
+  public boolean isFinished() {
+    return false;
   }
 }
