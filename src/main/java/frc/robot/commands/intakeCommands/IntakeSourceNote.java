@@ -11,7 +11,6 @@ import frc.robot.subsystems.shooterPose.ShooterPose;
 public class IntakeSourceNote extends Command {
   private final Feeder feeder;
   private final ShooterPose shooterPose;
-
   /**
    * Creates a new IntakeSourceNote.
    *
@@ -29,7 +28,6 @@ public class IntakeSourceNote extends Command {
   @Override
   public void initialize() {
     feeder.runFeederIn();
-    // FIXME:needs to check for a boolean for a position
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -39,12 +37,16 @@ public class IntakeSourceNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.stopFeederIn();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return feeder.hasNote();
+    if (shooterPose.isAtGoal()) {
+      feeder.stopFeederIn();
+      return true;
+    } else { 
+      return false;
+    }
   }
 }
