@@ -101,11 +101,10 @@ public class ShooterPose extends SubsystemBase {
     shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     shooterHeightRightMotor.setSoftLimit(
-        // SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
-        SoftLimitDirection.kForward, 4);
+       SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
+       
     shooterHeightRightMotor.setSoftLimit(
-        // SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
-        SoftLimitDirection.kReverse, -4);
+        SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
 
     shooterHeightEncoder = shooterHeightRightMotor.getEncoder();
     shooterHeightEncoder.setPositionConversionFactor(
