@@ -244,6 +244,8 @@ public class ShooterPose extends SubsystemBase {
     shooterPoseTab.addDouble("Elevator Height", () -> shooterHeightEncoder.getPosition());
     shooterPoseTab.addDouble("Elevator Velocity", () -> shooterHeightEncoder.getVelocity());
 
+    shooterPoseTab.addBoolean("Lower Limit Switch", () -> shooterHeightLimitSwitch.isPressed());
+
     shooterPoseTab.addDouble(
         "Feed Forward",
         () -> shooterHeightFeedforward.calculate(shooterHeightEncoder.getVelocity()));
@@ -259,11 +261,11 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void periodic() {
-    // if (shooterHeightLimitSwitch.isPressed()) {
-    //   shooterHeightEncoder.setPosition(0);
-    // } else if (shooterHeightPID.atGoal() && shooterHeightPID.getGoal().position == 0) {
-    //   // move elevator manually
-    // }
+    if (shooterHeightLimitSwitch.isPressed()) {
+       shooterHeightEncoder.setPosition(0);
+     } else if (shooterHeightPID.atGoal() && shooterHeightPID.getGoal().position == 0) {
+       // move elevator manually
+     }
 
     // shooterTiltMotor.set(
     //     shooterTiltPID.calculate(shooterTiltEncoder.getPosition())
