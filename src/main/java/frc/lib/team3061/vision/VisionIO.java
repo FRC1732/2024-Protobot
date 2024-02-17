@@ -14,10 +14,10 @@ import org.littletonrobotics.junction.AutoLog;
 public interface VisionIO {
   @AutoLog
   public static class VisionIOInputs {
-    Pose3d estimatedRobotPose = new Pose3d();
-    double estimatedRobotPoseTimestamp = 0.0;
-    int[] estimatedRobotPoseTags = new int[] {};
-    double lastCameraTimestamp = 0.0;
+    public Pose3d estimatedRobotPose = new Pose3d();
+    public double estimatedRobotPoseTimestamp = 0.0;
+    public int[] estimatedRobotPoseTags = new int[] {};
+    public double lastCameraTimestamp = 0.0;
   }
 
   /**
