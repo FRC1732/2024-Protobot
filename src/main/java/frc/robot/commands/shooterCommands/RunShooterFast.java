@@ -19,5 +19,6 @@ public class RunShooterFast extends Command {
   public void end(boolean isInterupted) {}
 
   public boolean isFinished() {
-    return false; }
+    return false;
+  }
 }

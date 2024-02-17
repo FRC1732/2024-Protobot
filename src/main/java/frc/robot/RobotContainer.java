@@ -25,7 +25,6 @@ import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
 import frc.lib.team3061.gyro.GyroIO;
 import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
 import frc.lib.team3061.leds.LEDs;
-import frc.lib.team3061.vision.Vision;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.commands.TeleopSwerve;
@@ -43,7 +42,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.subsystem.Subsystem;
-
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
