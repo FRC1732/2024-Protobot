@@ -35,6 +35,7 @@ import frc.robot.commands.shooterCommands.Eject;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
+import frc.robot.limelightVision.VisionSubsystem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.feeder.Feeder;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.subsystem.Subsystem;
+
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -57,7 +59,7 @@ public class RobotContainer {
   private RobotConfig config;
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Red;
-  private Vision vision;
+  private VisionSubsystem visionSubsystem;
   private Subsystem subsystem;
   public Intake intake;
   public Feeder feeder;
@@ -149,6 +151,8 @@ public class RobotContainer {
     feeder = new Feeder();
     shooterWheels = new ShooterWheels();
     shooterPose = new ShooterPose();
+
+    visionSubsystem = new VisionSubsystem();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
