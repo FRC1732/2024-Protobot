@@ -78,6 +78,7 @@ public class ShooterWheels extends SubsystemBase {
   public void setUpShuffleBoard() {
     shooterWheelsTab = Shuffleboard.getTab("Shooter Wheels");
 
+    shooterWheelsTab.add("Current Shooter Speed", shooterHighMotor.get());
     shooterWheelsTab.add("Shooter Speed Backwards", shooterSpeedBackwards);
     shooterWheelsTab.add("Shooter Speed Slow", shooterSpeedSlow);
     shooterWheelsTab.add("Shooter Speed Fast", shooterSpeedFast);
