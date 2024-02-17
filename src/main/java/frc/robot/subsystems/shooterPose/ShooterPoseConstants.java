@@ -25,9 +25,9 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_HEIGHT_KP = 0;
   public static final double SHOOTER_HEIGHT_KI = 0;
   public static final double SHOOTER_HEIGHT_KD = 0;
-  public static final double SHOOTER_HEIGHT_KG = 0.23; // V
-  public static final double SHOOTER_HEIGHT_KV = 0.334010; // V*s/in
-  public static final double SHOOTER_HEIGHT_KA = 0.000762; // V*s^2/in
+  public static final double SHOOTER_HEIGHT_KG = 0.23/18; // V
+  public static final double SHOOTER_HEIGHT_KV = 0.334010/18; // V*s/in
+  public static final double SHOOTER_HEIGHT_KA = 0.000762/18; // V*s^2/in
   public static final double SHOOTER_HEIGHT_KS = 0;
 
   public static final double SHOOTER_TILT_MAX_VELOCITY = 506.25; // deg/s

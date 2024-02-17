@@ -136,7 +136,7 @@ public class ShooterPose extends SubsystemBase {
         ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
     shooterTiltEncoder.setVelocityConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    shooterTiltEncoder.setPosition(42);
+    shooterTiltEncoder.setPosition(-100);
 
     shooterTiltPID =
         new ProfiledPIDController(
@@ -239,6 +239,8 @@ public class ShooterPose extends SubsystemBase {
     shooterPoseTab.addDouble("Elevator Height", () -> shooterHeightEncoder.getPosition());
     shooterPoseTab.addDouble("Elevator Velocity", () -> shooterHeightEncoder.getVelocity());
 
+    shooterPoseTab.addDouble("Feed Forward", () -> shooterHeightFeedforward.calculate(shooterHeightEncoder.getVelocity()));
+
     shooterHeightP = shooterPoseTab.add("Shooter Height P", 0).getEntry();
     shooterHeightI = shooterPoseTab.add("Shooter Height I", 0).getEntry();
     shooterHeightD = shooterPoseTab.add("Shooter Height D", 0).getEntry();
@@ -261,7 +263,8 @@ public class ShooterPose extends SubsystemBase {
     //         + shooterTiltFeedforward.calculate(
     //             shooterTiltEncoder.getPosition(), shooterTiltEncoder.getVelocity()));
 
-    if(shooterTiltAbsoluteEncoder.isConnected() && firstPeriod) {
+    if(Math.abs(shooterTiltEncoder.getPosition()-shooterTiltAbsoluteEncoder.getAbsolutePosition() * -360
+              + ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET) >= 10) {
       shooterTiltEncoder.setPosition(
           shooterTiltAbsoluteEncoder.getAbsolutePosition() * -360
               + ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET);
@@ -270,8 +273,8 @@ public class ShooterPose extends SubsystemBase {
 
     shooterHeightRightMotor.set(
         shooterHeightPID.calculate(shooterHeightEncoder.getPosition(), goalEntry.getDouble(0))
-            + shooterHeightFeedforward.calculate(
-                shooterHeightEncoder.getPosition(), shooterHeightEncoder.getVelocity()));
+            + shooterHeightFeedforward.calculate(shooterHeightEncoder.getVelocity()));
+    
 
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
       shooterHeightPID.setP(shooterHeightP.getDouble(0));
