@@ -101,11 +101,10 @@ public class ShooterPose extends SubsystemBase {
     shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     shooterHeightRightMotor.setSoftLimit(
-        // SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
-        SoftLimitDirection.kForward, 4);
+       SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
+       
     shooterHeightRightMotor.setSoftLimit(
-        // SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
-        SoftLimitDirection.kReverse, -4);
+        SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
 
     shooterHeightEncoder = shooterHeightRightMotor.getEncoder();
     shooterHeightEncoder.setPositionConversionFactor(
@@ -190,7 +189,7 @@ public class ShooterPose extends SubsystemBase {
       return;
     }
     // @TODO Determine if we need to reset PID controllers here
-    shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_POSE_HANDOFF_SETPOINT);
+    shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
     double speakerHeight = 83, shooterHeight = 27;
     double targetAngle =
         -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
@@ -203,31 +202,35 @@ public class ShooterPose extends SubsystemBase {
 
     switch (pose) {
       case HANDOFF:
-        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_POSE_HANDOFF_SETPOINT);
+        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
         shooterTiltPID.setGoal(ShooterPoseConstants.SHOOTER_TILT_HANDOFF_SETPOINT);
         break;
 
       case SUBWOOFER:
-        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_POSE_SUBWOOFER_SETPOINT);
+        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_SUBWOOFER_SETPOINT);
         shooterTiltPID.setGoal(ShooterPoseConstants.SHOOTER_TILT_SUBWOOFER_SETPOINT);
         break;
 
       case AMP:
-        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_POSE_AMP_SETPOINT);
+        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_AMP_SETPOINT);
         shooterTiltPID.setGoal(ShooterPoseConstants.SHOOTER_TILT_AMP_SETPOINT);
         break;
 
       case TRAP:
-        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_POSE_TRAP_SETPOINT);
+        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_SETPOINT);
         shooterTiltPID.setGoal(ShooterPoseConstants.SHOOTER_TILT_TRAP_SETPOINT);
         break;
 
       case SOURCE:
-        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_POSE_SOURCE_SETPOINT);
+        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_SOURCE_SETPOINT);
         shooterTiltPID.setGoal(ShooterPoseConstants.SHOOTER_TILT_SOURCE_SETPOINT);
         break;
     }
   }
+  public boolean isAtGoal() {
+    return shooterHeightPID.atGoal();
+  }
+
 
   private void setUpShuffleboard() {
     shooterPoseTab = Shuffleboard.getTab("Elevator");

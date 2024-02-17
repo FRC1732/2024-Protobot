@@ -15,20 +15,21 @@ public class ShooterPoseConstants {
   public static final double MAX_SHOOTER_HEIGHT_INCHES = 16;
   public static final double SHOOTER_HEIGHT_GOAL_TOLERANCE_INCHES = 0.5;
 
-  public static final double MIN_SHOOTER_TILT_DEGREES = -60;
+  public static final double MIN_SHOOTER_TILT_DEGREES = -37.5;
   public static final double MAX_SHOOTER_TILT_DEGREES = 102.5;
   public static final double SHOOTER_TILT_ABSOLUTE_OFFSET =
       60.5 - 36.366 + 4.428 + 291.062; // 0 is a flat shot, CCW is positive, shooter facing left
   public static final double SHOOTER_TILT_GOAL_TOLERANCE_DEGREES = 1;
+  public static final double SHOOTER_TILT_MAX_ABOLUTE_RELATIVE_ERROR_DEG = 10;
 
   public static final double SHOOTER_HEIGHT_MAX_VELOCITY = 35.17; // in/s
   public static final double SHOOTER_HEIGHT_MAX_ACCELERATION = 100; // in/s^2 838.75 calculated max
   public static final double SHOOTER_HEIGHT_KP = 0;
   public static final double SHOOTER_HEIGHT_KI = 0;
   public static final double SHOOTER_HEIGHT_KD = 0;
-  public static final double SHOOTER_HEIGHT_KG = 0.23 / 18; // V
-  public static final double SHOOTER_HEIGHT_KV = 0.334010 / 18; // V*s/in
-  public static final double SHOOTER_HEIGHT_KA = 0.000762 / 18; // V*s^2/in
+  public static final double SHOOTER_HEIGHT_KG = 0.23 / 12 * .8; // V
+  public static final double SHOOTER_HEIGHT_KV = 0; // 0.334010 / 12 * .8; // V*s/in
+  public static final double SHOOTER_HEIGHT_KA = 0; // 0.000762 / 12 * .8; // V*s^2/in
   public static final double SHOOTER_HEIGHT_KS = 0;
 
   public static final double SHOOTER_TILT_MAX_VELOCITY = 506.25; // deg/s
@@ -36,9 +37,9 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_TILT_KP = 0;
   public static final double SHOOTER_TILT_KI = 0;
   public static final double SHOOTER_TILT_KD = 0;
-  public static final double SHOOTER_TILT_KG = 0.77; // V
-  public static final double SHOOTER_TILT_KV = 0.021778; // V*s/deg
-  public static final double SHOOTER_TILT_KA = 0.000361; // V*s^2/deg
+  public static final double SHOOTER_TILT_KG = 0.77 / 12; // V
+  public static final double SHOOTER_TILT_KV = 0; // 0.021778; // V*s/deg
+  public static final double SHOOTER_TILT_KA = 0; // 0.000361; // V*s^2/deg
   public static final double SHOOTER_TILT_KS = 0;
 
   public static final double SHOOTER_TILT_DEGREES_PER_ROTATION =
@@ -52,13 +53,13 @@ public class ShooterPoseConstants {
 
   public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -37.5;
   public static final double SHOOTER_TILT_SUBWOOFER_SETPOINT = -60;
-  public static final double SHOOTER_TILT_AMP_SETPOINT = 42.5;
+  public static final double SHOOTER_TILT_AMP_SETPOINT = 60;
   public static final double SHOOTER_TILT_TRAP_SETPOINT = 30;
   public static final double SHOOTER_TILT_SOURCE_SETPOINT = 102.5;
 
-  public static final double SHOOTER_POSE_HANDOFF_SETPOINT = 0;
-  public static final double SHOOTER_POSE_SUBWOOFER_SETPOINT = 0;
-  public static final double SHOOTER_POSE_AMP_SETPOINT = 12;
-  public static final double SHOOTER_POSE_TRAP_SETPOINT = 16;
-  public static final double SHOOTER_POSE_SOURCE_SETPOINT = 4;
+  public static final double SHOOTER_HEIGHT_HANDOFF_SETPOINT = 0;
+  public static final double SHOOTER_HEIGHT_SUBWOOFER_SETPOINT = 0;
+  public static final double SHOOTER_HEIGHT_AMP_SETPOINT = 6;
+  public static final double SHOOTER_HEIGHT_TRAP_SETPOINT = 16;
+  public static final double SHOOTER_HEIGHT_SOURCE_SETPOINT = 4;
 }
