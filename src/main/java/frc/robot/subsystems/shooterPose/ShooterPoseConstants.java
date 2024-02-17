@@ -58,7 +58,7 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_TILT_SOURCE_SETPOINT = 102.5;
 
   public static final double SHOOTER_HEIGHT_HANDOFF_SETPOINT = 0;
-  public static final double SHOOTER_HIEGHT_SUBWOOFER_SETPOINT = 0;
+  public static final double SHOOTER_HEIGHT_SUBWOOFER_SETPOINT = 0;
   public static final double SHOOTER_HEIGHT_AMP_SETPOINT = 6;
   public static final double SHOOTER_HEIGHT_TRAP_SETPOINT = 16;
   public static final double SHOOTER_HEIGHT_SOURCE_SETPOINT = 4;
