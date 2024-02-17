@@ -102,8 +102,9 @@ public class Climber extends SubsystemBase {
       climberRightPID.setI(climberRightI.getDouble(0));
       climberRightPID.setD(climberRightD.getDouble(0));
     }
-
-    updateInputs();
+    if(ClimberConstants.CLIMBER_LOGGING) {
+      updateInputs();
+    }
   }
 
   private void updateInputs() {

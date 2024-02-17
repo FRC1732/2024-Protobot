@@ -8,4 +8,6 @@ public class IntakeConstants {
 
   public static final boolean INTAKE_MOTOR_L_INVERTED = false;
   public static final boolean INTAKE_MAIN_MOTOR_INVERTED = true;
+
+  public static final boolean INTAKE_LOGGING = true;
 }

@@ -50,7 +50,7 @@ public class ShooterWheels extends SubsystemBase {
     shooterSpeedStopped =
         new TunableNumber("Shooter Speed Stopped", ShooterWheelsConstants.SHOOTER_SPEED_STOPPED);
 
-    if (TESTING) {
+    if (SHOOTER_WHEELS_TESTING) {
       setUpShuffleBoard();
     }
   }
@@ -85,7 +85,9 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void periodic() {
-    updateInputs();
+    if(SHOOTER_WHEELS_LOGGING) {
+      updateInputs();
+    }
   }
 
   private void updateInputs() {

@@ -17,4 +17,6 @@ public class FeederConstants {
   public static final boolean SHOOTER_MOTOR_RIGHT_INVERTED = false;
 
   public static final int ANALOG_INPUT_LOCATION = 1;
+
+  public static final boolean FEEDER_LOGGING = true;
 }

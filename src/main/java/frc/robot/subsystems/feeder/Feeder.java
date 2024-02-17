@@ -5,6 +5,7 @@ import static frc.robot.subsystems.feeder.FeederConstants.*;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
+import com.google.flatbuffers.Constants;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -87,6 +88,10 @@ public class Feeder extends SubsystemBase {
       if (feederMotorSpeed.get() != 0) {
         feederMotor.set(feederMotorSpeed.get());
       }
+    }
+
+    if(Constants.FEEDER_LOGGING) {
+      updateInputs();
     }
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
     // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);

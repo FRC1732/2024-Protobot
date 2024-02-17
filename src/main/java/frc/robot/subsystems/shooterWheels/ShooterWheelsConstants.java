@@ -8,7 +8,8 @@ public class ShooterWheelsConstants {
     throw new IllegalStateException(CONSTRUCTOR_EXCEPTION);
   }
 
-  public static final boolean TESTING = false;
+  public static final boolean SHOOTER_WHEELS_TESTING = false;
+  public static final boolean SHOOTER_WHEELS_LOGGING = true;
   public static final String SUBSYSTEM_NAME = "Shooter";
 
   public static final int SHOOTER_HIGH_MOTOR_CAN_ID = 58; // TODO: set to comp bot values
