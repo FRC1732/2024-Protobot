@@ -130,16 +130,13 @@ public class ShooterPose extends SubsystemBase {
         SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
 
     shooterTiltAbsoluteEncoder = new DutyCycleEncoder(9);
-    shooterTiltAbsoluteEncoder.setDistancePerRotation(-360);
-    shooterTiltAbsoluteEncoder.setPositionOffset(
-        ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET / 360.0);
-
+    
     shooterTiltEncoder = shooterTiltMotor.getEncoder();
     shooterTiltEncoder.setPositionConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
     shooterTiltEncoder.setVelocityConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    
+    shooterTiltEncoder.setPosition(42);
 
     shooterTiltPID =
         new ProfiledPIDController(
@@ -234,8 +231,7 @@ public class ShooterPose extends SubsystemBase {
   private void setUpShuffleboard() {
     shooterPoseTab = Shuffleboard.getTab("Elevator");
 
-    double test = shooterTiltAbsoluteEncoder.getDistance();
-    shooterPoseTab.addDouble("Tilt Absolute Angle", () -> shooterTiltAbsoluteEncoder.getDistance());
+    shooterPoseTab.addDouble("Tilt Absolute Angle", () -> shooterTiltAbsoluteEncoder.getAbsolutePosition() * -360 + ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET);
 
     shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
     shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
@@ -265,8 +261,10 @@ public class ShooterPose extends SubsystemBase {
     //         + shooterTiltFeedforward.calculate(
     //             shooterTiltEncoder.getPosition(), shooterTiltEncoder.getVelocity()));
 
-    if(firstPeriod) {
-      shooterTiltEncoder.setPosition(shooterTiltAbsoluteEncoder.getDistance());
+    if(shooterTiltAbsoluteEncoder.isConnected() && firstPeriod) {
+      shooterTiltEncoder.setPosition(
+          shooterTiltAbsoluteEncoder.getAbsolutePosition() * -360
+              + ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET);
       firstPeriod = false;
     }
 
