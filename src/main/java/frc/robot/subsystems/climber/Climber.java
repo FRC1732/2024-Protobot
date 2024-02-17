@@ -1,14 +1,13 @@
 package frc.robot.subsystems.climber;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.Logger;
-
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
 
@@ -102,7 +101,7 @@ public class Climber extends SubsystemBase {
       climberRightPID.setI(climberRightI.getDouble(0));
       climberRightPID.setD(climberRightD.getDouble(0));
     }
-    if(ClimberConstants.CLIMBER_LOGGING) {
+    if (ClimberConstants.CLIMBER_LOGGING) {
       updateInputs();
     }
   }

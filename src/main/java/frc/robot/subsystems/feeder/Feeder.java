@@ -2,16 +2,14 @@ package frc.robot.subsystems.feeder;
 
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.Logger;
-
-import com.google.flatbuffers.Constants;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
 
@@ -22,7 +20,7 @@ public class Feeder extends SubsystemBase {
   }
 
   private FeederIOInputAutoLogged inputs = new FeederIOInputAutoLogged();
-  
+
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
   private final TunableNumber feederMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
@@ -90,7 +88,7 @@ public class Feeder extends SubsystemBase {
       }
     }
 
-    if(Constants.FEEDER_LOGGING) {
+    if (FeederConstants.FEEDER_LOGGING) {
       updateInputs();
     }
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
@@ -103,5 +101,4 @@ public class Feeder extends SubsystemBase {
 
     Logger.processInputs("Feeder", inputs);
   }
-
 }

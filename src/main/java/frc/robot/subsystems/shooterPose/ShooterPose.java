@@ -293,7 +293,7 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltPID.setI(shooterTiltI.getDouble(0));
       shooterTiltPID.setD(shooterTiltD.getDouble(0));
     }
-    if(ShooterPoseConstants.SHOOTER_POSE_LOGGING) {
+    if (ShooterPoseConstants.SHOOTER_POSE_LOGGING) {
       updateLoggedIO();
     }
   }

@@ -85,7 +85,7 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void periodic() {
-    if(SHOOTER_WHEELS_LOGGING) {
+    if (SHOOTER_WHEELS_LOGGING) {
       updateInputs();
     }
   }

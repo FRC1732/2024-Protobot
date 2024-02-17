@@ -2,9 +2,6 @@ package frc.robot.subsystems.intake;
 
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import static frc.robot.subsystems.feeder.FeederConstants.FEEDER_LOGGING;
-
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -36,7 +33,7 @@ public class Intake extends SubsystemBase {
     intakeCentererMotor.setInverted(IntakeConstants.INTAKE_MAIN_MOTOR_INVERTED);
   }
 
-    public void runIntake() {
+  public void runIntake() {
     intakeMainMotor.set(intakeMainMotorSpeed);
     intakeCentererMotor.set(intakeCentererMotorSpeed);
   }
@@ -54,8 +51,8 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(IntakeConstants.INTAKE_LOGGING) {
-     updateInputs();
+    if (IntakeConstants.INTAKE_LOGGING) {
+      updateInputs();
     }
   }
 
