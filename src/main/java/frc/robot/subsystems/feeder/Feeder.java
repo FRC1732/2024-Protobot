@@ -2,6 +2,9 @@ package frc.robot.subsystems.feeder;
 
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -11,9 +14,17 @@ import frc.lib.team6328.util.TunableNumber;
 
 public class Feeder extends SubsystemBase {
 
+  @AutoLog
+  public static class FeederIOInput {
+    double feederMotorSpeed = 0.0;
+    double analogBeamBreakSensor = 0.0;
+  }
+
+  private FeederIOInputAutoLogged inputs = new FeederIOInputAutoLogged();
+  
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
-  private final TunableNumber CentererMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
+  private final TunableNumber feederMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
 
   public final CANSparkMax feederMotor;
 
@@ -73,44 +84,19 @@ public class Feeder extends SubsystemBase {
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
     // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
     if (TESTING) {
-      if (CentererMotorSpeed.get() != 0) {
-        feederMotor.set(CentererMotorSpeed.get());
+      if (feederMotorSpeed.get() != 0) {
+        feederMotor.set(feederMotorSpeed.get());
       }
     }
     // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
     // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
   }
 
-  /*
-  *  private Command getSystemCheckCommand() {
-     return Commands.sequence(
-             Commands.run(() -> io.setMotorPower(0.3)).withTimeout(1.0),
-             Commands.runOnce(
-                 () -> {
-                   if (inputs.velocityRPM < 2.0) {
-                     FaultReporter.getInstance()
-                         .addFault(
-                             SUBSYSTEM_NAME,
-                             "[System Check] Subsystem motor not moving as fast as expected",
-                             false,
-                             true);
-                   }
-                 }),
-             Commands.run(() -> io.setMotorPower(-0.2)).withTimeout(1.0),
-             Commands.runOnce(
-                 () -> {
-                   if (inputs.velocityRPM > -2.0) {
-                     FaultReporter.getInstance()
-                         .addFault(
-                             SUBSYSTEM_NAME,
-                             "[System Check] Subsystem motor moving too slow or in the wrong direction",
-                             false,
-                             true);
-                   }
-                 }))
-         .until(() -> !FaultReporter.getInstance().getFaults(SUBSYSTEM_NAME).isEmpty())
-         .andThen(Commands.runOnce(() -> io.setMotorPower(0.0)));
-   }
-  */
+  private void updateInputs() {
+    inputs.feederMotorSpeed = feederMotor.get();
+    inputs.analogBeamBreakSensor = analog.getValue();
+
+    Logger.processInputs("Feeder", inputs);
+  }
 
 }

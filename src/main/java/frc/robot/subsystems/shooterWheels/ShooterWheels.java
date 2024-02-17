@@ -8,8 +8,19 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 public class ShooterWheels extends SubsystemBase {
+
+  @AutoLog
+  public static class ShooterWheelsIOInput {
+    double shooteHighMotorSpeed = 0.0;
+    double shooteLowMotorSpeed = 0.0;
+  }
+
+  private ShooterWheelsIOInputAutoLogged input = new ShooterWheelsIOInputAutoLogged();
+
   private CANSparkFlex shooterHighMotor;
   private CANSparkFlex shooterLowMotor;
 
@@ -73,5 +84,14 @@ public class ShooterWheels extends SubsystemBase {
     shooterWheelsTab.add("Shooter Speed Stopped", shooterSpeedStopped);
   }
 
-  public void periodic() {}
+  public void periodic() {
+    updateInputs();
+  }
+
+  private void updateInputs() {
+    input.shooteHighMotorSpeed = shooterHighMotor.get();
+    input.shooteLowMotorSpeed = shooterLowMotor.get();
+
+    Logger.processInputs("Shooter Wheels", input);
+  }
 }

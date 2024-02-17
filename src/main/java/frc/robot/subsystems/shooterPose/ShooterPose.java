@@ -299,8 +299,9 @@ public class ShooterPose extends SubsystemBase {
 
   public void updateLoggedIO() {
     loggedIO.Angle = shooterTiltEncoder.getPosition();
-    loggedIO.AbsoluteAngle = shooterTiltAbsoluteEncoder.getAbsolutePosition() * -360
-                + ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET;
+    loggedIO.AbsoluteAngle =
+        shooterTiltAbsoluteEncoder.getAbsolutePosition() * -360
+            + ShooterPoseConstants.SHOOTER_TILT_ABSOLUTE_OFFSET;
     loggedIO.AngleGoal = shooterTiltPID.getGoal().position;
     loggedIO.AngleSpeed = shooterTiltMotor.get();
     loggedIO.AngleFeedforward =
@@ -312,6 +313,6 @@ public class ShooterPose extends SubsystemBase {
     loggedIO.HeightFeedforward =
         shooterHeightFeedforward.calculate(shooterHeightEncoder.getVelocity());
 
-    Logger.processInputs("ShooterPose", loggedIO);
+    Logger.processInputs("Shooter Pose", loggedIO);
   }
 }

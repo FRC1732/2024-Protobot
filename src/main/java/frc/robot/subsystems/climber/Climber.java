@@ -1,5 +1,8 @@
 package frc.robot.subsystems.climber;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
@@ -8,6 +11,18 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
+
+  @AutoLog
+  public static class ClimberIOInput {
+    double climberLeftMotorSpeed = 0.0;
+    double climberRightMotorSpeed = 0.0;
+    double climberLeftMotorPosition = 0.0;
+    double climberRightMotorPosition = 0.0;
+    double climberLeftMotorSetpoint = 0.0;
+    double climberRightMotorSetpoint = 0.0;
+  }
+
+  private ClimberIOInputAutoLogged inputs = new ClimberIOInputAutoLogged();
 
   private CANSparkMax climberLeftMotor;
   private CANSparkMax climberRightMotor;
@@ -87,5 +102,18 @@ public class Climber extends SubsystemBase {
       climberRightPID.setI(climberRightI.getDouble(0));
       climberRightPID.setD(climberRightD.getDouble(0));
     }
+
+    updateInputs();
+  }
+
+  private void updateInputs() {
+    inputs.climberLeftMotorSpeed = climberLeftMotor.get();
+    inputs.climberRightMotorSpeed = climberRightMotor.get();
+    inputs.climberLeftMotorPosition = climberLeftMotor.getEncoder().getPosition();
+    inputs.climberRightMotorPosition = climberRightMotor.getEncoder().getPosition();
+    inputs.climberLeftMotorSetpoint = climberLeftPID.getSetpoint();
+    inputs.climberRightMotorSetpoint = climberRightPID.getSetpoint();
+
+    Logger.processInputs("Climber", inputs);
   }
 }
