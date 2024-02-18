@@ -28,17 +28,15 @@ public class VisionIOLimelight implements VisionIO {
             - (LimelightHelpers.getLatency_Capture(limelightName) / 1000.0);
     boolean newResult = Math.abs(latestTimestamp - lastTimestamp) > 1e-5;
 
-    if (newResult) { // FIXME untested, needs to be tested to ensure if this actually works
-      inputs.estimatedRobotPose = LimelightHelpers.getBotPose3d_wpiBlue(limelightName);
-      // inputs.estimatedRobotPoseTimestamp = estimate.timestampSeconds; FIXME find the
-      // non-photonvision equivalent of this
-      LimelightResults results = LimelightHelpers.getLatestResults(limelightName);
-      int[] tags = new int[results.targetingResults.targets_Fiducials.length];
-      for (int i = 0; i < results.targetingResults.targets_Fiducials.length; i++) {
-        tags[i] = (int) results.targetingResults.targets_Fiducials[i].fiducialID;
-      }
-      inputs.estimatedRobotPoseTags = tags;
+    if (newResult && LimelightHelpers.getTV(limelightName)) { // FIXME untested, needs to be tested to ensure if this actually works
+      inputs.estimatedRobotPose = LimelightHelpers.getBotPose3d(limelightName);
+      inputs.estimatedRobotPoseTimestamp = latestTimestamp; // FIXME: What is equivalent LL for this?
       inputs.lastCameraTimestamp = latestTimestamp;
+
+      int[] tags = new int[1];
+      tags[0] = (int)LimelightHelpers.getFiducialID(limelightName);
+      inputs.estimatedRobotPoseTags = tags;
+
       lastTimestamp = latestTimestamp;
     }
   }

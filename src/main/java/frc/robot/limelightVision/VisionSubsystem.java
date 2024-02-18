@@ -40,6 +40,10 @@ public class VisionSubsystem extends SubsystemBase {
     return LimelightHelpers.getTV(getLimelightName());
   }
 
+  public double getAprilTagId() {
+    return LimelightHelpers.getFiducialID(getLimelightName());
+  }
+
   @Override
   public void periodic() {
     // TODO Auto-generated method stub
@@ -53,5 +57,7 @@ public class VisionSubsystem extends SubsystemBase {
     tab.addDouble("Latency Capture", () -> this.getLatencyCapture());
     tab.addDouble("Latency Pipeline", () -> this.getLatencyPipeline());
     tab.addBoolean("Has Target", () -> this.hasTarget());
+    tab.addDouble("April Tag", () -> this.getAprilTagId());
   }
+
 }
