@@ -13,7 +13,7 @@ public class ShooterPoseConstants {
 
   public static final double MIN_SHOOTER_HEIGHT_INCHES = 0;
   public static final double MAX_SHOOTER_HEIGHT_INCHES = 16;
-  public static final double SHOOTER_HEIGHT_GOAL_TOLERANCE_INCHES = 0.5;
+  public static final double SHOOTER_HEIGHT_GOAL_TOLERANCE_INCHES = 0.25;
 
   public static final double MIN_SHOOTER_TILT_DEGREES = -37.5;
   public static final double MAX_SHOOTER_TILT_DEGREES = 102.5;
@@ -24,7 +24,7 @@ public class ShooterPoseConstants {
 
   public static final double SHOOTER_HEIGHT_MAX_VELOCITY = 35.17; // in/s
   public static final double SHOOTER_HEIGHT_MAX_ACCELERATION = 100; // in/s^2 838.75 calculated max
-  public static final double SHOOTER_HEIGHT_KP = 0;
+  public static final double SHOOTER_HEIGHT_KP = 0.1;
   public static final double SHOOTER_HEIGHT_KI = 0;
   public static final double SHOOTER_HEIGHT_KD = 0;
   public static final double SHOOTER_HEIGHT_KG = 0.23 / 12 * .8; // V
