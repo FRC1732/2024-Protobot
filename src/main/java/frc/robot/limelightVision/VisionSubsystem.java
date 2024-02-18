@@ -28,6 +28,18 @@ public class VisionSubsystem extends SubsystemBase {
     return LimelightHelpers.getBotPose2d(getLimelightName());
   }
 
+  public double getLatencyCapture() {
+    return LimelightHelpers.getLatency_Capture(getLimelightName());
+  }
+
+  public double getLatencyPipeline() {
+    return LimelightHelpers.getLatency_Pipeline(getLimelightName());
+  }
+
+  public boolean hasTarget() {
+    return LimelightHelpers.getTV(getLimelightName());
+  }
+
   @Override
   public void periodic() {
     // TODO Auto-generated method stub
@@ -36,10 +48,10 @@ public class VisionSubsystem extends SubsystemBase {
 
   private void setUpShuffleboard() {
     tab = Shuffleboard.getTab("Vision");
-    tab.addDouble("Tx", () -> LimelightHelpers.getTX(getLimelightName()));
-    tab.addDouble("Ty", () -> LimelightHelpers.getTY(getLimelightName()));
-    tab.addDouble("Latency Capture", () -> LimelightHelpers.getLatency_Capture(getLimelightName()));
-    tab.addDouble(
-        "Latency Pipeline", () -> LimelightHelpers.getLatency_Pipeline(getLimelightName()));
+    tab.addDouble("Tx", () -> this.getTX());
+    tab.addDouble("Ty", () -> this.getTY());
+    tab.addDouble("Latency Capture", () -> this.getLatencyCapture());
+    tab.addDouble("Latency Pipeline", () -> this.getLatencyPipeline());
+    tab.addBoolean("Has Target", () -> this.hasTarget());
   }
 }
