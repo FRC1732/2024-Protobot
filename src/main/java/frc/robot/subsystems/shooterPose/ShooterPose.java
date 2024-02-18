@@ -101,8 +101,8 @@ public class ShooterPose extends SubsystemBase {
     shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     shooterHeightRightMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
     shooterHeightRightMotor.setSoftLimit(
-       SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
-       
+        SoftLimitDirection.kForward, (float) ShooterPoseConstants.MAX_SHOOTER_HEIGHT_INCHES);
+
     shooterHeightRightMotor.setSoftLimit(
         SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_HEIGHT_INCHES);
 
@@ -227,10 +227,10 @@ public class ShooterPose extends SubsystemBase {
         break;
     }
   }
+
   public boolean isAtGoal() {
     return shooterHeightPID.atGoal();
   }
-
 
   private void setUpShuffleboard() {
     shooterPoseTab = Shuffleboard.getTab("Elevator");
@@ -265,10 +265,10 @@ public class ShooterPose extends SubsystemBase {
 
   public void periodic() {
     if (shooterHeightLimitSwitch.isPressed()) {
-       shooterHeightEncoder.setPosition(0);
-     } else if (shooterHeightPID.atGoal() && shooterHeightPID.getGoal().position == 0) {
-       // move elevator manually
-     }
+      shooterHeightEncoder.setPosition(0);
+    } else if (shooterHeightPID.atGoal() && shooterHeightPID.getGoal().position == 0) {
+      // move elevator manually
+    }
 
     // shooterTiltMotor.set(
     //     shooterTiltPID.calculate(shooterTiltEncoder.getPosition())
