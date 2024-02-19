@@ -59,5 +59,4 @@ public class VisionSubsystem extends SubsystemBase {
     tab.addBoolean("Has Target", () -> this.hasTarget());
     tab.addDouble("April Tag", () -> this.getAprilTagId());
   }
-
 }

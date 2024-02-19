@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.team6328.util.Alert;
 import frc.lib.team6328.util.Alert.AlertType;
 import frc.robot.limelightVision.LimelightHelpers;
-import frc.robot.limelightVision.LimelightHelpers.LimelightResults;
 
 public class VisionIOLimelight implements VisionIO {
   private Alert noCameraConnectedAlert =
@@ -28,13 +27,16 @@ public class VisionIOLimelight implements VisionIO {
             - (LimelightHelpers.getLatency_Capture(limelightName) / 1000.0);
     boolean newResult = Math.abs(latestTimestamp - lastTimestamp) > 1e-5;
 
-    if (newResult && LimelightHelpers.getTV(limelightName)) { // FIXME untested, needs to be tested to ensure if this actually works
+    if (newResult
+        && LimelightHelpers.getTV(
+            limelightName)) { // FIXME untested, needs to be tested to ensure if this actually works
       inputs.estimatedRobotPose = LimelightHelpers.getBotPose3d(limelightName);
-      inputs.estimatedRobotPoseTimestamp = latestTimestamp; // FIXME: What is equivalent LL for this?
+      inputs.estimatedRobotPoseTimestamp =
+          latestTimestamp; // FIXME: What is equivalent LL for this?
       inputs.lastCameraTimestamp = latestTimestamp;
 
       int[] tags = new int[1];
-      tags[0] = (int)LimelightHelpers.getFiducialID(limelightName);
+      tags[0] = (int) LimelightHelpers.getFiducialID(limelightName);
       inputs.estimatedRobotPoseTags = tags;
 
       lastTimestamp = latestTimestamp;
