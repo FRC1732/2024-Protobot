@@ -13,9 +13,11 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.Map;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -24,12 +26,16 @@ public class ShooterPose extends SubsystemBase {
   @AutoLog
   public static class ShooterPoseIOInput {
     double Angle = 0.0;
+    double AngleVelocity = 0.0;
     double AbsoluteAngle = 0.0;
     double AngleGoal = 0.0;
+    double AngleSetpoint = 0.0;
     double AngleSpeed = 0.0;
     double AngleFeedforward = 0.0;
     double Height = 0.0;
+    double HeightVelocity = 0.0;
     double HeightGoal = 0.0;
+    double HeightSetpoint = 0.0;
     double HeightSpeed = 0.0;
     double HeightFeedforward = 0.0;
   }
@@ -54,6 +60,7 @@ public class ShooterPose extends SubsystemBase {
 
   private GenericEntry goalEntry;
 
+  private GenericEntry maxVelocityEntry, maxAccelerationEntry;
   private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
   private GenericEntry shooterTiltP, shooterTiltI, shooterTiltD;
 
@@ -199,8 +206,8 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void setShooterPose(Pose pose) {
-    shooterTiltPID.reset(shooterTiltEncoder.getPosition());
-    shooterHeightPID.reset(shooterHeightEncoder.getPosition());
+    // shooterTiltPID.reset(shooterTiltEncoder.getPosition());
+    // shooterHeightPID.reset(shooterHeightEncoder.getPosition());
 
     switch (pose) {
       case HANDOFF:
@@ -264,7 +271,25 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltI = shooterPoseTab.add("Shooter Tilt I", 0).getEntry();
     shooterTiltD = shooterPoseTab.add("Shooter Tilt D", 0).getEntry();
 
-    goalEntry = shooterPoseTab.add("Goal", 0).getEntry();
+    goalEntry =
+        shooterPoseTab
+            .add("Goal", 66)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(
+                Map.of(
+                    "min",
+                    ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+                    "max",
+                    ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES))
+            .getEntry();
+    maxVelocityEntry =
+        shooterPoseTab
+            .add("MaxVelocity", ShooterPoseConstants.SHOOTER_TILT_MAX_VELOCITY)
+            .getEntry();
+    maxVelocityEntry =
+        shooterPoseTab
+            .add("MaxAcceleration", ShooterPoseConstants.SHOOTER_TILT_MAX_ACCELERATION)
+            .getEntry();
   }
 
   public void periodic() {
@@ -281,7 +306,6 @@ public class ShooterPose extends SubsystemBase {
         > ShooterPoseConstants.SHOOTER_TILT_MAX_ABOLUTE_RELATIVE_ERROR_DEG) {
       shooterTiltEncoder.setPosition(getAbsolutePosition());
     }
-
     shooterTiltMotor.set(
         MathUtil.clamp(
                 shooterTiltPID.calculate(shooterTiltEncoder.getPosition(), goalEntry.getDouble(66)),
@@ -297,6 +321,9 @@ public class ShooterPose extends SubsystemBase {
       // shooterHeightPID.setP(shooterHeightP.getDouble(0));
       // shooterHeightPID.setI(shooterHeightI.getDouble(0));
       // shooterHeightPID.setD(shooterHeightD.getDouble(0));
+      shooterTiltPID.setConstraints(
+          new TrapezoidProfile.Constraints(
+              maxVelocityEntry.getDouble(0), maxAccelerationEntry.getDouble(0)));
       shooterTiltPID.setP(shooterTiltP.getDouble(0));
       shooterTiltPID.setI(shooterTiltI.getDouble(0));
       shooterTiltPID.setD(shooterTiltD.getDouble(0));
@@ -308,8 +335,10 @@ public class ShooterPose extends SubsystemBase {
 
   public void updateLoggedIO() {
     loggedIO.Angle = shooterTiltEncoder.getPosition();
+    loggedIO.AngleVelocity = shooterTiltEncoder.getVelocity();
     loggedIO.AbsoluteAngle = getAbsolutePosition();
     loggedIO.AngleGoal = shooterTiltPID.getGoal().position;
+    loggedIO.AngleSetpoint = shooterTiltPID.getSetpoint().position;
     loggedIO.AngleSpeed = shooterTiltMotor.get();
     loggedIO.AngleFeedforward =
         shooterTiltFeedforward.calculate(
@@ -317,7 +346,9 @@ public class ShooterPose extends SubsystemBase {
                 shooterTiltEncoder.getPosition() + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
             shooterTiltEncoder.getVelocity());
     loggedIO.Height = shooterHeightEncoder.getPosition();
+    loggedIO.HeightVelocity = shooterHeightEncoder.getVelocity();
     loggedIO.HeightGoal = shooterHeightPID.getGoal().position;
+    loggedIO.HeightSetpoint = shooterHeightPID.getSetpoint().position;
     loggedIO.HeightSpeed = shooterHeightRightMotor.get();
     loggedIO.HeightFeedforward =
         shooterHeightFeedforward.calculate(shooterHeightEncoder.getVelocity());
