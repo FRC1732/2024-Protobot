@@ -7,6 +7,7 @@ package frc.robot.commands.intakeCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 
 public class IntakeNote extends Command {
@@ -17,10 +18,11 @@ public class IntakeNote extends Command {
   private ShooterPose shooterPose;
 
   public IntakeNote(Intake intake, Feeder feeder, ShooterPose shooterPose) {
-    addRequirements(intake, feeder); // TODO: fix ShooterPose shooterPose
-    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(intake, feeder, shooterPose);
+
     this.intake = intake;
     this.feeder = feeder;
+    this.shooterPose = shooterPose;
   }
 
   // Called when the command is initially scheduled.
@@ -29,6 +31,7 @@ public class IntakeNote extends Command {
     if (feeder.hasNote()) {
       return;
     }
+    shooterPose.setShooterPose(Pose.HANDOFF);
     intake.runIntake();
     feeder.runFeederIn();
     System.out.println("Intake and Feeder running in");

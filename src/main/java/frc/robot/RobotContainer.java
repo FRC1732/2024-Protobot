@@ -31,7 +31,6 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.intakeCommands.Eject;
 import frc.robot.commands.intakeCommands.IntakeNote;
-import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.limelightVision.VisionSubsystem;
@@ -203,8 +202,7 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.groundIntakeButton()
-        .whileTrue(new IntakeNote(intake, feeder, null).andThen(new RunShooterFast(shooterWheels)));
+    oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
     oi.manualFeedButton().onFalse(new StopShooter(shooterWheels));
     oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
     oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));

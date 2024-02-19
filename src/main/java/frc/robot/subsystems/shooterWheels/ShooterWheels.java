@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooterWheels;
 
 import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,8 +16,7 @@ public class ShooterWheels extends SubsystemBase {
 
   @AutoLog
   public static class ShooterWheelsIOInput {
-    double shooteHighMotorSpeed = 0.0;
-    double shooteLowMotorSpeed = 0.0;
+    double shooteHighMotorVelocity = 0.0;
   }
 
   private ShooterWheelsIOInputAutoLogged input = new ShooterWheelsIOInputAutoLogged();
@@ -37,8 +37,15 @@ public class ShooterWheels extends SubsystemBase {
     shooterLowMotor =
         new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
+    shooterHighMotor.restoreFactoryDefaults();
+
     shooterHighMotor.setInverted(true);
     shooterLowMotor.follow(shooterHighMotor, true);
+
+    shooterHighMotor.enableVoltageCompensation(12);
+    shooterHighMotor.setIdleMode(IdleMode.kBrake);
+    shooterHighMotor.setOpenLoopRampRate(1.0);
+    shooterHighMotor.stopMotor();
 
     shooterSpeedBackwards =
         new TunableNumber(
@@ -68,7 +75,7 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void stopShooter() {
-    shooterHighMotor.set(shooterSpeedStopped.get());
+    shooterHighMotor.stopMotor();
   }
 
   public void setShooterSpeed(double speed) {
@@ -92,8 +99,7 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   private void updateInputs() {
-    input.shooteHighMotorSpeed = shooterHighMotor.get();
-    input.shooteLowMotorSpeed = shooterLowMotor.get();
+    input.shooteHighMotorVelocity = shooterHighMotor.getEncoder().getVelocity();
 
     Logger.processInputs("Shooter Wheels", input);
   }
