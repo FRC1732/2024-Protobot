@@ -34,7 +34,8 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_HEIGHT_KS = 0;
 
   public static final double SHOOTER_TILT_MAX_VELOCITY = 506.25 * 0.05; // deg/s
-  public static final double SHOOTER_TILT_MAX_ACCELERATION = 1000 * 0.01; // deg/s^2 4500 calculated max
+  public static final double SHOOTER_TILT_MAX_ACCELERATION =
+      1000 * 0.01; // deg/s^2 4500 calculated max
   public static final double SHOOTER_TILT_KP = 0;
   public static final double SHOOTER_TILT_KI = 0;
   public static final double SHOOTER_TILT_KD = 0;

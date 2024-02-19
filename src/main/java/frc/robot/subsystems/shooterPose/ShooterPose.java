@@ -282,12 +282,16 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltEncoder.setPosition(getAbsolutePosition());
     }
 
-    shooterTiltMotor.set(MathUtil.clamp(
-        shooterTiltPID.calculate(shooterTiltEncoder.getPosition(), goalEntry.getDouble(66)), -0.5, 0.5) +
-        shooterTiltFeedforward.calculate(
-            Math.toRadians(
-                shooterTiltEncoder.getPosition() + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
-            shooterTiltEncoder.getVelocity()));
+    shooterTiltMotor.set(
+        MathUtil.clamp(
+                shooterTiltPID.calculate(shooterTiltEncoder.getPosition(), goalEntry.getDouble(66)),
+                -0.5,
+                0.5)
+            + shooterTiltFeedforward.calculate(
+                Math.toRadians(
+                    shooterTiltEncoder.getPosition()
+                        + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
+                shooterTiltEncoder.getVelocity()));
 
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
       // shooterHeightPID.setP(shooterHeightP.getDouble(0));
