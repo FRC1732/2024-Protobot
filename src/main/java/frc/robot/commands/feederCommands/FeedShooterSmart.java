@@ -35,14 +35,14 @@ public class FeedShooterSmart extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.stopShooter();
-    feeder.stopFeederIn();
+    feeder.stopFeeder();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if (feeder.hasNote()) {
-      feeder.stopFeederIn();
+      feeder.stopFeeder();
       return true;
     } else {
       return false;

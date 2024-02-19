@@ -33,7 +33,7 @@ public class IntakeNote extends Command {
     }
     shooterPose.setShooterPose(Pose.HANDOFF);
     intake.runIntake();
-    feeder.runFeederIn();
+    feeder.runFeeder();
     System.out.println("Intake and Feeder running in");
   }
 
@@ -44,7 +44,7 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.stopFeederIn();
+    feeder.stopFeeder();
     intake.stopIntake();
   }
 

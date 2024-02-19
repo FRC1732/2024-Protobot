@@ -2,6 +2,7 @@ package frc.robot.subsystems.feeder;
 
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -28,7 +29,6 @@ public class Feeder extends SubsystemBase {
   public final CANSparkMax feederMotor;
 
   public static Double FEEDER_MOTOR_SPEED = .4;
-  public static Double FEEDER_MOTOR_RIGHT_SPEED = .8;
 
   private final AnalogInput analog;
 
@@ -37,7 +37,11 @@ public class Feeder extends SubsystemBase {
     feederMotor =
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
+    feederMotor.restoreFactoryDefaults();
     feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
+    feederMotor.enableVoltageCompensation(12);
+    feederMotor.setIdleMode(IdleMode.kBrake);
+    feederMotor.stopMotor();
 
     analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
 
@@ -54,20 +58,16 @@ public class Feeder extends SubsystemBase {
     // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
   }
 
-  public void runFeederIn() {
+  public void runFeeder() {
     feederMotor.set(FEEDER_MOTOR_SPEED);
   }
 
-  public void runFeederIntakeSpeedIn() {
-    feederMotor.set(FEEDER_MOTOR_SPEED);
-  }
-
-  public void runFeederOut() {
+  public void reverseFeeder() {
     feederMotor.set(FEEDER_MOTOR_SPEED * -1);
   }
 
-  public void stopFeederIn() {
-    feederMotor.set(0);
+  public void stopFeeder() {
+    feederMotor.stopMotor();
   }
 
   public boolean hasNote() {
@@ -80,8 +80,6 @@ public class Feeder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
-    // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
     if (TESTING) {
       if (feederMotorSpeed.get() != 0) {
         feederMotor.set(feederMotorSpeed.get());
@@ -91,8 +89,6 @@ public class Feeder extends SubsystemBase {
     if (FeederConstants.FEEDER_LOGGING) {
       updateInputs();
     }
-    // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
-    // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
   }
 
   private void updateInputs() {

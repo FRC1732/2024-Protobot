@@ -29,8 +29,8 @@ import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.FeedShooterManual;
-import frc.robot.commands.intakeCommands.Eject;
 import frc.robot.commands.intakeCommands.IntakeNote;
+import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.limelightVision.VisionSubsystem;
@@ -203,9 +203,18 @@ public class RobotContainer {
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
     oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
+
+    // source load
+    // amp aim
+    // amp score
+    // speaker aim
+    // speaker score
+
+    oi.manualFeedButton()
+        .whileTrue(new RunShooterFast(shooterWheels).andThen(new FeedShooterManual(feeder)));
     oi.manualFeedButton().onFalse(new StopShooter(shooterWheels));
-    oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
-    oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
+
+    // oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
 
     configureDrivetrainCommands();
 

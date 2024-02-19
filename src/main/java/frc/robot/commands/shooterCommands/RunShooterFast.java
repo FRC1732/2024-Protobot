@@ -7,6 +7,7 @@ public class RunShooterFast extends Command {
   private final ShooterWheels shooterWheels;
 
   public RunShooterFast(ShooterWheels shooterWheels) {
+    addRequirements(shooterWheels);
     this.shooterWheels = shooterWheels;
   }
 
@@ -19,6 +20,6 @@ public class RunShooterFast extends Command {
   public void end(boolean isInterupted) {}
 
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

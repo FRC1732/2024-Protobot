@@ -28,7 +28,7 @@ public class IntakeSourceNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.runFeederIn();
+    feeder.runFeeder();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,7 +43,7 @@ public class IntakeSourceNote extends Command {
   @Override
   public boolean isFinished() {
     if (shooterPose.isAtGoal()) {
-      feeder.stopFeederIn();
+      feeder.stopFeeder();
       return true;
     } else {
       return false;
