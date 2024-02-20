@@ -25,7 +25,7 @@ import org.littletonrobotics.junction.Logger;
 public class ShooterPose extends SubsystemBase {
 
   @AutoLog
-  public static class ShooterPoseIOInput {
+  public static class ShooterPoseTiltIOInput {
     double Angle = 0.0;
     double AngleVelocity = 0.0;
     double AbsoluteAngle = 0.0;
@@ -33,6 +33,10 @@ public class ShooterPose extends SubsystemBase {
     double AngleSetpoint = 0.0;
     double AngleSpeed = 0.0;
     double AngleFeedforward = 0.0;
+  }
+
+  @AutoLog
+  public static class ShooterPoseHeightIOInput {
     double Height = 0.0;
     double HeightVelocity = 0.0;
     double HeightGoal = 0.0;
@@ -41,7 +45,10 @@ public class ShooterPose extends SubsystemBase {
     double HeightFeedforward = 0.0;
   }
 
-  private final ShooterPoseIOInputAutoLogged loggedIO = new ShooterPoseIOInputAutoLogged();
+  private final ShooterPoseTiltIOInputAutoLogged loggedTiltIO =
+      new ShooterPoseTiltIOInputAutoLogged();
+  private final ShooterPoseHeightIOInputAutoLogged loggedHeightIO =
+      new ShooterPoseHeightIOInputAutoLogged();
 
   private CANSparkMax shooterHeightLeftMotor;
   private CANSparkMax shooterHeightRightMotor;
@@ -339,26 +346,27 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void updateLoggedIO() {
-    loggedIO.Angle = shooterTiltEncoder.getPosition();
-    loggedIO.AngleVelocity = shooterTiltEncoder.getVelocity();
-    loggedIO.AbsoluteAngle = getAbsolutePosition();
-    loggedIO.AngleGoal = shooterTiltPID.getGoal().position;
-    loggedIO.AngleSetpoint = shooterTiltPID.getSetpoint().position;
-    loggedIO.AngleSpeed = shooterTiltMotor.get();
-    loggedIO.AngleFeedforward =
+    loggedTiltIO.Angle = shooterTiltEncoder.getPosition();
+    loggedTiltIO.AngleVelocity = shooterTiltEncoder.getVelocity();
+    loggedTiltIO.AbsoluteAngle = getAbsolutePosition();
+    loggedTiltIO.AngleGoal = shooterTiltPID.getGoal().position;
+    loggedTiltIO.AngleSetpoint = shooterTiltPID.getSetpoint().position;
+    loggedTiltIO.AngleSpeed = shooterTiltMotor.get();
+    loggedTiltIO.AngleFeedforward =
         shooterTiltFeedforward.calculate(
             Math.toRadians(
                 shooterTiltEncoder.getPosition() + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
             shooterTiltEncoder.getVelocity());
-    loggedIO.Height = shooterHeightEncoder.getPosition();
-    loggedIO.HeightVelocity = shooterHeightEncoder.getVelocity();
-    loggedIO.HeightGoal = shooterHeightPID.getGoal().position;
-    loggedIO.HeightSetpoint = shooterHeightPID.getSetpoint().position;
-    loggedIO.HeightSpeed = shooterHeightRightMotor.get();
-    loggedIO.HeightFeedforward =
+    loggedHeightIO.Height = shooterHeightEncoder.getPosition();
+    loggedHeightIO.HeightVelocity = shooterHeightEncoder.getVelocity();
+    loggedHeightIO.HeightGoal = shooterHeightPID.getGoal().position;
+    loggedHeightIO.HeightSetpoint = shooterHeightPID.getSetpoint().position;
+    loggedHeightIO.HeightSpeed = shooterHeightRightMotor.get();
+    loggedHeightIO.HeightFeedforward =
         shooterHeightFeedforward.calculate(shooterHeightEncoder.getVelocity());
 
-    Logger.processInputs("Shooter Pose", loggedIO);
+    Logger.processInputs("Shooter Pose/Tilt", loggedTiltIO);
+    Logger.processInputs("Shooter Pose/Height", loggedHeightIO);
   }
 
   private double getAbsolutePosition() {
