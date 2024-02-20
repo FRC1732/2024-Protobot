@@ -218,8 +218,7 @@ public class RobotContainer {
         .onFalse(
             new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
-    oi.smartFeedButton()
-        .whileTrue(new FeedShooterManual(feeder));
+    oi.smartFeedButton().whileTrue(new FeedShooterManual(feeder));
 
     oi.aimSpeakerButton()
         .whileTrue(
@@ -231,8 +230,7 @@ public class RobotContainer {
         .onFalse(
             new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
-    oi.manualFeedButton()
-        .whileTrue(new FeedShooterManual(feeder));
+    oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 
     // oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
 
