@@ -68,7 +68,7 @@ public class DualJoysticksOI implements OperatorInterface {
   // Rotate Joystick
   @Override
   public double getRotate() {
-    return -rotateJoystick.getX();
+    return rotateJoystick.getX();
   }
 
   @Override

@@ -30,6 +30,7 @@ public class IntakeSourceNote extends Command {
   @Override
   public void initialize() {
     feeder.runFeeder();
+    shooterPose.setShooterPose(Pose.SOURCE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

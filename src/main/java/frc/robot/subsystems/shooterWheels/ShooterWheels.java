@@ -64,15 +64,15 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void setShooterSpeedFast() {
-    shooterHighMotor.set(shooterSpeedFast.get());
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
   }
 
   public void setShooterSpeedSlow() {
-    shooterHighMotor.set(shooterSpeedSlow.get());
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
   }
 
   public void setShooterSpeedBackwards() {
-    shooterHighMotor.set(shooterSpeedBackwards.get());
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
   }
 
   public void stopShooter() {

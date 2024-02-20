@@ -13,13 +13,13 @@ public class ShooterPoseConstants {
 
   public static final double MIN_SHOOTER_HEIGHT_INCHES = 0;
   public static final double MAX_SHOOTER_HEIGHT_INCHES = 16;
-  public static final double SHOOTER_HEIGHT_GOAL_TOLERANCE_INCHES = 0.25;
+  public static final double SHOOTER_HEIGHT_GOAL_TOLERANCE_INCHES = 1;
 
-  public static final double MIN_SHOOTER_TILT_DEGREES = -37.5;
+  public static final double MIN_SHOOTER_TILT_DEGREES = -32.5;
   public static final double MAX_SHOOTER_TILT_DEGREES = 102.5;
   public static final double SHOOTER_TILT_ABSOLUTE_OFFSET =
       60.5 - 36.366 + 4.428 + 291.062; // 0 is a flat shot, CCW is positive, shooter facing left
-  public static final double SHOOTER_TILT_GOAL_TOLERANCE_DEGREES = 1;
+  public static final double SHOOTER_TILT_GOAL_TOLERANCE_DEGREES = 2;
   public static final double SHOOTER_TILT_MAX_ABOLUTE_RELATIVE_ERROR_DEG = 10;
   public static final double SHOOTER_TILT_COG_OFFSET = 37.79;
 
@@ -52,15 +52,15 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_HEIGHT_RPM_TO_INCHES_PER_SECOND =
       0.006109; // RPM to inch/sec (spool diam * 3.14 / reduction / 60 = 1.75 * 3.14 / 15 / 60)
 
-  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -37.5;
+  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -32.5;
   public static final double SHOOTER_TILT_SUBWOOFER_SETPOINT = -60;
-  public static final double SHOOTER_TILT_AMP_SETPOINT = 60;
+  public static final double SHOOTER_TILT_AMP_SETPOINT = 40;
   public static final double SHOOTER_TILT_TRAP_SETPOINT = 30;
   public static final double SHOOTER_TILT_SOURCE_SETPOINT = 102.5;
 
   public static final double SHOOTER_HEIGHT_HANDOFF_SETPOINT = 0;
   public static final double SHOOTER_HEIGHT_SUBWOOFER_SETPOINT = 0;
-  public static final double SHOOTER_HEIGHT_AMP_SETPOINT = 6;
+  public static final double SHOOTER_HEIGHT_AMP_SETPOINT = 8;
   public static final double SHOOTER_HEIGHT_TRAP_SETPOINT = 16;
   public static final double SHOOTER_HEIGHT_SOURCE_SETPOINT = 4;
 }
