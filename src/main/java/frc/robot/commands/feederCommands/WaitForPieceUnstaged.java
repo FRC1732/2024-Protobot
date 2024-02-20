@@ -32,9 +32,9 @@ public class WaitForPieceUnstaged extends Command {
   @Override
   public boolean isFinished() {
     if (feederSystem.hasNote()) {
-      return false;
-    } else {
       return true;
+    } else {
+      return false;
     }
   }
 }

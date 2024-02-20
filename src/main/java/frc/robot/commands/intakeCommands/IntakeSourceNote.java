@@ -47,7 +47,10 @@ public class IntakeSourceNote extends Command {
   public boolean isFinished() {
     if (feeder.hasNote() && shooterPose.isAtGoal()) {
        feeder.stopFeeder();
+       return true;
+    } else { 
+      return false;
     }
-    return true;
+  
   }
 }
