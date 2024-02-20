@@ -268,7 +268,7 @@ public class ShooterPose extends SubsystemBase {
     // shooterHeightP = shooterPoseTab.add("Shooter Height P", 0).getEntry();
     // shooterHeightI = shooterPoseTab.add("Shooter Height I", 0).getEntry();
     // shooterHeightD = shooterPoseTab.add("Shooter Height D", 0).getEntry();
-    shooterTiltP = shooterPoseTab.add("Shooter Tilt P", 0).getEntry();
+    shooterTiltP = shooterPoseTab.add("Shooter Tilt P", ShooterPoseConstants.SHOOTER_TILT_KP).getEntry();
     shooterTiltI = shooterPoseTab.add("Shooter Tilt I", 0).getEntry();
     shooterTiltD = shooterPoseTab.add("Shooter Tilt D", 0).getEntry();
 
