@@ -30,7 +30,11 @@ import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizatio
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.intakeCommands.IntakeNote;
+import frc.robot.commands.intakeCommands.IntakeSourceNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
+import frc.robot.commands.shooterCommands.RunShooterSlow;
+import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
+import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.limelightVision.VisionSubsystem;
@@ -38,6 +42,7 @@ import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.subsystem.Subsystem;
@@ -204,11 +209,28 @@ public class RobotContainer {
   private void configureButtonBindings() {
     oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
 
-    // source load
-    // amp aim
-    // amp score
-    // speaker aim
-    // speaker score
+    oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
+
+    oi.ampScoreButton()
+        .whileTrue(
+            new RunShooterSlow(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.AMP)));
+    oi.ampScoreButton()
+        .onFalse(
+            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+
+    oi.smartFeedButton()
+        .whileTrue(new RunShooterFast(shooterWheels).andThen(new FeedShooterManual(feeder)));
+    oi.smartFeedButton().onFalse(new StopShooter(shooterWheels));
+
+    oi.aimSpeakerButton()
+        .whileTrue(
+            new RunShooterFast(shooterWheels)
+                .andThen(
+                    new SetShooterDistanceContinuous(
+                        shooterPose, () -> 105))); // @TODO replace with vision
+    oi.aimSpeakerButton()
+        .onFalse(
+            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
     oi.manualFeedButton()
         .whileTrue(new RunShooterFast(shooterWheels).andThen(new FeedShooterManual(feeder)));
