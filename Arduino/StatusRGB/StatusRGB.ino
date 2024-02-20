@@ -1,25 +1,25 @@
 #include <Adafruit_NeoPixel.h>
 
-#define LED_DATA 2
+#define DIGITAL_D0 8
+#define DIGITAL_D1 9
+#define DIGITAL_D2 10
+#define DIGITAL_D3 11
+#define DIGITAL_D4 12
 
-#define NUMPIXELS 69  // number of neopixels in strip
-#define NUM_SEG 23    // number of neopixels in a segment
+#define OUTPUT_D0 3
+#define OUTPUT_D1 4
+#define OUTPUT_D2 5
+#define OUTPUT_D3 6
+#define OUTPUT_D4 7
+
+#define LEDSTRIP_1 A6
+#define LEDSTRIP_2 A7
+
+#define NUMPIXELS 20  // number of neopixels in strip
 #define DELAY_TIME 200
 #define INTENSITY 255
 
-Adafruit_NeoPixel pixels(NUMPIXELS, LED_DATA, NEO_GRB + NEO_KHZ800);
-
-#define DIGITAL_D0 3
-#define DIGITAL_D1 4
-#define DIGITAL_D2 5
-#define DIGITAL_D3 6
-#define DIGITAL_D4 7
-
-#define OUTPUT_D0 8
-#define OUTPUT_D1 9
-#define OUTPUT_D2 10
-#define OUTPUT_D3 11
-#define OUTPUT_D4 12
+Adafruit_NeoPixel pixels1(NUMPIXELS, LEDSTRIP_1, NEO_GRB + NEO_KHZ800);
 
 int mode = 0;
 int timer = 0;
@@ -39,7 +39,15 @@ void setup() {
   pinMode(OUTPUT_D3, OUTPUT);
   pinMode(OUTPUT_D4, OUTPUT);
 
-  pixels.begin();
+  pixels1.begin();
+}
+
+void setColor(bool red, bool green, bool blue) {
+  pixels1.clear();
+  for (int i = 0; i < NUMPIXELS; i++) {
+    pixels1.setPixelColor(i, pixels1.Color(INTENSITY * (int)red, INTENSITY * (int)green * .50, INTENSITY * (int)blue));
+  }
+  pixels1.show();
 }
 
 void loop() {
@@ -60,4 +68,10 @@ void loop() {
 
   mode = ((int)b0 << 0) + ((int)b1 << 1) + ((int)b2 << 2) + ((int)b3 << 3) + ((int)b4 << 4);
   Serial.print("Mode: ");
-  Serial.println(mode);}
+  Serial.println(mode);
+
+  if (mode == 1) {
+    setColor(false, true, false);
+  }
+}
+
