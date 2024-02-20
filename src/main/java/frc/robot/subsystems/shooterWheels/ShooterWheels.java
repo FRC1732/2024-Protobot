@@ -16,7 +16,8 @@ public class ShooterWheels extends SubsystemBase {
 
   @AutoLog
   public static class ShooterWheelsIOInput {
-    double shooteHighMotorVelocity = 0.0;
+    double shooterHighMotorVelocity = 0.0;
+    double shooterLowMotorVelocity = 0.0;
   }
 
   private ShooterWheelsIOInputAutoLogged input = new ShooterWheelsIOInputAutoLogged();
@@ -99,7 +100,8 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   private void updateInputs() {
-    input.shooteHighMotorVelocity = shooterHighMotor.getEncoder().getVelocity();
+    input.shooterHighMotorVelocity = shooterHighMotor.getEncoder().getVelocity();
+    input.shooterLowMotorVelocity = shooterLowMotor.getEncoder().getVelocity();
 
     Logger.processInputs("Shooter Wheels", input);
   }
