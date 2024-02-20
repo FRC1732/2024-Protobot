@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -286,13 +287,18 @@ public class ShooterPose extends SubsystemBase {
         shooterPoseTab
             .add("MaxVelocity", ShooterPoseConstants.SHOOTER_TILT_MAX_VELOCITY)
             .getEntry();
-    maxVelocityEntry =
+    maxAccelerationEntry =
         shooterPoseTab
             .add("MaxAcceleration", ShooterPoseConstants.SHOOTER_TILT_MAX_ACCELERATION)
             .getEntry();
   }
 
   public void periodic() {
+    if(DriverStation.isDisabled()) {
+      shooterHeightPID.reset(shooterHeightEncoder.getPosition());
+      shooterTiltPID.reset(shooterTiltEncoder.getPosition());
+    }
+
     if (shooterHeightPID.getGoal().position == 0 && shooterHeightLimitSwitch.isPressed()) {
       shooterHeightRightMotor.stopMotor();
       shooterHeightEncoder.setPosition(0);
