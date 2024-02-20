@@ -220,7 +220,6 @@ public class RobotContainer {
 
     oi.smartFeedButton()
         .whileTrue(new RunShooterFast(shooterWheels).andThen(new FeedShooterManual(feeder)));
-    oi.smartFeedButton().onFalse(new StopShooter(shooterWheels));
 
     oi.aimSpeakerButton()
         .whileTrue(

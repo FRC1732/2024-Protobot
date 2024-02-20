@@ -178,6 +178,7 @@ public class ShooterPose extends SubsystemBase {
             ShooterPoseConstants.SHOOTER_PID_PERIOD_SEC);
     shooterTiltPID.setTolerance(ShooterPoseConstants.SHOOTER_TILT_GOAL_TOLERANCE_DEGREES);
     shooterTiltPID.reset(shooterTiltEncoder.getPosition());
+    shooterTiltPID.setGoal(ShooterPoseConstants.SHOOTER_TILT_HANDOFF_SETPOINT);
 
     shooterTiltFeedforward =
         new ArmFeedforward(
@@ -314,10 +315,7 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltEncoder.setPosition(getAbsolutePosition());
     }
     shooterTiltMotor.set(
-        MathUtil.clamp(
-                shooterTiltPID.calculate(shooterTiltEncoder.getPosition(), goalEntry.getDouble(66)),
-                -0.5,
-                0.5)
+        MathUtil.clamp(shooterTiltPID.calculate(shooterTiltEncoder.getPosition()), -0.5, 0.5)
             + shooterTiltFeedforward.calculate(
                 Math.toRadians(
                     shooterTiltEncoder.getPosition()

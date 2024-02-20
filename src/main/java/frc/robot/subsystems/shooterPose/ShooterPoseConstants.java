@@ -2,7 +2,7 @@ package frc.robot.subsystems.shooterPose;
 
 public class ShooterPoseConstants {
 
-  public static final boolean SHOOTER_POSE_TESTING = true;
+  public static final boolean SHOOTER_POSE_TESTING = false;
   public static final boolean SHOOTER_POSE_LOGGING = true;
 
   public static final double SHOOTER_PID_PERIOD_SEC = 0.02;
