@@ -29,6 +29,7 @@ public class IntakeSourceNote extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooterPose.setShooterPose(Pose.HANDOFF);
     feeder.runFeeder();
   }
 
@@ -39,13 +40,14 @@ public class IntakeSourceNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.stopFeeder();
-    shooterPose.setShooterPose(Pose.HANDOFF);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return feeder.hasNote();
+    if (feeder.hasNote() && shooterPose.isAtGoal()) {
+       feeder.stopFeeder();
+    }
+    return true;
   }
 }
