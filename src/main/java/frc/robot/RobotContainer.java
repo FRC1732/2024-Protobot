@@ -210,10 +210,10 @@ public class RobotContainer {
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
     oi.groundIntakeButton()
-        .whileTrue(new IntakeNote(intake, feeder, shooterPose).andThen(new BrakeFeeder(feeder)));
+        .whileTrue(new IntakeNote(intake, feeder, shooterPose));
 
     oi.sourceLoadButton()
-        .whileTrue(new IntakeSourceNote(feeder, shooterPose).andThen(new BrakeFeeder(feeder)));
+        .whileTrue(new IntakeSourceNote(feeder, shooterPose));
 
     oi.ampScoreButton()
         .whileTrue(
