@@ -227,7 +227,11 @@ public class RobotContainer {
             new RunShooterFast(shooterWheels)
                 .andThen(
                     new SetShooterDistanceContinuous(
-                            shooterPose, () -> visionSubsystem.getDistanceToTarget())
+                            shooterPose,
+                            () ->
+                                visionSubsystem.hasTarget()
+                                    ? visionSubsystem.getDistanceToTarget()
+                                    : 105)
                         .alongWith(
                             new BrakeFeeder(feeder),
                             new RotateToAngle(

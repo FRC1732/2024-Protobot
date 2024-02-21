@@ -217,7 +217,11 @@ public class ShooterPose extends SubsystemBase {
     double speakerHeight = 83, shooterHeight = 27;
     double targetAngle =
         -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
-    shooterTiltPID.setGoal(angleModulusDeg(targetAngle));
+    shooterTiltPID.setGoal(
+        MathUtil.clamp(
+            angleModulusDeg(targetAngle),
+            ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+            ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
   }
 
   public void setShooterPose(Pose pose) {
