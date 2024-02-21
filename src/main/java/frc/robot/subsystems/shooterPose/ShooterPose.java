@@ -45,10 +45,16 @@ public class ShooterPose extends SubsystemBase {
     double HeightFeedforward = 0.0;
   }
 
+  @AutoLog
+  public static class ShooterPoseIOInput {
+    Pose pose = Pose.HANDOFF;
+  }
+
   private final ShooterPoseTiltIOInputAutoLogged loggedTiltIO =
       new ShooterPoseTiltIOInputAutoLogged();
   private final ShooterPoseHeightIOInputAutoLogged loggedHeightIO =
       new ShooterPoseHeightIOInputAutoLogged();
+  private final ShooterPoseIOInputAutoLogged loggedPoseIO = new ShooterPoseIOInputAutoLogged();
 
   private CANSparkMax shooterHeightLeftMotor;
   private CANSparkMax shooterHeightRightMotor;
@@ -217,6 +223,7 @@ public class ShooterPose extends SubsystemBase {
   public void setShooterPose(Pose pose) {
     // shooterTiltPID.reset(shooterTiltEncoder.getPosition());
     // shooterHeightPID.reset(shooterHeightEncoder.getPosition());
+    loggedPoseIO.pose = pose;
 
     switch (pose) {
       case HANDOFF:
@@ -357,6 +364,7 @@ public class ShooterPose extends SubsystemBase {
             Math.toRadians(
                 shooterTiltEncoder.getPosition() + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
             shooterTiltEncoder.getVelocity());
+
     loggedHeightIO.Height = shooterHeightEncoder.getPosition();
     loggedHeightIO.HeightVelocity = shooterHeightEncoder.getVelocity();
     loggedHeightIO.HeightGoal = shooterHeightPID.getGoal().position;
@@ -367,6 +375,7 @@ public class ShooterPose extends SubsystemBase {
 
     Logger.processInputs("Shooter Pose/Tilt", loggedTiltIO);
     Logger.processInputs("Shooter Pose/Height", loggedHeightIO);
+    Logger.processInputs("Shooter Pose", loggedPoseIO);
   }
 
   private double getAbsolutePosition() {
