@@ -44,11 +44,17 @@ public class VisionSubsystem extends SubsystemBase {
     return LimelightHelpers.getFiducialID(getLimelightName());
   }
 
-  @Override
-  public void periodic() {
-    // TODO Auto-generated method stub
-    super.periodic();
+  public double getDistanceToTarget() {
+    double cameraHeight = 28;
+    double targetHeight = 60;
+    double heightDiff = targetHeight - cameraHeight;
+    double cameraAngle = 0;
+    double theta = Math.toRadians(cameraAngle + getTY());
+    return heightDiff / Math.tan(theta);
   }
+
+  @Override
+  public void periodic() {}
 
   private void setUpShuffleboard() {
     tab = Shuffleboard.getTab("Vision");

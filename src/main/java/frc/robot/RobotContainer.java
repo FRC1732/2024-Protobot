@@ -27,7 +27,9 @@ import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
 import frc.lib.team3061.leds.LEDs;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.intakeCommands.IntakeNote;
 import frc.robot.commands.intakeCommands.IntakeSourceNote;
@@ -207,9 +209,11 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
+    oi.groundIntakeButton()
+        .whileTrue(new IntakeNote(intake, feeder, shooterPose).andThen(new BrakeFeeder(feeder)));
 
-    oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
+    oi.sourceLoadButton()
+        .whileTrue(new IntakeSourceNote(feeder, shooterPose).andThen(new BrakeFeeder(feeder)));
 
     oi.ampScoreButton()
         .whileTrue(
@@ -218,17 +222,29 @@ public class RobotContainer {
         .onFalse(
             new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
-    oi.smartFeedButton().whileTrue(new FeedShooterManual(feeder));
-
     oi.aimSpeakerButton()
         .whileTrue(
             new RunShooterFast(shooterWheels)
                 .andThen(
                     new SetShooterDistanceContinuous(
-                        shooterPose, () -> 105))); // @TODO replace with vision
+                            shooterPose, () -> visionSubsystem.getDistanceToTarget())
+                        .alongWith(
+                            new BrakeFeeder(feeder),
+                            new RotateToAngle(
+                                drivetrain,
+                                oi::getTranslateX,
+                                oi::getTranslateY,
+                                () ->
+                                    visionSubsystem.hasTarget()
+                                        ? drivetrain.getPose().getRotation().getDegrees()
+                                            + visionSubsystem.getTX()
+                                        : oi.getRotate()))));
+
     oi.aimSpeakerButton()
         .onFalse(
             new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+
+    oi.smartFeedButton().whileTrue(new FeedShooterManual(feeder));
 
     oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 

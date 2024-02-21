@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -29,10 +30,15 @@ public class RotateToAngle extends Command {
   private final DoubleSupplier targetAngleSupplier;
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
+  private final DoubleSupplier rotationSupplier;
+  private final BooleanSupplier manualRotationOverrideSupplier;
 
-  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 2);
-  protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 10.0);
-  protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0.1);
+  private boolean lastManualRotationOverrideValue;
+  private double lastAngularVelocity;
+
+  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 1);
+  protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 0);
+  protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0);
   protected static final TunableNumber thetaMaxVelocity =
       new TunableNumber("RotateToAngle/ThetaMaxVelocity", 8);
   protected static final TunableNumber thetaMaxAcceleration =
@@ -83,6 +89,24 @@ public class RotateToAngle extends Command {
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
     this.targetAngleSupplier = targetAngleSupplier;
+    this.rotationSupplier = () -> 0;
+    this.manualRotationOverrideSupplier = () -> false;
+  }
+
+  public RotateToAngle(
+      Drivetrain drivetrain,
+      DoubleSupplier translationXSupplier,
+      DoubleSupplier translationYSupplier,
+      DoubleSupplier rotationSupplier,
+      DoubleSupplier targetAngleSupplier,
+      BooleanSupplier manualRotationOverrideSupplier) {
+    this.drivetrain = drivetrain;
+    addRequirements(drivetrain);
+    this.translationXSupplier = translationXSupplier;
+    this.translationYSupplier = translationYSupplier;
+    this.targetAngleSupplier = targetAngleSupplier;
+    this.rotationSupplier = rotationSupplier;
+    this.manualRotationOverrideSupplier = manualRotationOverrideSupplier;
   }
 
   /**
@@ -104,6 +128,8 @@ public class RotateToAngle extends Command {
     thetaController.enableContinuousInput(
         Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()) - Math.PI,
         Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()) + Math.PI);
+
+    lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();
 
     Logger.recordOutput("RotateToAngle/AngleDeg", targetAngleSupplier.getAsDouble());
   }
@@ -131,6 +157,9 @@ public class RotateToAngle extends Command {
     }
 
     Pose2d currentPose = drivetrain.getPose();
+    if (lastManualRotationOverrideValue == manualRotationOverrideSupplier.getAsBoolean()) {
+      thetaController.reset(currentPose.getRotation().getRadians(), lastAngularVelocity);
+    }
     double thetaVelocity =
         thetaController.calculate(
             currentPose.getRotation().getRadians(),
@@ -140,11 +169,23 @@ public class RotateToAngle extends Command {
     }
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
+    double rotationPercentage = TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0);
 
     double xVelocity = xPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
     double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
+    double rotationalVelocity =
+        rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
 
-    drivetrain.drive(xVelocity, yVelocity, thetaVelocity, true, drivetrain.getFieldRelative());
+    drivetrain.drive(
+        xVelocity,
+        yVelocity,
+        manualRotationOverrideSupplier.getAsBoolean() ? rotationalVelocity : thetaVelocity,
+        true,
+        drivetrain.getFieldRelative());
+
+    lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();
+    lastAngularVelocity =
+        manualRotationOverrideSupplier.getAsBoolean() ? rotationalVelocity : thetaVelocity;
   }
 
   /**
