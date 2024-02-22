@@ -221,7 +221,8 @@ public class RobotContainer {
                 new ConditionalCommand(
                     // Has note AND is in AMP scoring mode
                     new RunShooterSlow(shooterWheels)
-                        .andThen(new SetShooterPose(shooterPose, Pose.AMP)),
+                        .asProxy()
+                        .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy()),
                     // Has note AND is in SPEAKER scoring mode
                     new RunShooterFast(shooterWheels)
                         .andThen(
@@ -231,21 +232,23 @@ public class RobotContainer {
                                         visionSubsystem.hasTarget()
                                             ? visionSubsystem.getDistanceToTarget()
                                             : 105)
+                                .asProxy()
                                 .alongWith(
-                                    new BrakeFeeder(feeder, shooterWheels),
+                                    new BrakeFeeder(feeder, shooterWheels).asProxy(),
                                     new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        () ->
-                                            drivetrain.getPose().getRotation().getDegrees()
-                                                + visionSubsystem.getTX(),
-                                        () -> !visionSubsystem.hasTarget()))),
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            () ->
+                                                drivetrain.getPose().getRotation().getDegrees()
+                                                    + visionSubsystem.getTX(),
+                                            () -> !visionSubsystem.hasTarget())
+                                        .asProxy())),
                     // Check ScoringMode
                     () -> scoringMode == ScoringMode.AMP),
                 // Does NOT have note
-                new IntakeSourceNote(feeder, shooterPose),
+                new IntakeSourceNote(feeder, shooterPose).asProxy(),
                 // Check hasNote
                 feeder::hasNote));
 
@@ -256,8 +259,8 @@ public class RobotContainer {
     oi.IntakeOrScoreButton()
         .whileTrue(
             new ConditionalCommand(
-                new FeedShooterManual(feeder),
-                new IntakeNote(intake, feeder, shooterPose),
+                new FeedShooterManual(feeder).asProxy(),
+                new IntakeNote(intake, feeder, shooterPose).asProxy(),
                 feeder::hasNote));
 
     oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
