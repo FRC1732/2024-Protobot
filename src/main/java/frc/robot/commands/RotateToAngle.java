@@ -36,7 +36,7 @@ public class RotateToAngle extends Command {
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
 
-  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 1);
+  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 10);
   protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 0);
   protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0);
   protected static final TunableNumber thetaMaxVelocity =

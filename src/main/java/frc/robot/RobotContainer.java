@@ -236,11 +236,11 @@ public class RobotContainer {
                                 drivetrain,
                                 oi::getTranslateX,
                                 oi::getTranslateY,
+                                oi::getRotate,
                                 () ->
-                                    visionSubsystem.hasTarget()
-                                        ? drivetrain.getPose().getRotation().getDegrees()
-                                            + visionSubsystem.getTX()
-                                        : oi.getRotate()))));
+                                    drivetrain.getPose().getRotation().getDegrees()
+                                        + visionSubsystem.getTX(),
+                                () -> visionSubsystem.hasTarget()))));
 
     oi.aimSpeakerButton()
         .onFalse(
