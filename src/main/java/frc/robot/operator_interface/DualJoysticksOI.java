@@ -41,19 +41,24 @@ public class DualJoysticksOI implements OperatorInterface {
   }
 
   @Override
-  public Trigger aimSpeakerButton() {
+  public Trigger aimOrSourceButton() {
     return translateJoystickButtons[1];
   }
 
-  @Override
-  public Trigger ampScoreButton() {
-    return translateJoystickButtons[2];
-  }
+  // @Override
+  // public Trigger aimSpeakerButton() {
+  //   return translateJoystickButtons[1];
+  // }
 
-  @Override
-  public Trigger sourceLoadButton() {
-    return translateJoystickButtons[3];
-  }
+  // @Override
+  // public Trigger ampScoreButton() {
+  //   return translateJoystickButtons[2];
+  // }
+
+  // @Override
+  // public Trigger sourceLoadButton() {
+  //   return translateJoystickButtons[3];
+  // }
 
   @Override
   public Trigger feedThroughButton() {
@@ -72,23 +77,38 @@ public class DualJoysticksOI implements OperatorInterface {
   }
 
   @Override
-  public Trigger groundIntakeButton() {
+  public Trigger IntakeOrScoreButton() {
     return rotateJoystickButtons[1];
   }
 
   @Override
-  public Trigger smartFeedButton() {
+  public Trigger ampModeButton() {
     return rotateJoystickButtons[2];
   }
 
   @Override
-  public Trigger manualFeedButton() {
+  public Trigger speakerModeButton() {
     return rotateJoystickButtons[3];
   }
 
+  // @Override
+  // public Trigger groundIntakeButton() {
+  //   return rotateJoystickButtons[1];
+  // }
+
+  // @Override
+  // public Trigger smartFeedButton() {
+  //   return rotateJoystickButtons[2];
+  // }
+
+  // @Override
+  // public Trigger manualFeedButton() {
+  //   return rotateJoystickButtons[3];
+  // }
+
   @Override
   public Trigger resetGyroButton() {
-    return rotateJoystickButtons[6];
+    return rotateJoystickButtons[8];
   }
 
   @Override
