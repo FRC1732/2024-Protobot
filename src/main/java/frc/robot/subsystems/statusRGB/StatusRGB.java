@@ -5,10 +5,12 @@
 package frc.robot.subsystems.statusRGB;
 
 import java.sql.Driver;
+import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -29,9 +31,25 @@ public class StatusRGB extends SubsystemBase {
 
   private boolean hasBeenEnabled = false;
 
+  private BooleanSupplier hasClearence;
+  private boolean intakeNote;
+  private boolean targetReady;
+  private BooleanSupplier whenClimbing;
+
   /** Creates a new StatusRGB. */
-  public StatusRGB() {
+  public StatusRGB(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
+    this.hasClearence = hasClearence;
+    this.intakeNote = intakeNote;
+    this.robotContainer = RobotContainer.getInstance();
     timer = new Timer();
+  }
+
+  public void setIntakeNote(boolean intakeNote) {
+    this.intakeNote = intakeNote;
+  }
+
+  public void setTargetReady(boolean targetReady) {
+    this.targetReady = targetReady;
   }
 
   @Override
