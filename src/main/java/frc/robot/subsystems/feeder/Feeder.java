@@ -5,6 +5,7 @@ import static frc.robot.subsystems.feeder.FeederConstants.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +37,7 @@ public class Feeder extends SubsystemBase {
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     feederMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
     feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
     feederMotor.enableVoltageCompensation(12);
     feederMotor.setIdleMode(IdleMode.kBrake);
@@ -52,6 +54,10 @@ public class Feeder extends SubsystemBase {
       tab.addBoolean("Has Note", this::hasNote);
       tab.addDouble("Sensor Value", () -> analog.getValue());
     }
+
+    Timer.delay(0.25);
+    feederMotor.burnFlash();
+    Timer.delay(0.25);
 
     // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
   }

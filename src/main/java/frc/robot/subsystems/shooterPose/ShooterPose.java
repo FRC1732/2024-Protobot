@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -105,6 +106,7 @@ public class ShooterPose extends SubsystemBase {
 
     shooterHeightRightMotor.restoreFactoryDefaults();
     shooterHeightLeftMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
 
     shooterHeightRightMotor.setInverted(true);
 
@@ -160,6 +162,7 @@ public class ShooterPose extends SubsystemBase {
         new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterTiltMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
     shooterTiltMotor.setInverted(true);
     shooterTiltMotor.enableVoltageCompensation(12);
     shooterTiltMotor.setIdleMode(IdleMode.kCoast);
@@ -206,6 +209,14 @@ public class ShooterPose extends SubsystemBase {
 
     shooterHeightRightMotor.stopMotor();
     shooterTiltMotor.stopMotor();
+
+    Timer.delay(0.25);
+    shooterHeightRightMotor.burnFlash();
+    Timer.delay(0.25);
+    shooterHeightLeftMotor.burnFlash();
+    Timer.delay(0.25);
+    shooterTiltMotor.burnFlash();
+    Timer.delay(0.25);
   }
 
   public void setShooterDistance(double distanceInches) {

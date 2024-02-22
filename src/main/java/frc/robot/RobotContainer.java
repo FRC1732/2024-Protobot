@@ -209,11 +209,9 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.groundIntakeButton()
-        .whileTrue(new IntakeNote(intake, feeder, shooterPose));
+    oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
 
-    oi.sourceLoadButton()
-        .whileTrue(new IntakeSourceNote(feeder, shooterPose));
+    oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
 
     oi.ampScoreButton()
         .whileTrue(
@@ -233,7 +231,7 @@ public class RobotContainer {
                                     ? visionSubsystem.getDistanceToTarget()
                                     : 105)
                         .alongWith(
-                            new BrakeFeeder(feeder),
+                            new BrakeFeeder(feeder, shooterWheels),
                             new RotateToAngle(
                                 drivetrain,
                                 oi::getTranslateX,

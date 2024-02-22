@@ -6,25 +6,32 @@ package frc.robot.commands.feederCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class BrakeFeeder extends Command {
   private Feeder feeder;
+  private ShooterWheels shooterWheels;
 
-  public BrakeFeeder(Feeder feeder) {
+  public BrakeFeeder(Feeder feeder, ShooterWheels shooterWheels) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(feeder);
     this.feeder = feeder;
+    this.shooterWheels = shooterWheels;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    feeder.brakeFeeder();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if (shooterWheels.getShooterSpeed() > 0.8) {
+      feeder.brakeFeeder();
+    } else {
+      feeder.stopFeeder();
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
