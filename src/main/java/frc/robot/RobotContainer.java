@@ -240,7 +240,7 @@ public class RobotContainer {
                                 () ->
                                     drivetrain.getPose().getRotation().getDegrees()
                                         + visionSubsystem.getTX(),
-                                () -> visionSubsystem.hasTarget()))));
+                                () -> !visionSubsystem.hasTarget()))));
 
     oi.aimSpeakerButton()
         .onFalse(
