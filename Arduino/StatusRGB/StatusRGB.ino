@@ -15,7 +15,7 @@
 #define LEDSTRIP_1 A5
 #define LEDSTRIP_2 A7
 
-#define NUMPIXELS 30  // number of neopixels in strip
+#define NUMPIXELS 100  // number of neopixels in strip
 #define DELAY_TIME 200
 #define INTENSITY 255
 
