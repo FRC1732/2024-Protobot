@@ -221,8 +221,14 @@ public class RobotContainer {
                 new ConditionalCommand(
                     // Has note AND is in AMP scoring mode
                     new RunShooterSlow(shooterWheels)
-                        .asProxy()
-                        .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy()),
+                        .andThen(
+                            new SetShooterPose(shooterPose, Pose.AMP)
+                                .asProxy()
+                                .alongWith(
+                                    new RotateToAngle(
+                                            drivetrain,
+                                            () -> this.lastAlliance == Alliance.Blue ? 90 : -90)
+                                        .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
                     new RunShooterFast(shooterWheels)
                         .andThen(

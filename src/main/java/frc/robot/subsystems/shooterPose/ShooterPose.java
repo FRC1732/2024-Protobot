@@ -230,7 +230,7 @@ public class ShooterPose extends SubsystemBase {
         -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
     shooterTiltPID.setGoal(
         MathUtil.clamp(
-            angleModulusDeg(targetAngle),
+            angleModulusDeg(targetAngle + 0),
             ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
             ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
   }
