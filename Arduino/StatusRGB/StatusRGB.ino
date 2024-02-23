@@ -181,7 +181,3 @@ void climberColors(bool red, bool green, bool blue) {
     pixels1.show();
   }
 }
-
-void climberColorsFade(int red, int green, int blue) {
-
-}
