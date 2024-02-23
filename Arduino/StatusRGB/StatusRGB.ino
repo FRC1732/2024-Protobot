@@ -13,7 +13,7 @@
 #define OUTPUT_D4 7
 
 #define LEDSTRIP_1 A5
-#define LEDSTRIP_2 A7
+#define LEDSTRIP_2 A7 // FIXME change this when the board is rewired
 
 #define NUMPIXELS 100  // number of neopixels in strip
 #define DELAY_TIME 200
@@ -107,7 +107,7 @@ void loop() {
         break;
 
       case 4:  // climbing
-        climberColors(255, 255, 255);
+        climberColors(true, true, true);
         break;
 
       default:
@@ -162,19 +162,26 @@ void flashFast(bool red, bool green, bool blue) {
   }
 }
 
-void climberColors(int red, int green, int blue) {
-  if (timer % 50 == 0) {
+int currentlyFlashing[NUMPIXELS];
+void climberColors(bool red, bool green, bool blue) {
+  if (timer % 10 == 0) {
     timer = 0;
     pixels1.clear();
     for (int i = 0; i < NUMPIXELS; i++) { 
-      int rng = random(1, 10); // 1/10 chance for a single led to sparkle
-      if (rng == 1) {
-        pixels1.setPixelColor(i, pixels1.Color(red, green, blue));
-      } else {
-        pixels1.setPixelColor(i, pixels1.Color(0, 0, 0));
+      int rng = random(1, 25); 
+      if (rng == 1 && currentlyFlashing[i] == 0) {
+        currentlyFlashing[i] = 250;
+      } else if (currentlyFlashing[i] > 0) {
+        currentlyFlashing[i] = max(0, currentlyFlashing[i] - 20);
       }
+
+      pixels1.setPixelColor(i, pixels1.Color(red * currentlyFlashing[i], green * currentlyFlashing[i], blue * currentlyFlashing[i]));
      
     }
     pixels1.show();
   }
+}
+
+void climberColorsFade(int red, int green, int blue) {
+
 }
