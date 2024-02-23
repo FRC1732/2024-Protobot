@@ -4,16 +4,12 @@
 
 package frc.robot.subsystems.statusRGB;
 
-import java.sql.Driver;
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
+import java.util.function.BooleanSupplier;
 
 public class StatusRGB extends SubsystemBase {
   private DigitalOutput out0 = new DigitalOutput(1);
@@ -29,91 +25,78 @@ public class StatusRGB extends SubsystemBase {
 
   private RobotContainer robotContainer;
 
-  private boolean hasBeenEnabled = false;
-
   private BooleanSupplier hasClearence;
-  private boolean intakeNote;
   private boolean targetReady;
   private BooleanSupplier whenClimbing;
 
   /** Creates a new StatusRGB. */
   public StatusRGB(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
     this.hasClearence = hasClearence;
-    this.intakeNote = intakeNote;
     this.robotContainer = RobotContainer.getInstance();
     timer = new Timer();
+    out3.set(!false); // always off, not used
   }
 
-  public void setIntakeNote(boolean intakeNote) {
-    this.intakeNote = intakeNote;
+  public void acquiredNote() {
+    timer.start();
+    targetElapsedTimeSeconds = 0.5;
+    specialMode = SpecialMode.NOTE_CAPTURED;
   }
 
-  public void setTargetReady(boolean targetReady) {
+  public void targetReady(boolean targetReady) {
     this.targetReady = targetReady;
   }
 
   @Override
   public void periodic() {
-
-    if (!hasBeenEnabled && DriverStation.isEnabled()) {
-      hasBeenEnabled = true;
-    }
     if (specialMode != SpecialMode.NONE) {
-      if (targetElapsedTimeSeconds > 0 && timer.hasElapsed(targetElapsedTimeSeconds)) {
+      if (timer.hasElapsed(targetElapsedTimeSeconds)) {
         specialMode = SpecialMode.NONE;
         timer.stop();
       } else {
-
         switch (specialMode) {
-          case GAME_PIECE_CAPTURED:
-            // bits 4, 3, 2 -- 28
-            out0.set(!true);
-            out1.set(!false);
-            out2.set(!false);
-            out3.set(!false);
-            out4.set(!false);
+          case NOTE_CAPTURED:
+            out4.set(!true);
             break;
-
-          case GAME_IDLE_MODE:
-            // all bits off
-            out0.set(!false);
-            out1.set(!true);
-            out2.set(!false);
-            out3.set(!false);
-            out4.set(!false);
+          default: // do nothing
             break;
         }
       }
-    }
-    if (!hasBeenEnabled && DriverStation.isEnabled()) {
-      hasBeenEnabled = true;
+    } else {
+      out4.set(!false);
     }
 
-    if (hasBeenEnabled && DriverStation.isDisabled()) {
-      specialMode = SpecialMode.GAME_IDLE_MODE;
-      targetElapsedTimeSeconds = 0;
-    }
-    if (specialMode == SpecialMode.NONE) {
-      if (DriverStation.isEnabled()){
-        if (DriverStation.getAlliance().get() == Alliance.Red ) {
-          out0.set(!false);
-          out1.set(!false);
-          out2.set(!true);  //red
-          out3.set(!false);
-          out4.set(!false);
-        } else {
-          out0.set(!false);
-          out1.set(!false);
-          out2.set(!true);  //blue
-          out3.set(!false);
-          out4.set(!false);
-        }
-      }
+    if (DriverStation.isDisabled()) {
+      out0.set(!false);
+      out1.set(!false);
+      out2.set(!false);
+    } else if (targetReady) {
+      out0.set(!true);
+      out1.set(!true);
+      out2.set(!false);
+    } else if (whenClimbing.getAsBoolean()) {
+      out0.set(!false);
+      out1.set(!false);
+      out2.set(!true);
+    } else if (!hasClearence.getAsBoolean()) {
+      out0.set(!false);
+      out1.set(!true);
+      out2.set(!false);
+    } else if (false) { // if (robotContainer.scoringMode == ScoringMode.SPEAKER) { FIXME uncomment
+      // when
+      // newControls is in this branch
+      out0.set(!true);
+      out1.set(!false);
+      out2.set(!false);
+    } else {
+      out0.set(!false);
+      out1.set(!false);
+      out2.set(!false);
     }
   }
-    public enum SpecialMode {
-      GAME_PIECE_CAPTURED,
-      GAME_IDLE_MODE,
-      NONE;
-    }
+
+  public enum SpecialMode {
+    NOTE_CAPTURED,
+    NONE;
+  }
 }

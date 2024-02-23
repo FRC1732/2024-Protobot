@@ -15,7 +15,7 @@
 #define LEDSTRIP_1 A5
 #define LEDSTRIP_2 A7
 
-#define NUMPIXELS 100  // number of neopixels in strip
+#define NUMPIXELS 30  // number of neopixels in strip
 #define DELAY_TIME 200
 #define INTENSITY 255
 
@@ -58,6 +58,14 @@ void setColor(bool red, bool green, bool blue) {
   pixels1.show();
 }
 
+void setColorInt(int red, int green, int blue) {
+  pixels1.clear();
+  for (int i = 0; i < NUMPIXELS; i++) {
+    pixels1.setPixelColor(i, pixels1.Color(red, green, blue));
+  }
+  pixels1.show();
+}
+
 void loop() {
   bool b0, b1, b2, b3, b4;
 
@@ -78,26 +86,35 @@ void loop() {
   Serial.print("Mode: ");
   Serial.println(mode);
 
-  switch (mode) {
-    case 0:
-      idleMode();
-      break;
+  if (mode >= 16) {
+    flashFast(false, true, false);
+  } else {
+    switch (mode) {
+      case 0:  // idle
+        idleMode();
+        break;
 
-    case 1:
-      flashFast(false, true, false);
-      break;
+      case 1:  // mode == speaker
+        setColorInt(255, 255, 255);
+        break;
 
-      case 2:
-      setColor(true, false, true);
-      break;
+      case 2:  // !hasClearance
+        setColorInt(255, 0, 0);
+        break;
 
-    default:
-      break;
+      case 3:  // target ready
+        setColorInt(0, 125, 0);
+        break;
+
+      case 4:  // climbing
+        climberColors(255, 255, 255);
+        break;
+
+      default:
+        break;
+    }
   }
-  /* if (mode == 1) {
-    setColor(false, true, false);
-  }
-*/
+
   timer++;
   delay(1);
 }
@@ -142,5 +159,22 @@ void flashFast(bool red, bool green, bool blue) {
 
   if (timer > 31 || timer < 0) {
     timer = 0;
+  }
+}
+
+void climberColors(int red, int green, int blue) {
+  if (timer % 50 == 0) {
+    timer = 0;
+    pixels1.clear();
+    for (int i = 0; i < NUMPIXELS; i++) { 
+      int rng = random(1, 10); // 1/10 chance for a single led to sparkle
+      if (rng == 1) {
+        pixels1.setPixelColor(i, pixels1.Color(red, green, blue));
+      } else {
+        pixels1.setPixelColor(i, pixels1.Color(0, 0, 0));
+      }
+     
+    }
+    pixels1.show();
   }
 }
