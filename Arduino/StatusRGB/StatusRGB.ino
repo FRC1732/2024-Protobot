@@ -13,9 +13,9 @@
 #define OUTPUT_D4 7
 
 #define LEDSTRIP_1 A5
-#define LEDSTRIP_2 A7 // FIXME change this when the board is rewired
+#define LEDSTRIP_2 A7  // FIXME change this when the board is rewired
 
-#define NUMPIXELS 100  // number of neopixels in strip
+#define NUMPIXELS 28  // number of neopixels in strip
 #define DELAY_TIME 200
 #define INTENSITY 255
 
@@ -31,6 +31,8 @@ uint32_t highGold = pixels1.Color(INTENSITY, INTENSITY / 2, 0);
 
 int mode = 0;
 int timer = 0;
+
+unsigned long myTime;
 
 void setup() {
   Serial.begin(250000);
@@ -65,6 +67,8 @@ void setColorInt(int red, int green, int blue) {
   }
   pixels1.show();
 }
+
+int elapsedTime = 0;
 
 void loop() {
   bool b0, b1, b2, b3, b4;
@@ -107,7 +111,8 @@ void loop() {
         break;
 
       case 4:  // climbing
-        climberColors(true, true, true);
+        //climberColors(true, true, true); unsure which one of these to use
+        climberColorsRainbow();
         break;
 
       default:
@@ -115,8 +120,10 @@ void loop() {
     }
   }
 
+  myTime = millis();
   timer++;
   delay(1);
+  elapsedTime += myTime - millis();
 }
 
 void idleMode() {
@@ -164,11 +171,10 @@ void flashFast(bool red, bool green, bool blue) {
 
 int currentlyFlashing[NUMPIXELS];
 void climberColors(bool red, bool green, bool blue) {
-  if (timer % 10 == 0) {
-    timer = 0;
+  if (myTime % 15 == 0) {
     pixels1.clear();
-    for (int i = 0; i < NUMPIXELS; i++) { 
-      int rng = random(1, 25); 
+    for (int i = 0; i < NUMPIXELS; i++) {
+      int rng = random(1, 25);
       if (rng == 1 && currentlyFlashing[i] == 0) {
         currentlyFlashing[i] = 250;
       } else if (currentlyFlashing[i] > 0) {
@@ -176,8 +182,100 @@ void climberColors(bool red, bool green, bool blue) {
       }
 
       pixels1.setPixelColor(i, pixels1.Color(red * currentlyFlashing[i], green * currentlyFlashing[i], blue * currentlyFlashing[i]));
-     
     }
     pixels1.show();
   }
+}
+
+// RAINBOW verison of the climber
+int currentlyFlashingColor[NUMPIXELS][3];
+void climberColorsRainbow() {
+  if (myTime % 20 == 0) {
+    pixels1.clear();
+    for (int i = 0; i < NUMPIXELS; i++) {
+      int rng = random(1, 15);
+
+      if (rng == 1 && currentlyFlashing[i] == 0) {
+        currentlyFlashing[i] = 250;
+        currentlyFlashingColor[i][0] = random(5, 255);
+        currentlyFlashingColor[i][1] = random(5, 255);
+        currentlyFlashingColor[i][2] = random(5, 255);
+
+      } else if (currentlyFlashing[i] > 0) {
+        currentlyFlashing[i] = max(0, currentlyFlashing[i] - 20);
+      }
+
+      pixels1.setPixelColor(i, pixels1.Color(currentlyFlashingColor[i][0] * (currentlyFlashing[i] / 250.0), currentlyFlashingColor[i][1] * (currentlyFlashing[i] / 250.0), currentlyFlashingColor[i][2] * (currentlyFlashing[i] / 250.0)));
+    }
+    pixels1.show();
+  }
+}
+
+
+int currentlyFlashingColorOld[NUMPIXELS][3];
+int waitTime = 50;
+bool colorDirection = true;
+
+// different take on the idle state, currently broken
+void topperLine() {
+  if (myTime % waitTime == 0) {
+    if (colorDirection == false) {
+      waitTime++;
+    } else {
+      waitTime--;
+    }
+
+    if (waitTime == 1 || waitTime == 55) {
+      colorDirection = !colorDirection;
+    }
+    
+    bool doColor = false;
+    if (timer >= 125 && waitTime <= 60) {
+      timer = 0;
+      doColor = true;
+    }
+    pixels1.clear();
+
+    for (int i = 0; i < NUMPIXELS; i++) {
+      if (currentlyFlashingColor[i][0] == 0 && currentlyFlashingColor[i][2] == 0) {
+          currentlyFlashingColor[i][0] = 0;
+          currentlyFlashingColor[i][1] = 0;
+          currentlyFlashingColor[i][2] = 255;
+      }
+    }
+
+    for (int i = 0; i < NUMPIXELS; i++) {
+      currentlyFlashingColorOld[i][0] = currentlyFlashingColor[i][0];
+      currentlyFlashingColorOld[i][1] = currentlyFlashingColor[i][1];
+      currentlyFlashingColorOld[i][2] = currentlyFlashingColor[i][2];      
+    }
+
+    for (int i = 0; i < NUMPIXELS ; i++) {
+      int putPosition = i;
+
+      if (putPosition == 0) {
+        if (!doColor) {
+          currentlyFlashingColor[putPosition][0] = 0;
+          currentlyFlashingColor[putPosition][1] = 0;
+          currentlyFlashingColor[putPosition][2] = 255;
+        } else {
+          currentlyFlashingColor[putPosition][0] = 255;
+          currentlyFlashingColor[putPosition][1] = 125;
+          currentlyFlashingColor[putPosition][2] = 0;
+        }
+
+      } else {
+        shiftColor(putPosition, 1);
+      }
+
+      pixels1.setPixelColor(putPosition, pixels1.Color(currentlyFlashingColor[putPosition][0], currentlyFlashingColor[putPosition][1], currentlyFlashingColor[putPosition][2]));
+    }
+    pixels1.show();
+  }
+}
+
+void shiftColor(int pos, int direction) {
+  currentlyFlashingColor[pos][0] = currentlyFlashingColorOld[pos - direction][0];
+  currentlyFlashingColor[pos][1] = currentlyFlashingColorOld[pos - direction][1];
+  currentlyFlashingColor[pos][2] = currentlyFlashingColorOld[pos - direction][2];
 }
