@@ -13,60 +13,59 @@ import frc.lib.team3061.drivetrain.swerve.SwerveConstants.SwerveType;
 public class DefaultRobotConfig extends RobotConfig {
 
   // REMINDER: offsets are in rotations
-  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 10;
-  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
-  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12;
+  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 30;
+  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 31;
+  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 32;
   private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT =
-      0.456787109375 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.68896484375 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 40;
-  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 41;
-  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 42;
+  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 20;
+  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 21;
+  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
   private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT =
-      -0.22607421875 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.533935546875 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 20;
-  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 21;
-  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
+  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 40;
+  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 41;
+  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 42;
   private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT =
-      -0.031494140625 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.723388671875 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 30;
-  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 31;
-  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 32;
+  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 10;
+  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11;
+  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 12;
   private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT =
-      -0.186767578125 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.041748046875 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int GYRO_ID = 7;
 
-  // FIXME: update robot dimensions
-  private static final double TRACKWIDTH_METERS = 0.5715; // 22.5 inches
-  private static final double WHEELBASE_METERS = 0.5969; // 23.5 inches
-  private static final double ROBOT_WIDTH_WITH_BUMPERS = 0.89; // meters
-  private static final double ROBOT_LENGTH_WITH_BUMPERS = 0.91; // meters
+  private static final double TRACKWIDTH_METERS = 0.55245; // 21.75 inches
+  private static final double WHEELBASE_METERS = 0.55245; // 21.75 inches
+  private static final double ROBOT_WIDTH_WITH_BUMPERS = 0.8636; // 34 inches
+  private static final double ROBOT_LENGTH_WITH_BUMPERS = 0.9779; // 38.5 inches
 
   // FIXME: tune PID values for the angle and drive motors for the swerve modules
 
   /* Angle Motor PID Values */
-  private static final double ANGLE_KP = 100;
+  private static final double ANGLE_KP = 100; // 0.6 last year
   private static final double ANGLE_KI = 0.0;
-  private static final double ANGLE_KD = 0.2;
+  private static final double ANGLE_KD = 0.2; // 12 last year
 
   /* Drive Motor PID Values */
-  private static final double DRIVE_KP = 3;
+  private static final double DRIVE_KP = 3; // 0.1 last year
   private static final double DRIVE_KI = 0.0;
   private static final double DRIVE_KD = 0.0;
 
   // FIXME: characterize the drivetrain and update these constants
-  private static final double DRIVE_KS = 0.55493;
-  private static final double DRIVE_KV = 2.3014;
-  private static final double DRIVE_KA = 0.12872;
+  private static final double DRIVE_KS = 0.55493; // divide by 12 last year
+  private static final double DRIVE_KV = 2.3014; // divide by 12 last year
+  private static final double DRIVE_KA = 0.12872; // divide by 12 last year
 
   // FIXME: specify the type of swerve module (MK4 and MK4i are supported)
   private static final SwerveType SWERVE_TYPE = SwerveType.MK4I;
 
   // FIXME: determine maximum velocities empirically
-  private static final double MAX_VELOCITY_METERS_PER_SECOND = 4.25;
+  private static final double MAX_VELOCITY_METERS_PER_SECOND = 4.25; // 4.96824 last year
   private static final double MAX_COAST_VELOCITY_METERS_PER_SECOND = 0.05;
 
   // FIXME: specify the name of the CANivore CAN FD bus as appropriate (an empty string uses the
@@ -88,14 +87,16 @@ public class DefaultRobotConfig extends RobotConfig {
 
   // FIXME: specify maximum velocity and acceleration and tune PID values for auto paths
 
-  private static final double AUTO_MAX_SPEED_METERS_PER_SECOND = 2.0;
-  private static final double AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 2.0;
-  private static final double AUTO_DRIVE_P_CONTROLLER = 0.2402346041055719;
+  private static final double AUTO_MAX_SPEED_METERS_PER_SECOND =
+      2.0; // last year was max velocity * 0.625
+  private static final double AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED =
+      2.0; // last year was 1.9
+  private static final double AUTO_DRIVE_P_CONTROLLER = 0.2402346041055719; // last year was 1.0
   private static final double AUTO_DRIVE_I_CONTROLLER = 0.0;
   private static final double AUTO_DRIVE_D_CONTROLLER = 0.0;
-  private static final double AUTO_TURN_P_CONTROLLER = 14.414076246334309;
+  private static final double AUTO_TURN_P_CONTROLLER = 14.414076246334309; // last year was 7
   private static final double AUTO_TURN_I_CONTROLLER = 0.0;
-  private static final double AUTO_TURN_D_CONTROLLER = 0.28828152492668624;
+  private static final double AUTO_TURN_D_CONTROLLER = 0.28828152492668624; // last year was 0
 
   @Override
   public double getSwerveAngleKP() {
@@ -223,6 +224,11 @@ public class DefaultRobotConfig extends RobotConfig {
   }
 
   @Override
+  public double getRobotMaxAngularVelocity() {
+    return super.getRobotMaxAngularVelocity() * 0.5;
+  }
+
+  @Override
   public double getRobotMaxCoastVelocity() {
     return MAX_COAST_VELOCITY_METERS_PER_SECOND;
   }
@@ -235,6 +241,11 @@ public class DefaultRobotConfig extends RobotConfig {
   @Override
   public double getAutoMaxAcceleration() {
     return AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED;
+  }
+
+  @Override
+  public double getRobotMaxTurnAcceleration() {
+    return 1000.0;
   }
 
   @Override

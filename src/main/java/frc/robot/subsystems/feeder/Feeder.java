@@ -5,6 +5,7 @@ import static frc.robot.subsystems.feeder.FeederConstants.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,8 +29,6 @@ public class Feeder extends SubsystemBase {
 
   public final CANSparkMax feederMotor;
 
-  public static Double FEEDER_MOTOR_SPEED = .4;
-
   private final AnalogInput analog;
 
   public Feeder() {
@@ -38,6 +37,7 @@ public class Feeder extends SubsystemBase {
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     feederMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
     feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
     feederMotor.enableVoltageCompensation(12);
     feederMotor.setIdleMode(IdleMode.kBrake);
@@ -55,15 +55,23 @@ public class Feeder extends SubsystemBase {
       tab.addDouble("Sensor Value", () -> analog.getValue());
     }
 
+    Timer.delay(0.25);
+    feederMotor.burnFlash();
+    Timer.delay(0.25);
+
     // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
   }
 
   public void runFeeder() {
-    feederMotor.set(FEEDER_MOTOR_SPEED);
+    feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED);
+  }
+
+  public void brakeFeeder() {
+    feederMotor.set(FeederConstants.FEEDER_BRAKE_SPEED);
   }
 
   public void reverseFeeder() {
-    feederMotor.set(FEEDER_MOTOR_SPEED * -1);
+    feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED * -1);
   }
 
   public void stopFeeder() {

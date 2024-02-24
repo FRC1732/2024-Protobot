@@ -18,5 +18,8 @@ public class FeederConstants {
 
   public static final int ANALOG_INPUT_LOCATION = 1;
 
+  public static final Double FEEDER_MOTOR_SPEED = .4;
+  public static final Double FEEDER_BRAKE_SPEED = 0.0; // -.04;
+
   public static final boolean FEEDER_LOGGING = true;
 }

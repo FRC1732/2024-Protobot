@@ -5,6 +5,7 @@ import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,6 +40,7 @@ public class ShooterWheels extends SubsystemBase {
         new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterHighMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
 
     shooterHighMotor.setInverted(true);
     shooterLowMotor.follow(shooterHighMotor, true);
@@ -61,18 +63,23 @@ public class ShooterWheels extends SubsystemBase {
     if (SHOOTER_WHEELS_TESTING) {
       setUpShuffleBoard();
     }
+    Timer.delay(0.25);
+    shooterHighMotor.burnFlash();
+    Timer.delay(0.25);
+    shooterLowMotor.burnFlash();
+    Timer.delay(0.25);
   }
 
   public void setShooterSpeedFast() {
-    shooterHighMotor.set(shooterSpeedFast.get());
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
   }
 
   public void setShooterSpeedSlow() {
-    shooterHighMotor.set(shooterSpeedSlow.get());
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
   }
 
   public void setShooterSpeedBackwards() {
-    shooterHighMotor.set(shooterSpeedBackwards.get());
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
   }
 
   public void stopShooter() {
@@ -81,6 +88,10 @@ public class ShooterWheels extends SubsystemBase {
 
   public void setShooterSpeed(double speed) {
     shooterHighMotor.set(speed);
+  }
+
+  public double getShooterSpeed() {
+    return shooterHighMotor.get();
   }
 
   public void setUpShuffleBoard() {

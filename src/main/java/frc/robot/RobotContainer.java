@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
-import frc.lib.team3061.drivetrain.DrivetrainIO;
-import frc.lib.team3061.drivetrain.DrivetrainIOGeneric;
+import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
 import frc.lib.team3061.drivetrain.swerve.SwerveModuleIO;
 import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
 import frc.lib.team3061.gyro.GyroIO;
@@ -27,7 +27,9 @@ import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
 import frc.lib.team3061.leds.LEDs;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.intakeCommands.IntakeNote;
 import frc.robot.commands.intakeCommands.IntakeSourceNote;
@@ -45,7 +47,6 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
-import frc.robot.subsystems.subsystem.Subsystem;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -62,11 +63,17 @@ public class RobotContainer {
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Red;
   private VisionSubsystem visionSubsystem;
-  private Subsystem subsystem;
   public Intake intake;
   public Feeder feeder;
   public ShooterWheels shooterWheels;
   public ShooterPose shooterPose;
+
+  public enum ScoringMode {
+    AMP,
+    SPEAKER
+  }
+
+  public ScoringMode scoringMode = ScoringMode.AMP;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -145,8 +152,9 @@ public class RobotContainer {
             3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
 
     GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
-    DrivetrainIO drivetrainIO =
-        new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
+    // DrivetrainIO drivetrainIO =
+    //     new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
+    DrivetrainIOCTRE drivetrainIO = new DrivetrainIOCTRE();
     drivetrain = new Drivetrain(drivetrainIO);
 
     intake = new Intake();
@@ -207,36 +215,115 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
-
-    oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
-
-    oi.ampScoreButton()
+    oi.aimOrSourceButton()
         .whileTrue(
-            new RunShooterSlow(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.AMP)));
-    oi.ampScoreButton()
+            new ConditionalCommand(
+                new ConditionalCommand(
+                    // Has note AND is in AMP scoring mode
+                    new RunShooterSlow(shooterWheels)
+                        .andThen(
+                            new SetShooterPose(shooterPose, Pose.AMP)
+                                .asProxy()
+                                .alongWith(
+                                    new RotateToAngle(
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            () -> this.lastAlliance == Alliance.Blue ? 90 : -90,
+                                            () -> false)
+                                        .asProxy())),
+                    // Has note AND is in SPEAKER scoring mode
+                    new RunShooterFast(shooterWheels)
+                        .andThen(
+                            new SetShooterDistanceContinuous(
+                                    shooterPose,
+                                    () ->
+                                        visionSubsystem.hasTarget()
+                                            ? visionSubsystem.getDistanceToTarget()
+                                            : 105)
+                                .asProxy()
+                                .alongWith(
+                                    new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                                    new RotateToAngle(
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            () ->
+                                                drivetrain.getPose().getRotation().getDegrees()
+                                                    + visionSubsystem.getTX(),
+                                            () -> !visionSubsystem.hasTarget())
+                                        .asProxy())),
+                    // Check ScoringMode
+                    () -> scoringMode == ScoringMode.AMP),
+                // Does NOT have note
+                new IntakeSourceNote(feeder, shooterPose).asProxy(),
+                // Check hasNote
+                feeder::hasNote));
+
+    oi.aimOrSourceButton()
         .onFalse(
             new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
-    oi.smartFeedButton()
-        .whileTrue(new RunShooterFast(shooterWheels).andThen(new FeedShooterManual(feeder)));
-    oi.smartFeedButton().onFalse(new StopShooter(shooterWheels));
-
-    oi.aimSpeakerButton()
+    oi.IntakeOrScoreButton()
         .whileTrue(
-            new RunShooterFast(shooterWheels)
-                .andThen(
-                    new SetShooterDistanceContinuous(
-                        shooterPose, () -> 105))); // @TODO replace with vision
-    oi.aimSpeakerButton()
-        .onFalse(
-            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+            new ConditionalCommand(
+                new FeedShooterManual(feeder).asProxy(),
+                new IntakeNote(intake, feeder, shooterPose).asProxy(),
+                feeder::hasNote));
 
-    oi.manualFeedButton()
-        .whileTrue(new RunShooterFast(shooterWheels).andThen(new FeedShooterManual(feeder)));
-    oi.manualFeedButton().onFalse(new StopShooter(shooterWheels));
+    oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
+
+    oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
+
+    // oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
+
+    // oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
+
+    // oi.ampScoreButton()
+    //     .whileTrue(
+    //         new RunShooterSlow(shooterWheels).andThen(new SetShooterPose(shooterPose,
+    // Pose.AMP)));
+    // oi.ampScoreButton()
+    //     .onFalse(
+    //         new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose,
+    // Pose.HANDOFF)));
+
+    // oi.aimSpeakerButton()
+    //     .whileTrue(
+    //         new RunShooterFast(shooterWheels)
+    //             .andThen(
+    //                 new SetShooterDistanceContinuous(
+    //                         shooterPose,
+    //                         () ->
+    //                             visionSubsystem.hasTarget()
+    //                                 ? visionSubsystem.getDistanceToTarget()
+    //                                 : 105)
+    //                     .alongWith(
+    //                         new BrakeFeeder(feeder, shooterWheels),
+    //                         new RotateToAngle(
+    //                             drivetrain,
+    //                             oi::getTranslateX,
+    //                             oi::getTranslateY,
+    //                             oi::getRotate,
+    //                             () ->
+    //                                 drivetrain.getPose().getRotation().getDegrees()
+    //                                     + visionSubsystem.getTX(),
+    //                             () -> !visionSubsystem.hasTarget()))));
+
+    // oi.aimSpeakerButton()
+    //     .onFalse(
+    //         new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose,
+    // Pose.HANDOFF)));
+
+    // oi.smartFeedButton().whileTrue(new FeedShooterManual(feeder));
+
+    // oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 
     // oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
+
+    oi.feedThroughButton().whileTrue(new FeedShooterManual(feeder));
 
     configureDrivetrainCommands();
 
@@ -417,15 +504,18 @@ public class RobotContainer {
   }
 
   private void configureDrivetrainCommands() {
-    /*
-     * Set up the default command for the drivetrain. The joysticks' values map to percentage of the
-     * maximum velocities. The velocities may be specified from either the robot's frame of
-     * reference or the field's frame of reference. In the robot's frame of reference, the positive
-     * x direction is forward; the positive y direction, left; position rotation, CCW. In the field
-     * frame of reference, the origin of the field to the lower left corner (i.e., the corner of the
-     * field to the driver's right). Zero degrees is away from the driver and increases in the CCW
-     * direction. This is why the left joystick's y axis specifies the velocity in the x direction
-     * and the left joystick's x axis specifies the velocity in the y direction.
+    /*-
+     * Set up the default command for the drivetrain.
+     * The joysticks' values map to percentage of the maximum velocities.
+     * The velocities may be specified from either the robot's or field's frame of
+     * reference.
+     * Robot-centric: +x is forward, +y is left, +theta is CCW
+     * Field-centric: origin is down-right, 0deg is up, +x is forward, +y is left,
+     * +theta is CCW
+     * direction.
+     *      ___________
+     *      |    |    | ^
+     * (0,0).____|____| y, x-> 0->
      */
     drivetrain.setDefaultCommand(
         new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate));
