@@ -36,7 +36,7 @@ public class RotateToAngle extends Command {
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
 
-  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 7);
+  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 20);
   protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 0);
   protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0);
   protected static final TunableNumber thetaMaxVelocity =
@@ -166,6 +166,9 @@ public class RotateToAngle extends Command {
         thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
+            System.out.println("theta velocity: "+thetaVelocity); //FIXME: REMOVE
+            System.out.println("Setpoint: "+thetaController.getSetpoint().position);
+            System.out.println("Goal: " + thetaController.getGoal().position );
     if (thetaController.atGoal()) {
       thetaVelocity = 0.0;
     }
