@@ -13,29 +13,29 @@ import frc.lib.team3061.drivetrain.swerve.SwerveConstants.SwerveType;
 public class DefaultRobotConfig extends RobotConfig {
 
   // REMINDER: offsets are in rotations
-  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 30;
-  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 31;
-  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 32;
+  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 10;
+  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
+  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12;
   private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT =
-      -0.68896484375 + (0) / 360 * .01; // input degree values inside the parenthesis
+  0.18603515625 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 20;
-  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 21;
-  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
+  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 40;
+  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 41;
+  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 42;
   private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT =
-      -0.533935546875 + (0) / 360 * .01; // input degree values inside the parenthesis
+  -0.318115234375 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 40;
-  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 41;
-  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 42;
+  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 20;
+  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 21;
+  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
   private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT =
-      -0.723388671875 + (0) / 360 * .01; // input degree values inside the parenthesis
+  0.048583984375 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 10;
-  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11;
-  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 12;
+  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 30;
+  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 31;
+  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 32;
   private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT =
-      -0.041748046875 + (0) / 360 * .01; // input degree values inside the parenthesis
+  0.37109375 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int GYRO_ID = 7;
 
@@ -70,7 +70,7 @@ public class DefaultRobotConfig extends RobotConfig {
 
   // FIXME: specify the name of the CANivore CAN FD bus as appropriate (an empty string uses the
   // default CAN bus)
-  private static final String CAN_BUS_NAME = "Monke";
+  private static final String CAN_BUS_NAME = "Shifu";
 
   // FIXME: specify the name of the camera used for detecting AprilTags
   private static final String CAMERA_NAME = "";
