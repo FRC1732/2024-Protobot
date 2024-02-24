@@ -17,25 +17,25 @@ public class DefaultRobotConfig extends RobotConfig {
   private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 31;
   private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 32;
   private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT =
-  -0.68896484375  + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.68896484375 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 20;
   private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 21;
   private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 22;
   private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT =
-  -0.533935546875 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.533935546875 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 40;
   private static final int BACK_LEFT_MODULE_STEER_MOTOR = 41;
   private static final int BACK_LEFT_MODULE_STEER_ENCODER = 42;
   private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT =
-  -0.723388671875 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.723388671875 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 10;
   private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 11;
   private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 12;
   private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT =
-  -0.041748046875 + (0) / 360 * .01; // input degree values inside the parenthesis
+      -0.041748046875 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int GYRO_ID = 7;
 
@@ -224,6 +224,11 @@ public class DefaultRobotConfig extends RobotConfig {
   }
 
   @Override
+  public double getRobotMaxAngularVelocity() {
+    return super.getRobotMaxAngularVelocity() * 0.5;
+  }
+
+  @Override
   public double getRobotMaxCoastVelocity() {
     return MAX_COAST_VELOCITY_METERS_PER_SECOND;
   }
@@ -236,6 +241,11 @@ public class DefaultRobotConfig extends RobotConfig {
   @Override
   public double getAutoMaxAcceleration() {
     return AUTO_MAX_ACCELERATION_METERS_PER_SECOND_SQUARED;
+  }
+
+  @Override
+  public double getRobotMaxTurnAcceleration() {
+    return 1000.0;
   }
 
   @Override

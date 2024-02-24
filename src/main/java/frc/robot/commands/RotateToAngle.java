@@ -36,13 +36,12 @@ public class RotateToAngle extends Command {
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
 
-  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 20);
+  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 7);
   protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 0);
   protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0);
   protected static final TunableNumber thetaMaxVelocity =
       new TunableNumber(
-          "RotateToAngle/ThetaMaxVelocity",
-          RobotConfig.getInstance().getRobotMaxAngularVelocity() / 1.1);
+          "RotateToAngle/ThetaMaxVelocity", RobotConfig.getInstance().getRobotMaxAngularVelocity());
   protected static final TunableNumber thetaMaxAcceleration =
       new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 5.5 / 1.1);
   protected static final TunableNumber thetaTolerance =
@@ -159,16 +158,16 @@ public class RotateToAngle extends Command {
     }
 
     Pose2d currentPose = drivetrain.getPose();
-    if (lastManualRotationOverrideValue == manualRotationOverrideSupplier.getAsBoolean()) {
+    if (lastManualRotationOverrideValue != manualRotationOverrideSupplier.getAsBoolean()) {
       thetaController.reset(currentPose.getRotation().getRadians(), lastAngularVelocity);
     }
     double thetaVelocity =
         thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
-            System.out.println("theta velocity: "+thetaVelocity); //FIXME: REMOVE
-            System.out.println("Setpoint: "+thetaController.getSetpoint().position);
-            System.out.println("Goal: " + thetaController.getGoal().position );
+    System.out.println("theta velocity: " + thetaVelocity); // FIXME: REMOVE
+    System.out.println("Setpoint: " + thetaController.getSetpoint().position);
+    System.out.println("Goal: " + thetaController.getGoal().position);
     if (thetaController.atGoal()) {
       thetaVelocity = 0.0;
     }
