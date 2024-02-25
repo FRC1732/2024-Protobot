@@ -35,9 +35,9 @@ public class Intake extends SubsystemBase {
 
     intakeMainMotor =
         new CANSparkMax(
-            IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+            IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
     intakeCentererMotor =
-        new CANSparkMax(IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+        new CANSparkMax(IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     intakeMainMotor.restoreFactoryDefaults();
     Timer.delay(0.050);
@@ -48,7 +48,7 @@ public class Intake extends SubsystemBase {
 
     intakeCentererMotor.restoreFactoryDefaults();
     Timer.delay(0.050);
-    intakeCentererMotor.setInverted(true);
+    intakeCentererMotor.setInverted(false);
     intakeCentererMotor.enableVoltageCompensation(12);
     intakeCentererMotor.setIdleMode(IdleMode.kCoast);
     intakeCentererMotor.stopMotor();
