@@ -10,10 +10,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.ScoringMode;
-
 import java.util.function.BooleanSupplier;
 
-public class StatusRGB2 extends SubsystemBase {
+public class StatusRgb extends SubsystemBase {
   private DigitalOutput out0 = new DigitalOutput(1);
   private DigitalOutput out1 = new DigitalOutput(2);
   private DigitalOutput out2 = new DigitalOutput(3);
@@ -32,7 +31,7 @@ public class StatusRGB2 extends SubsystemBase {
   private BooleanSupplier whenClimbing;
 
   /** Creates a new StatusRGB. */
-  public StatusRGB2(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
+  public StatusRgb(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
     this.hasClearence = hasClearence;
     this.robotContainer = RobotContainer.getInstance();
     timer = new Timer();
@@ -84,7 +83,7 @@ public class StatusRGB2 extends SubsystemBase {
       out0.set(!false);
       out1.set(!true);
       out2.set(!false);
-    } else if (robotContainer.scoringMode == ScoringMode.SPEAKER) { 
+    } else if (robotContainer.scoringMode == ScoringMode.SPEAKER) {
       out0.set(!true);
       out1.set(!false);
       out2.set(!false);

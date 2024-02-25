@@ -36,19 +36,23 @@ public class Climber extends SubsystemBase {
   private ShuffleboardTab tab;
 
   public Climber() {
-    climberLeftMotor = new CANSparkMax(
-        ClimberConstants.CLIMBER_LEFT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
-    climberRightMotor = new CANSparkMax(
-        ClimberConstants.CLIMBER_RIGHT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    climberLeftMotor =
+        new CANSparkMax(
+            ClimberConstants.CLIMBER_LEFT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    climberRightMotor =
+        new CANSparkMax(
+            ClimberConstants.CLIMBER_RIGHT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
     climberRightMotor.follow(climberLeftMotor, true);
-    climberLeftPID = new PIDController(
-        ClimberConstants.CLIMBER_LEFT_P,
-        ClimberConstants.CLIMBER_LEFT_I,
-        ClimberConstants.CLIMBER_LEFT_D);
-    climberRightPID = new PIDController(
-        ClimberConstants.CLIMBER_RIGHT_P,
-        ClimberConstants.CLIMBER_RIGHT_I,
-        ClimberConstants.CLIMBER_RIGHT_D);
+    climberLeftPID =
+        new PIDController(
+            ClimberConstants.CLIMBER_LEFT_P,
+            ClimberConstants.CLIMBER_LEFT_I,
+            ClimberConstants.CLIMBER_LEFT_D);
+    climberRightPID =
+        new PIDController(
+            ClimberConstants.CLIMBER_RIGHT_P,
+            ClimberConstants.CLIMBER_RIGHT_I,
+            ClimberConstants.CLIMBER_RIGHT_D);
 
     if (ClimberConstants.CLIMBER_TESTING) {
       setUpShuffleBoard();
@@ -127,7 +131,7 @@ public class Climber extends SubsystemBase {
      * climberRightPID.calculate(
      * climberRightMotor.getEncoder().getPosition(),
      * climberRightPID.getSetpoint()));
-     * 
+     *
      * if (ClimberConstants.CLIMBER_TESTING) {
      * climberLeftPID.setP(climberLeftP.getDouble(0));
      * climberLeftPID.setI(climberLeftI.getDouble(0));
@@ -143,7 +147,7 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public boolean isClimbing(){
+  public boolean isClimbing() {
     return isClimbing;
   }
 

@@ -49,7 +49,6 @@ import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.statusrgb.StatusRgb;
-
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -170,7 +169,7 @@ public class RobotContainer {
 
     visionSubsystem = new VisionSubsystem();
 
-    statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), ()-> climber.isClimbing());
+    statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), () -> climber.isClimbing());
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -285,12 +284,23 @@ public class RobotContainer {
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
 
-    oi.climbUp().onTrue(new SetShooterPose(shooterPose, Pose.SOURCE).andThen(new InstantCommand(()->climber.ClimberUp())));
-    oi.climbUp().onFalse(new InstantCommand(()->climber.ClimberStop()).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
-    oi.climbDown().onTrue(new SetShooterPose(shooterPose, Pose.SOURCE).andThen(new InstantCommand(()->climber.ClimberDown())));
-    oi.climbDown().onFalse(new InstantCommand(()->climber.ClimberStop()).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
-    
-    
+    oi.climbUp()
+        .onTrue(
+            new SetShooterPose(shooterPose, Pose.SOURCE)
+                .andThen(new InstantCommand(() -> climber.ClimberUp())));
+    oi.climbUp()
+        .onFalse(
+            new InstantCommand(() -> climber.ClimberStop())
+                .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+    oi.climbDown()
+        .onTrue(
+            new SetShooterPose(shooterPose, Pose.SOURCE)
+                .andThen(new InstantCommand(() -> climber.ClimberDown())));
+    oi.climbDown()
+        .onFalse(
+            new InstantCommand(() -> climber.ClimberStop())
+                .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+
     // oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
 
     // oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
