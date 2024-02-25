@@ -2,6 +2,8 @@ package frc.robot.subsystems.climber;
 
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -43,6 +45,8 @@ public class Climber extends SubsystemBase {
     climberRightMotor =
         new CANSparkMax(
             ClimberConstants.CLIMBER_RIGHT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    climberLeftMotor.setIdleMode(IdleMode.kBrake);
+    climberRightMotor.setIdleMode(IdleMode.kBrake);
     climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
     climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
     climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
@@ -65,14 +69,14 @@ public class Climber extends SubsystemBase {
   }
 
   public void ClimberUp() {
-    climberLeftMotor.set(-.1);
+    climberLeftMotor.set(-.3);
     // climberRightMotor.set(.1);
 
     isClimbing = true;
   }
 
   public void ClimberDown() {
-    climberLeftMotor.set(.1);
+    climberLeftMotor.set(.3);
     // climberRightMotor.set(-.1);
 
     isClimbing = true;

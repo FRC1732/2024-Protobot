@@ -272,7 +272,7 @@ public class RobotContainer {
     oi.IntakeOrScoreButton()
         .whileTrue(
             new ConditionalCommand(
-                new FeedShooterManual(feeder).asProxy(),
+                new RunShooterSlow(shooterWheels).andThen(new FeedShooterManual(feeder).asProxy()),
                 new IntakeNote(intake, feeder, shooterPose).asProxy(),
                 feeder::hasNote));
 
@@ -290,7 +290,7 @@ public class RobotContainer {
                 .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
     oi.climbDown()
         .onTrue(
-            new SetShooterPose(shooterPose, Pose.SOURCE)
+            new SetShooterPose(shooterPose, Pose.TRAP)
                 .andThen(new InstantCommand(() -> climber.ClimberDown())));
     oi.climbDown()
         .onFalse(
