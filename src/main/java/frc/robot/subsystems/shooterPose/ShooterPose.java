@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -82,6 +84,8 @@ public class ShooterPose extends SubsystemBase {
   private int limitSwitchCounter;
   private boolean elevatorPIDOverride;
 
+  private NavigableMap<Double, Double> angleLookupTable;
+
   // private final TunableNumber shooterHeightP =
   // new TunableNumber("Elevator Height P",
   // ShooterPoseConstants.SHOOTER_HEIGHT_KP);
@@ -100,6 +104,10 @@ public class ShooterPose extends SubsystemBase {
   // new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
 
   public ShooterPose() {
+    angleLookupTable = new TreeMap<>();
+    angleLookupTable.put(36.0, -57.26477); // (distance, optimal angle)
+    angleLookupTable.put(157.0, -19.6307);
+
     shooterHeightLeftMotor =
         new CANSparkMax(
             ShooterPoseConstants.SHOOTER_HEIGHT_LEFT_MOTOR_CAN_ID, MotorType.kBrushless);
@@ -226,16 +234,41 @@ public class ShooterPose extends SubsystemBase {
     if (distanceInches == 0) {
       return;
     }
-    // @TODO Determine if we need to reset PID controllers here
-    shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
+
     double speakerHeight = 83, shooterHeight = 27;
-    double targetAngle =
+    double basicAngle =
         -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
+
+    // Find the closest distances in the lookup table
+    Double lowerDistance = angleLookupTable.floorKey(distanceInches);
+    Double higherDistance = angleLookupTable.ceilingKey(distanceInches);
+
+    double targetAngle;
+
+    // If exact match or only one boundary exists, use it directly
+    if (lowerDistance == null || higherDistance == null || lowerDistance.equals(higherDistance)) {
+      targetAngle = angleLookupTable.getOrDefault(distanceInches, basicAngle);
+    } else {
+
+      // Interpolate between the two angles for a more accurate angle
+      double lowerAngle = angleLookupTable.get(lowerDistance);
+      double higherAngle = angleLookupTable.get(higherDistance);
+      targetAngle =
+          interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
+    }
+
+    // @TODO check targetAngle, raise elevator if it is too low
+    shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
+
     shooterTiltPID.setGoal(
         MathUtil.clamp(
-            angleModulusDeg(targetAngle + 0),
+            angleModulusDeg(targetAngle),
             ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
             ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
+  }
+
+  private static double interpolate(double x, double x0, double x1, double y0, double y1) {
+    return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
   }
 
   public void setShooterPose(Pose pose) {

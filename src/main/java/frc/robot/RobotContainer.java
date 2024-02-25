@@ -7,6 +7,8 @@ package frc.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -110,16 +112,6 @@ public class RobotContainer {
     updateOI();
 
     configureAutoCommands();
-
-    NamedCommands.registerCommand("SpinShooter", new PrintCommand("Spin Shooter Command"));
-    NamedCommands.registerCommand("ShootNote", new PrintCommand("Shoot Note Command"));
-    NamedCommands.registerCommand("IntakeNote", new PrintCommand("Intake Note Command"));
-    NamedCommands.registerCommand(
-        "SetShooterDistance115", new PrintCommand("Set Shooter Distance 115 Command"));
-    NamedCommands.registerCommand(
-        "SetShooterDistance125", new PrintCommand("Set Shooter Distance 125 Command"));
-    NamedCommands.registerCommand(
-        "SetShooterDistance150", new PrintCommand("Set Shooter Distance 150 Command"));
   }
 
   /**
@@ -230,7 +222,7 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> this.lastAlliance == Alliance.Blue ? -90 : 90,
+                                            () -> this.lastAlliance == Alliance.Blue ? 90 : -90,
                                             () -> false)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
@@ -364,6 +356,15 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "disableXStance", Commands.runOnce(drivetrain::disableXstance, drivetrain));
     NamedCommands.registerCommand("wait5Seconds", Commands.waitSeconds(5.0));
+    NamedCommands.registerCommand("SpinShooter", new PrintCommand("Spin Shooter Command"));
+    NamedCommands.registerCommand("ShootNote", new PrintCommand("Shoot Note Command"));
+    NamedCommands.registerCommand("IntakeNote", new PrintCommand("Intake Note Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance115", new PrintCommand("Set Shooter Distance 115 Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance125", new PrintCommand("Set Shooter Distance 125 Command"));
+    NamedCommands.registerCommand(
+        "SetShooterDistance150", new PrintCommand("Set Shooter Distance 150 Command"));
 
     // build auto path commands
 
@@ -548,7 +549,17 @@ public class RobotContainer {
         .onFalse(Commands.runOnce(drivetrain::disableTranslationSlowMode, drivetrain));
 
     // reset gyro to 0 degrees
-    oi.resetGyroButton().onTrue(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain));
+    oi.resetGyroButton()
+        .onTrue(
+            Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)
+                .andThen(
+                    Commands.runOnce(
+                        () ->
+                            drivetrain.resetPose(
+                                new Pose2d(
+                                    drivetrain.getPose().getTranslation(),
+                                    Rotation2d.fromDegrees(0))),
+                        drivetrain)));
 
     // @reference code
     // reset pose based on vision
