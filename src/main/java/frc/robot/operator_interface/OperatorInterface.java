@@ -88,4 +88,11 @@ public interface OperatorInterface {
   public default Trigger speakerModeButton() {
     return new Trigger(() -> false);
   }
+
+   public default Trigger climbUp() {
+    return new Trigger(() -> false);
+  }
+   public default Trigger climbDown() {
+    return new Trigger(() -> false);
+  }
 }

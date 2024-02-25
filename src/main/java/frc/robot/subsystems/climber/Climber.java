@@ -39,7 +39,7 @@ public class Climber extends SubsystemBase {
     climberRightMotor =
         new CANSparkMax(
             ClimberConstants.CLIMBER_RIGHT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
-
+    climberRightMotor.follow(climberLeftMotor, true);
     climberLeftPID =
         new PIDController(
             ClimberConstants.CLIMBER_LEFT_P,
@@ -55,7 +55,19 @@ public class Climber extends SubsystemBase {
       setUpShuffleBoard();
     }
   }
+ public void ClimberUp() {
+    climberLeftMotor.set(-.1);
+   // climberRightMotor.set(.1);
+  }
+  public void ClimberDown() {
+    climberLeftMotor.set(.1);
+   // climberRightMotor.set(-.1);
+  }
 
+  public void ClimberStop() {
+    climberLeftMotor.set(0);
+   // climberRightMotor.set(-.1);
+  }
   public void ExtendClimber() {
     climberLeftPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
     climberRightPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
@@ -86,7 +98,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    climberLeftMotor.set(
+    /*climberLeftMotor.set(
         climberLeftPID.calculate(
             climberLeftMotor.getEncoder().getPosition(), climberLeftPID.getSetpoint()));
     climberRightMotor.set(
@@ -100,7 +112,7 @@ public class Climber extends SubsystemBase {
       climberRightPID.setP(climberRightP.getDouble(0));
       climberRightPID.setI(climberRightI.getDouble(0));
       climberRightPID.setD(climberRightD.getDouble(0));
-    }
+    }*/
     if (ClimberConstants.CLIMBER_LOGGING) {
       updateInputs();
     }

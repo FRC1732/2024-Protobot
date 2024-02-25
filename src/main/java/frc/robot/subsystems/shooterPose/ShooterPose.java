@@ -163,7 +163,7 @@ public class ShooterPose extends SubsystemBase {
 
     shooterTiltMotor.restoreFactoryDefaults();
     Timer.delay(0.050);
-    shooterTiltMotor.setInverted(true);
+    shooterTiltMotor.setInverted(false);
     shooterTiltMotor.enableVoltageCompensation(12);
     shooterTiltMotor.setIdleMode(IdleMode.kCoast);
 
