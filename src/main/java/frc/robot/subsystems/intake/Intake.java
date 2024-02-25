@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -34,12 +35,15 @@ public class Intake extends SubsystemBase {
   public Intake() {
 
     intakeMainMotor =
-        new CANSparkMax(
-            IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+        new CANSparkMax(IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
     intakeCentererMotor =
-        new CANSparkMax(IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+        new CANSparkMax(
+            IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     intakeMainMotor.restoreFactoryDefaults();
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
     Timer.delay(0.050);
     intakeMainMotor.setInverted(false);
     intakeMainMotor.enableVoltageCompensation(12);
@@ -47,15 +51,19 @@ public class Intake extends SubsystemBase {
     intakeMainMotor.stopMotor();
 
     intakeCentererMotor.restoreFactoryDefaults();
+
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
     Timer.delay(0.050);
     intakeCentererMotor.setInverted(false);
     intakeCentererMotor.enableVoltageCompensation(12);
     intakeCentererMotor.setIdleMode(IdleMode.kCoast);
     intakeCentererMotor.stopMotor();
     Timer.delay(0.25);
-    intakeCentererMotor.burnFlash();
+    //intakeCentererMotor.burnFlash();
     Timer.delay(0.25);
-    intakeMainMotor.burnFlash();
+    //intakeMainMotor.burnFlash();
     Timer.delay(0.25);
 
     setupShuffleboard();

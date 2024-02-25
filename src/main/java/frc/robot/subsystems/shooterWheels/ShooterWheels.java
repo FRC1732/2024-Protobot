@@ -5,6 +5,8 @@ import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -40,6 +42,10 @@ public class ShooterWheels extends SubsystemBase {
         new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterHighMotor.restoreFactoryDefaults();
+    shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
+    shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    
     Timer.delay(0.050);
 
     shooterHighMotor.setInverted(true);
@@ -63,11 +69,11 @@ public class ShooterWheels extends SubsystemBase {
     if (SHOOTER_WHEELS_TESTING) {
       setUpShuffleBoard();
     }
-    Timer.delay(0.25);
+    /*Timer.delay(0.25);
     shooterHighMotor.burnFlash();
     Timer.delay(0.25);
     shooterLowMotor.burnFlash();
-    Timer.delay(0.25);
+    Timer.delay(0.25);*/
   }
 
   public void setShooterSpeedFast() {

@@ -89,10 +89,11 @@ public interface OperatorInterface {
     return new Trigger(() -> false);
   }
 
-   public default Trigger climbUp() {
+  public default Trigger climbUp() {
     return new Trigger(() -> false);
   }
-   public default Trigger climbDown() {
+
+  public default Trigger climbDown() {
     return new Trigger(() -> false);
   }
 }
