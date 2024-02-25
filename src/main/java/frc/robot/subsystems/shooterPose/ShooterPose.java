@@ -79,6 +79,9 @@ public class ShooterPose extends SubsystemBase {
   private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
   private GenericEntry shooterTiltP, shooterTiltI, shooterTiltD;
 
+  private int limitSwitchCounter;
+  private boolean elevatorPIDOverride;
+
   // private final TunableNumber shooterHeightP =
   // new TunableNumber("Elevator Height P",
   // ShooterPoseConstants.SHOOTER_HEIGHT_KP);
@@ -330,7 +333,21 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltPID.reset(shooterTiltEncoder.getPosition());
     }
 
-    if (shooterHeightPID.getGoal().position == 0 && shooterHeightLimitSwitch.isPressed()) {
+    // filter out false positives
+    if (shooterHeightLimitSwitch.isPressed()) {
+      limitSwitchCounter++;
+    } else {
+      limitSwitchCounter = 0;
+    }
+
+    // turn off elevator when limit switch is pressed, leave it off if goal isn't changed
+    if (shooterHeightPID.getGoal().position != 0) {
+      elevatorPIDOverride = false;
+    } else if (limitSwitchCounter > 10) {
+      elevatorPIDOverride = true;
+    }
+
+    if (elevatorPIDOverride) {
       shooterHeightRightMotor.stopMotor();
       shooterHeightEncoder.setPosition(0);
     } else {
