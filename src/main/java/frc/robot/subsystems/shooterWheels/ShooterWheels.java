@@ -2,113 +2,118 @@ package frc.robot.subsystems.shooterWheels;
 
 import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 public class ShooterWheels extends SubsystemBase {
+
+  @AutoLog
+  public static class ShooterWheelsIOInput {
+    double shooterHighMotorVelocity = 0.0;
+    double shooterLowMotorVelocity = 0.0;
+  }
+
+  private ShooterWheelsIOInputAutoLogged input = new ShooterWheelsIOInputAutoLogged();
+
   private CANSparkFlex shooterHighMotor;
   private CANSparkFlex shooterLowMotor;
 
-  private ShooterSetpoint shooterSetpoint;
-
   private ShuffleboardTab shooterWheelsTab;
 
-  private TunableNumber shooterSpeed115;
-  private TunableNumber shooterSpeed125;
-  private TunableNumber shooterSpeed150;
+  private TunableNumber shooterSpeedBackwards;
+  private TunableNumber shooterSpeedSlow;
+  private TunableNumber shooterSpeedFast;
+  private TunableNumber shooterSpeedStopped;
 
   public ShooterWheels() {
     shooterHighMotor =
-        new CANSparkFlex(
-            ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+        new CANSparkFlex(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
     shooterLowMotor =
-        new CANSparkFlex(
-            ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+        new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
-    shooterHighMotor.setInverted(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_INVERTED);
-    shooterHighMotor.follow(shooterLowMotor);
+    shooterHighMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
 
-    shooterSetpoint = ShooterSetpoint.RANGE_115;
+    shooterHighMotor.setInverted(true);
+    shooterLowMotor.follow(shooterHighMotor, true);
 
-    shooterSpeed115 =
-        new TunableNumber("Shooter Speed 115", ShooterWheelsConstants.SHOOTER_SPEED_115);
-    shooterSpeed125 =
-        new TunableNumber("Shooter Speed 125", ShooterWheelsConstants.SHOOTER_SPEED_125);
-    shooterSpeed150 =
-        new TunableNumber("Shooter Speed 150", ShooterWheelsConstants.SHOOTER_SPEED_150);
+    shooterHighMotor.enableVoltageCompensation(12);
+    shooterHighMotor.setIdleMode(IdleMode.kCoast);
+    shooterHighMotor.setOpenLoopRampRate(1.0);
+    shooterHighMotor.stopMotor();
 
-    if (TESTING) {
+    shooterSpeedBackwards =
+        new TunableNumber(
+            "Shooter Speed Backwards", ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
+    shooterSpeedFast =
+        new TunableNumber("Shooter Speed High", ShooterWheelsConstants.SHOOTER_SPEED_FAST);
+    shooterSpeedSlow =
+        new TunableNumber("Shooter Speed Low", ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
+    shooterSpeedStopped =
+        new TunableNumber("Shooter Speed Stopped", ShooterWheelsConstants.SHOOTER_SPEED_STOPPED);
+
+    if (SHOOTER_WHEELS_TESTING) {
       setUpShuffleBoard();
     }
+    Timer.delay(0.25);
+    shooterHighMotor.burnFlash();
+    Timer.delay(0.25);
+    shooterLowMotor.burnFlash();
+    Timer.delay(0.25);
   }
 
-  public void setShooterSpeed115() {
-    shooterSetpoint = ShooterSetpoint.RANGE_115;
+  public void setShooterSpeedFast() {
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
   }
 
-  public void setShooterSpeed125() {
-    shooterSetpoint = ShooterSetpoint.RANGE_125;
+  public void setShooterSpeedSlow() {
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
   }
 
-  public void setShooterSpeed150() {
-    shooterSetpoint = ShooterSetpoint.RANGE_150;
+  public void setShooterSpeedBackwards() {
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
   }
 
-  public void rampUpShooter() {
-    if (ShooterWheelsConstants.TESTING) {
-      switch (shooterSetpoint) {
-        case RANGE_115:
-          shooterHighMotor.set(shooterSpeed115.get());
-          break;
-        case RANGE_125:
-          shooterHighMotor.set(shooterSpeed125.get());
-          break;
-        case RANGE_150:
-          shooterHighMotor.set(shooterSpeed150.get());
-          break;
-        default:
-          shooterHighMotor.set(0);
-          break;
-      }
-    } else {
-      switch (shooterSetpoint) {
-        case RANGE_115:
-          shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_115);
-          break;
-        case RANGE_125:
-          shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_125);
-          break;
-        case RANGE_150:
-          shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_150);
-          break;
-        default:
-          shooterHighMotor.set(0);
-          break;
-      }
-    }
+  public void stopShooter() {
+    shooterHighMotor.stopMotor();
   }
 
-  public void rampDownShooter() {
-    shooterHighMotor.set(0);
+  public void setShooterSpeed(double speed) {
+    shooterHighMotor.set(speed);
+  }
+
+  public double getShooterSpeed() {
+    return shooterHighMotor.get();
   }
 
   public void setUpShuffleBoard() {
     shooterWheelsTab = Shuffleboard.getTab("Shooter Wheels");
 
-    shooterWheelsTab.add("Shooter Speed 115", shooterSpeed115);
-    shooterWheelsTab.add("Shooter Speed 125", shooterSpeed125);
-    shooterWheelsTab.add("Shooter Speed 150", shooterSpeed150);
+    shooterWheelsTab.add("Current Shooter Speed", shooterHighMotor.get());
+    shooterWheelsTab.add("Shooter Speed Backwards", shooterSpeedBackwards);
+    shooterWheelsTab.add("Shooter Speed Slow", shooterSpeedSlow);
+    shooterWheelsTab.add("Shooter Speed Fast", shooterSpeedFast);
+    shooterWheelsTab.add("Shooter Speed Stopped", shooterSpeedStopped);
   }
 
-  public void periodic() {}
-}
+  public void periodic() {
+    if (SHOOTER_WHEELS_LOGGING) {
+      updateInputs();
+    }
+  }
 
-enum ShooterSetpoint {
-  RANGE_115,
-  RANGE_125,
-  RANGE_150
+  private void updateInputs() {
+    input.shooterHighMotorVelocity = shooterHighMotor.getEncoder().getVelocity();
+    input.shooterLowMotorVelocity = shooterLowMotor.getEncoder().getVelocity();
+
+    Logger.processInputs("Shooter Wheels", input);
+  }
 }

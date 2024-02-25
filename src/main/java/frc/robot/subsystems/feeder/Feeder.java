@@ -2,102 +2,107 @@ package frc.robot.subsystems.feeder;
 
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
 
+  @AutoLog
+  public static class FeederIOInput {
+    double feederMotorSpeed = 0.0;
+    double analogBeamBreakSensor = 0.0;
+  }
+
+  private FeederIOInputAutoLogged inputs = new FeederIOInputAutoLogged();
+
   // these Tunables are convenient when testing as they provide direct control of the subsystem's
   // motor
-  private final TunableNumber leftMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
-  private final TunableNumber rightMotorSpeed = new TunableNumber("Feeder/rightSpeed", 0.0);
+  private final TunableNumber feederMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
 
-  public final CANSparkMax feederMotorLeft;
-  public final CANSparkMax feederMotorRight;
+  public final CANSparkMax feederMotor;
 
-  public static Double FEEDER_MOTOR_LEFT_SPEED = .3;
-  public static Double FEEDER_MOTOR_RIGHT_SPEED = .3;
+  private final AnalogInput analog;
 
   public Feeder() {
 
-    feederMotorLeft =
-        new CANSparkMax(FeederConstants.FEEDER_MOTOR_LEFT_CAN_ID, CANSparkMax.MotorType.kBrushed);
-    feederMotorRight =
-        new CANSparkMax(FeederConstants.FEEDER_MOTOR_RIGHT_CAN_ID, CANSparkMax.MotorType.kBrushed);
+    feederMotor =
+        new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
-    feederMotorLeft.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
-    feederMotorRight.setInverted(FeederConstants.SHOOTER_MOTOR_RIGHT_INVERTED);
+    feederMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
+    feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
+    feederMotor.enableVoltageCompensation(12);
+    feederMotor.setIdleMode(IdleMode.kBrake);
+    feederMotor.stopMotor();
+
+    analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
 
     // Create a Shuffleboard tab for this subsystem if testing is enabled. Add additional indicators
     // and controls as needed.
     if (TESTING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
       tab.add(SUBSYSTEM_NAME, this);
+
+      tab.addBoolean("Has Note", this::hasNote);
+      tab.addDouble("Sensor Value", () -> analog.getValue());
     }
+
+    Timer.delay(0.25);
+    feederMotor.burnFlash();
+    Timer.delay(0.25);
 
     // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
   }
 
-  public void runFeederIn() {
-    feederMotorLeft.set(FEEDER_MOTOR_LEFT_SPEED);
-    feederMotorRight.set(FEEDER_MOTOR_RIGHT_SPEED);
+  public void runFeeder() {
+    feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED);
   }
 
-  public void stopFeederIn() {
-    feederMotorLeft.set(0);
-    feederMotorRight.set(0);
+  public void brakeFeeder() {
+    feederMotor.set(FeederConstants.FEEDER_BRAKE_SPEED);
+  }
+
+  public void reverseFeeder() {
+    feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED * -1);
+  }
+
+  public void stopFeeder() {
+    feederMotor.stopMotor();
+  }
+
+  public boolean hasNote() {
+    return analog.getValue() > 300;
+  }
+
+  public boolean checkStopped() {
+    return feederMotor.get() == 0;
   }
 
   @Override
   public void periodic() {
-    // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
-    // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
     if (TESTING) {
-      if (leftMotorSpeed.get() != 0) {
-        feederMotorLeft.set(leftMotorSpeed.get());
-      }
-
-      if (rightMotorSpeed.get() != 0) {
-        feederMotorRight.set(rightMotorSpeed.get());
+      if (feederMotorSpeed.get() != 0) {
+        feederMotor.set(feederMotorSpeed.get());
       }
     }
-    // FEEDER_MOTOR_LEFT_SPEED = feederLEntry.getDouble(0);
-    // FEEDER_MOTOR_RIGHT_SPEED = feederREntry.getDouble(0);
+
+    if (FeederConstants.FEEDER_LOGGING) {
+      updateInputs();
+    }
   }
 
-  /*
-  *  private Command getSystemCheckCommand() {
-     return Commands.sequence(
-             Commands.run(() -> io.setMotorPower(0.3)).withTimeout(1.0),
-             Commands.runOnce(
-                 () -> {
-                   if (inputs.velocityRPM < 2.0) {
-                     FaultReporter.getInstance()
-                         .addFault(
-                             SUBSYSTEM_NAME,
-                             "[System Check] Subsystem motor not moving as fast as expected",
-                             false,
-                             true);
-                   }
-                 }),
-             Commands.run(() -> io.setMotorPower(-0.2)).withTimeout(1.0),
-             Commands.runOnce(
-                 () -> {
-                   if (inputs.velocityRPM > -2.0) {
-                     FaultReporter.getInstance()
-                         .addFault(
-                             SUBSYSTEM_NAME,
-                             "[System Check] Subsystem motor moving too slow or in the wrong direction",
-                             false,
-                             true);
-                   }
-                 }))
-         .until(() -> !FaultReporter.getInstance().getFaults(SUBSYSTEM_NAME).isEmpty())
-         .andThen(Commands.runOnce(() -> io.setMotorPower(0.0)));
-   }
-  */
+  private void updateInputs() {
+    inputs.feederMotorSpeed = feederMotor.get();
+    inputs.analogBeamBreakSensor = analog.getValue();
 
+    Logger.processInputs("Feeder", inputs);
+  }
 }

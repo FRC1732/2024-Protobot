@@ -7,46 +7,46 @@ package frc.robot;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
-import frc.lib.team3061.drivetrain.DrivetrainIO;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
-import frc.lib.team3061.drivetrain.DrivetrainIOGeneric;
 import frc.lib.team3061.drivetrain.swerve.SwerveModuleIO;
 import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
 import frc.lib.team3061.gyro.GyroIO;
 import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
 import frc.lib.team3061.leds.LEDs;
-import frc.lib.team3061.pneumatics.Pneumatics;
-import frc.lib.team3061.pneumatics.PneumaticsIORev;
-import frc.lib.team3061.vision.Vision;
-import frc.lib.team3061.vision.VisionConstants;
-import frc.lib.team3061.vision.VisionIO;
-import frc.lib.team3061.vision.VisionIOSim;
-import frc.robot.Constants.Mode;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
+import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.feederCommands.BrakeFeeder;
+import frc.robot.commands.feederCommands.FeedShooterManual;
+import frc.robot.commands.intakeCommands.IntakeNote;
+import frc.robot.commands.intakeCommands.IntakeSourceNote;
+import frc.robot.commands.shooterCommands.RunShooterFast;
+import frc.robot.commands.shooterCommands.RunShooterSlow;
+import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
+import frc.robot.commands.shooterCommands.SetShooterPose;
+import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
-import frc.robot.configs.NovaCTRERobotConfig;
-import frc.robot.configs.NovaCTRETCFRobotConfig;
-import frc.robot.configs.NovaRobotConfig;
+import frc.robot.limelightVision.VisionSubsystem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
-import frc.robot.subsystems.subsystem.Subsystem;
-import frc.robot.subsystems.subsystem.SubsystemIO;
-import java.io.IOException;
-import java.util.ArrayList;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.shooterPose.Pose;
+import frc.robot.subsystems.shooterPose.ShooterPose;
+import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -62,8 +62,18 @@ public class RobotContainer {
   private RobotConfig config;
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Red;
-  private Vision vision;
-  private Subsystem subsystem;
+  private VisionSubsystem visionSubsystem;
+  public Intake intake;
+  public Feeder feeder;
+  public ShooterWheels shooterWheels;
+  public ShooterPose shooterPose;
+
+  public enum ScoringMode {
+    AMP,
+    SPEAKER
+  }
+
+  public ScoringMode scoringMode = ScoringMode.AMP;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
   private final LoggedDashboardChooser<Command> autoChooser =
@@ -90,44 +100,7 @@ public class RobotContainer {
 
     LEDs.getInstance();
 
-    // create real, simulated, or replay subsystems based on the mode and robot specified
-    if (Constants.getMode() != Mode.REPLAY) {
-
-      switch (Constants.getRobot()) {
-        case ROBOT_2023_NOVA_CTRE:
-        case ROBOT_2023_NOVA_CTRE_FOC:
-          {
-            createCTRESubsystems();
-            break;
-          }
-        case ROBOT_DEFAULT:
-        case ROBOT_2023_NOVA:
-        case ROBOT_SIMBOT:
-          {
-            createSubsystems();
-            break;
-          }
-        case ROBOT_SIMBOT_CTRE:
-          {
-            createCTRESimSubsystems();
-
-            break;
-          }
-        default:
-          break;
-      }
-
-    } else {
-      drivetrain = new Drivetrain(new DrivetrainIO() {});
-
-      // String[] cameraNames = config.getCameraNames(); TODO: update with actual data
-      // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      // for (int i = 0; i < visionIOs.length; i++) {
-      //   visionIOs[i] = new VisionIO() {};
-      // }
-      // vision = new Vision(visionIOs);
-      // subsystem = new Subsystem(new SubsystemIO() {});
-    }
+    createSubsystems();
 
     // disable all telemetry in the LiveWindow to reduce the processing during each iteration
     LiveWindow.disableAllTelemetry();
@@ -154,52 +127,7 @@ public class RobotContainer {
    * or indirectly. If this isn't done, a null pointer exception will result.
    */
   private void createRobotConfig() {
-    switch (Constants.getRobot()) {
-      case ROBOT_DEFAULT:
-        config = new DefaultRobotConfig();
-        break;
-      case ROBOT_2023_NOVA_CTRE:
-      case ROBOT_SIMBOT_CTRE:
-        config = new NovaCTRERobotConfig();
-        break;
-      case ROBOT_2023_NOVA_CTRE_FOC:
-        config = new NovaCTRETCFRobotConfig();
-        break;
-      case ROBOT_2023_NOVA:
-      case ROBOT_SIMBOT:
-        config = new NovaRobotConfig();
-        break;
-    }
-  }
-
-  private void createCTRESubsystems() {
-    DrivetrainIO drivetrainIO = new DrivetrainIOCTRE();
-    drivetrain = new Drivetrain(drivetrainIO);
-
-    // String[] cameraNames = config.getCameraNames();
-    // Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
-    // VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-    // AprilTagFieldLayout layout;
-    // try {
-    //   layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
-    // } catch (IOException e) {
-    //   layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-    // }
-    // for (int i = 0; i < visionIOs.length; i++) {
-    //   visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout,
-    // robotToCameraTransforms[i]);
-    // }
-    // vision = new Vision(visionIOs);
-
-    String[] cameraNames = config.getCameraNames();
-    VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-    for (int i = 0; i < visionIOs.length; i++) {
-      visionIOs[i] = new VisionIO() {};
-    }
-    vision = new Vision(visionIOs);
-
-    // FIXME: create the hardware-specific subsystem class
-    subsystem = new Subsystem(new SubsystemIO() {});
+    config = new DefaultRobotConfig();
   }
 
   private void createSubsystems() {
@@ -224,70 +152,32 @@ public class RobotContainer {
             3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
 
     GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
-    DrivetrainIO drivetrainIO =
-        new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
+    // DrivetrainIO drivetrainIO =
+    //     new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
+    DrivetrainIOCTRE drivetrainIO = new DrivetrainIOCTRE();
     drivetrain = new Drivetrain(drivetrainIO);
 
-    // FIXME: create the hardware-specific subsystem class
-    subsystem = new Subsystem(new SubsystemIO() {});
+    intake = new Intake();
+    feeder = new Feeder();
+    shooterWheels = new ShooterWheels();
+    shooterPose = new ShooterPose();
 
-    if (Constants.getRobot() == Constants.RobotType.ROBOT_DEFAULT) {
-      new Pneumatics(new PneumaticsIORev());
-    }
+    visionSubsystem = new VisionSubsystem();
 
-    if (Constants.getRobot() == Constants.RobotType.ROBOT_SIMBOT) {
-      AprilTagFieldLayout layout;
-      try {
-        layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
-      } catch (IOException e) {
-        layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-      }
-      vision =
-          new Vision(
-              new VisionIO[] {
-                new VisionIOSim(
-                    layout,
-                    drivetrain::getPose,
-                    RobotConfig.getInstance().getRobotToCameraTransforms()[0])
-              });
-    } else {
-      //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
-      //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
-      //   VisionIO[] visionIOs = new VisionIO[cameraNames.length];
-      //   AprilTagFieldLayout layout;
-      //   try {
-      //     layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
-      //   } catch (IOException e) {
-      //     layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-      //   }
-      //   for (int i = 0; i < visionIOs.length; i++) {
-      //     visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout,
-      // robotToCameraTransforms[i]);
-      //   }
-      //   vision = new Vision(visionIOs);
-    }
-  }
-
-  private void createCTRESimSubsystems() {
-    DrivetrainIO drivetrainIO = new DrivetrainIOCTRE();
-    drivetrain = new Drivetrain(drivetrainIO);
-
-    AprilTagFieldLayout layout;
-    try {
-      layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
-    } catch (IOException e) {
-      layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
-    }
-    vision =
-        new Vision(
-            new VisionIO[] {
-              new VisionIOSim(
-                  layout,
-                  drivetrain::getPose,
-                  RobotConfig.getInstance().getRobotToCameraTransforms()[0])
-            });
-
-    // FIXME: create the hardware-specific subsystem class
+    //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
+    //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
+    //   VisionIO[] visionIOs = new VisionIO[cameraNames.length];
+    //   AprilTagFieldLayout layout;
+    //   try {
+    //     layout = new AprilTagFieldLayout(VisionConstants.APRILTAG_FIELD_LAYOUT_PATH);
+    //   } catch (IOException e) {
+    //     layout = new AprilTagFieldLayout(new ArrayList<>(), 16.4592, 8.2296);
+    //   }
+    //   for (int i = 0; i < visionIOs.length; i++) {
+    //     visionIOs[i] = new VisionIOPhotonVision(cameraNames[i], layout,
+    // robotToCameraTransforms[i]);
+    //   }
+    //   vision = new Vision(visionIOs);
   }
 
   /**
@@ -325,6 +215,115 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
+    oi.aimOrSourceButton()
+        .whileTrue(
+            new ConditionalCommand(
+                new ConditionalCommand(
+                    // Has note AND is in AMP scoring mode
+                    new RunShooterSlow(shooterWheels)
+                        .andThen(
+                            new SetShooterPose(shooterPose, Pose.AMP)
+                                .asProxy()
+                                .alongWith(
+                                    new RotateToAngle(
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            () -> this.lastAlliance == Alliance.Blue ? 90 : -90,
+                                            () -> false)
+                                        .asProxy())),
+                    // Has note AND is in SPEAKER scoring mode
+                    new RunShooterFast(shooterWheels)
+                        .andThen(
+                            new SetShooterDistanceContinuous(
+                                    shooterPose,
+                                    () ->
+                                        visionSubsystem.hasTarget()
+                                            ? visionSubsystem.getDistanceToTarget()
+                                            : 105)
+                                .asProxy()
+                                .alongWith(
+                                    new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                                    new RotateToAngle(
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            () ->
+                                                drivetrain.getPose().getRotation().getDegrees()
+                                                    + visionSubsystem.getTX(),
+                                            () -> !visionSubsystem.hasTarget())
+                                        .asProxy())),
+                    // Check ScoringMode
+                    () -> scoringMode == ScoringMode.AMP),
+                // Does NOT have note
+                new IntakeSourceNote(feeder, shooterPose).asProxy(),
+                // Check hasNote
+                feeder::hasNote));
+
+    oi.aimOrSourceButton()
+        .onFalse(
+            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+
+    oi.IntakeOrScoreButton()
+        .whileTrue(
+            new ConditionalCommand(
+                new FeedShooterManual(feeder).asProxy(),
+                new IntakeNote(intake, feeder, shooterPose).asProxy(),
+                feeder::hasNote));
+
+    oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
+
+    oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
+
+    // oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
+
+    // oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
+
+    // oi.ampScoreButton()
+    //     .whileTrue(
+    //         new RunShooterSlow(shooterWheels).andThen(new SetShooterPose(shooterPose,
+    // Pose.AMP)));
+    // oi.ampScoreButton()
+    //     .onFalse(
+    //         new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose,
+    // Pose.HANDOFF)));
+
+    // oi.aimSpeakerButton()
+    //     .whileTrue(
+    //         new RunShooterFast(shooterWheels)
+    //             .andThen(
+    //                 new SetShooterDistanceContinuous(
+    //                         shooterPose,
+    //                         () ->
+    //                             visionSubsystem.hasTarget()
+    //                                 ? visionSubsystem.getDistanceToTarget()
+    //                                 : 105)
+    //                     .alongWith(
+    //                         new BrakeFeeder(feeder, shooterWheels),
+    //                         new RotateToAngle(
+    //                             drivetrain,
+    //                             oi::getTranslateX,
+    //                             oi::getTranslateY,
+    //                             oi::getRotate,
+    //                             () ->
+    //                                 drivetrain.getPose().getRotation().getDegrees()
+    //                                     + visionSubsystem.getTX(),
+    //                             () -> !visionSubsystem.hasTarget()))));
+
+    // oi.aimSpeakerButton()
+    //     .onFalse(
+    //         new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose,
+    // Pose.HANDOFF)));
+
+    // oi.smartFeedButton().whileTrue(new FeedShooterManual(feeder));
+
+    // oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
+
+    // oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
+
+    oi.feedThroughButton().whileTrue(new FeedShooterManual(feeder));
 
     configureDrivetrainCommands();
 
@@ -505,15 +504,18 @@ public class RobotContainer {
   }
 
   private void configureDrivetrainCommands() {
-    /*
-     * Set up the default command for the drivetrain. The joysticks' values map to percentage of the
-     * maximum velocities. The velocities may be specified from either the robot's frame of
-     * reference or the field's frame of reference. In the robot's frame of reference, the positive
-     * x direction is forward; the positive y direction, left; position rotation, CCW. In the field
-     * frame of reference, the origin of the field to the lower left corner (i.e., the corner of the
-     * field to the driver's right). Zero degrees is away from the driver and increases in the CCW
-     * direction. This is why the left joystick's y axis specifies the velocity in the x direction
-     * and the left joystick's x axis specifies the velocity in the y direction.
+    /*-
+     * Set up the default command for the drivetrain.
+     * The joysticks' values map to percentage of the maximum velocities.
+     * The velocities may be specified from either the robot's or field's frame of
+     * reference.
+     * Robot-centric: +x is forward, +y is left, +theta is CCW
+     * Field-centric: origin is down-right, 0deg is up, +x is forward, +y is left,
+     * +theta is CCW
+     * direction.
+     *      ___________
+     *      |    |    | ^
+     * (0,0).____|____| y, x-> 0->
      */
     drivetrain.setDefaultCommand(
         new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate));

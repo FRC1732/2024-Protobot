@@ -45,20 +45,20 @@ public class SingleHandheldOI implements OperatorInterface {
     return new Trigger(controller::getBackButton);
   }
 
-  @Override
-  public Trigger aimSpeakerButton() {
-    return new Trigger(() -> controller.getLeftTriggerAxis() >= 0.5);
-  }
+  // @Override
+  // public Trigger aimSpeakerButton() {
+  //   return new Trigger(() -> controller.getLeftTriggerAxis() >= 0.5);
+  // }
 
-  @Override
-  public Trigger ampScoreButton() {
-    return new Trigger(controller::getLeftBumper);
-  }
+  // @Override
+  // public Trigger ampScoreButton() {
+  //   return new Trigger(controller::getLeftBumper);
+  // }
 
-  @Override
-  public Trigger sourceLoadButton() {
-    return new Trigger(controller::getAButton);
-  }
+  // @Override
+  // public Trigger sourceLoadButton() {
+  //   return new Trigger(controller::getAButton);
+  // }
 
   @Override
   public Trigger feedThroughButton() {
@@ -70,18 +70,18 @@ public class SingleHandheldOI implements OperatorInterface {
     return new Trigger(controller::getBButton);
   }
 
-  @Override
-  public Trigger groundIntakeButton() {
-    return new Trigger(() -> controller.getRightTriggerAxis() >= 0.5);
-  }
+  // @Override
+  // public Trigger groundIntakeButton() {
+  //   return new Trigger(() -> controller.getRightTriggerAxis() >= 0.5);
+  // }
 
-  @Override
-  public Trigger smartFeedButton() {
-    return new Trigger(controller::getRightBumper);
-  }
+  // @Override
+  // public Trigger smartFeedButton() {
+  //   return new Trigger(controller::getRightBumper);
+  // }
 
-  @Override
-  public Trigger manualFeedButton() {
-    return new Trigger(controller::getYButton);
-  }
+  // @Override
+  // public Trigger manualFeedButton() {
+  //   return new Trigger(controller::getYButton);
+  // }
 }

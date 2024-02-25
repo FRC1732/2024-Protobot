@@ -1,39 +1,102 @@
 package frc.robot.subsystems.intake;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
-  private CANSparkMax intakeLCanSparkMax;
-  private CANSparkMax intakeRCanSparkMax;
 
-  public static Double intakeMotorLSpeed = 0.40;
-  public static Double intakeMotorRSpeed = 0.40;
+  @AutoLog
+  public static class IntakeIOInput {
+    double intakeMainMotorSpeed = 0.0;
+    double intakeCentererMotorSpeed = 0.0;
+  }
+
+  private IntakeIOInputAutoLogged inputs = new IntakeIOInputAutoLogged();
+
+  private CANSparkMax intakeMainMotor;
+  private CANSparkMax intakeCentererMotor;
+
+  public static Double intakeMainMotorSpeed = 0.80;
+  public static Double intakeCentererMotorSpeed = 0.80;
+
+  private AnalogInput intakeAnalogSensor = new AnalogInput(IntakeConstants.INTAKE_ANALOG_SENSOR);
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("Intake");
 
   /** Creates a new Intake. */
   public Intake() {
 
-    intakeLCanSparkMax =
-        new CANSparkMax(IntakeConstants.INTAKE_MOTOR_L_CAN_ID, CANSparkMax.MotorType.kBrushless);
-    intakeRCanSparkMax =
-        new CANSparkMax(IntakeConstants.INTAKE_MOTOR_R_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    intakeMainMotor =
+        new CANSparkMax(
+            IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    intakeCentererMotor =
+        new CANSparkMax(IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
-    intakeLCanSparkMax.setInverted(IntakeConstants.INTAKE_MOTOR_L_INVERTED);
-    intakeRCanSparkMax.setInverted(IntakeConstants.INTAKE_MOTOR_R_INVERTED);
+    intakeMainMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
+    intakeMainMotor.setInverted(false);
+    intakeMainMotor.enableVoltageCompensation(12);
+    intakeMainMotor.setIdleMode(IdleMode.kCoast);
+    intakeMainMotor.stopMotor();
+
+    intakeCentererMotor.restoreFactoryDefaults();
+    Timer.delay(0.050);
+    intakeCentererMotor.setInverted(true);
+    intakeCentererMotor.enableVoltageCompensation(12);
+    intakeCentererMotor.setIdleMode(IdleMode.kCoast);
+    intakeCentererMotor.stopMotor();
+    Timer.delay(0.25);
+    intakeCentererMotor.burnFlash();
+    Timer.delay(0.25);
+    intakeMainMotor.burnFlash();
+    Timer.delay(0.25);
+
+    setupShuffleboard();
+  }
+
+  private void setupShuffleboard() {
+    tab.addBoolean("Has Note", () -> isNoteInIntake());
+    tab.addDouble("Sensore Value", () -> intakeAnalogSensor.getValue());
+  }
+
+  public void runIntake() {
+    intakeMainMotor.set(intakeMainMotorSpeed);
+    intakeCentererMotor.set(intakeCentererMotorSpeed);
+  }
+
+  public void runIntakeOut() {
+    intakeMainMotor.set(intakeMainMotorSpeed * -1);
+    intakeCentererMotor.set(intakeCentererMotorSpeed * -1);
+  }
+
+  public void stopIntake() {
+    intakeMainMotor.set(0);
+    intakeCentererMotor.set(0);
+  }
+
+  public boolean isNoteInIntake() {
+    return intakeAnalogSensor.getValue() > 500;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if (IntakeConstants.INTAKE_LOGGING) {
+      updateInputs();
+    }
   }
 
-  public void runIntake() {
-    intakeLCanSparkMax.set(intakeMotorLSpeed);
-    intakeRCanSparkMax.set(intakeMotorRSpeed);
-  }
+  private void updateInputs() {
+    inputs.intakeMainMotorSpeed = intakeMainMotor.get();
+    inputs.intakeCentererMotorSpeed = intakeCentererMotor.get();
 
-  public void stopIntake() {
-    intakeLCanSparkMax.set(0);
-    intakeRCanSparkMax.set(0);
+    Logger.processInputs("Intake", inputs);
   }
 }

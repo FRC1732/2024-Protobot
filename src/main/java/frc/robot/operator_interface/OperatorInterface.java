@@ -41,17 +41,17 @@ public interface OperatorInterface {
     return new Trigger(() -> false);
   }
 
-  public default Trigger aimSpeakerButton() {
-    return new Trigger(() -> false);
-  }
+  // public default Trigger aimSpeakerButton() {
+  //   return new Trigger(() -> false);
+  // }
 
-  public default Trigger ampScoreButton() {
-    return new Trigger(() -> false);
-  }
+  // public default Trigger ampScoreButton() {
+  //   return new Trigger(() -> false);
+  // }
 
-  public default Trigger sourceLoadButton() {
-    return new Trigger(() -> false);
-  }
+  // public default Trigger sourceLoadButton() {
+  //   return new Trigger(() -> false);
+  // }
 
   public default Trigger feedThroughButton() {
     return new Trigger(() -> false);
@@ -61,15 +61,31 @@ public interface OperatorInterface {
     return new Trigger(() -> false);
   }
 
-  public default Trigger groundIntakeButton() {
+  // public default Trigger groundIntakeButton() {
+  //   return new Trigger(() -> false);
+  // }
+
+  // public default Trigger smartFeedButton() {
+  //   return new Trigger(() -> false);
+  // }
+
+  //   public default Trigger manualFeedButton() {
+  //     return new Trigger(() -> false);
+  //   }
+
+  public default Trigger aimOrSourceButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger smartFeedButton() {
+  public default Trigger IntakeOrScoreButton() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger manualFeedButton() {
+  public default Trigger ampModeButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger speakerModeButton() {
     return new Trigger(() -> false);
   }
 }

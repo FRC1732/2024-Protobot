@@ -9,10 +9,8 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
-import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.team3015.subsystem.FaultReporter;
 import frc.lib.team3061.RobotConfig;
-import frc.robot.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,11 +41,7 @@ public class GyroIOPigeon2Phoenix6 implements GyroIO {
 
     FaultReporter.getInstance().registerHardware("Drivetrain", "gyro", gyro);
 
-    if (Constants.getMode() == Constants.Mode.SIM) {
-      this.gyroSim = this.gyro.getSimState();
-    } else {
-      this.gyroSim = null;
-    }
+    this.gyroSim = null;
   }
 
   @Override
@@ -79,9 +73,6 @@ public class GyroIOPigeon2Phoenix6 implements GyroIO {
     inputs.rollDegPerSec = this.angularVelocityXStatusSignal.getValue();
     inputs.pitchDegPerSec = this.angularVelocityYStatusSignal.getValue();
     inputs.yawDegPerSec = this.angularVelocityZStatusSignal.getValue();
-    if (Constants.getMode() == Constants.Mode.SIM) {
-      this.gyroSim.setSupplyVoltage(RobotController.getBatteryVoltage());
-    }
   }
 
   @Override
@@ -91,9 +82,7 @@ public class GyroIOPigeon2Phoenix6 implements GyroIO {
 
   @Override
   public void addYaw(double yaw) {
-    if (Constants.getMode() == Constants.Mode.SIM) {
-      this.gyroSim.addYaw(yaw);
-    }
+    return;
   }
 
   @Override

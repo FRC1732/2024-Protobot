@@ -29,6 +29,7 @@ public class DualJoysticksOI implements OperatorInterface {
     }
   }
 
+  // Translate Joystick
   @Override
   public double getTranslateX() {
     return -translateJoystick.getY();
@@ -40,17 +41,83 @@ public class DualJoysticksOI implements OperatorInterface {
   }
 
   @Override
+  public Trigger aimOrSourceButton() {
+    return translateJoystickButtons[1];
+  }
+
+  // @Override
+  // public Trigger aimSpeakerButton() {
+  //   return translateJoystickButtons[1];
+  // }
+
+  // @Override
+  // public Trigger ampScoreButton() {
+  //   return translateJoystickButtons[2];
+  // }
+
+  // @Override
+  // public Trigger sourceLoadButton() {
+  //   return translateJoystickButtons[3];
+  // }
+
+  @Override
+  public Trigger feedThroughButton() {
+    return translateJoystickButtons[6];
+  }
+
+  @Override
+  public Trigger ejectButton() {
+    return translateJoystickButtons[7];
+  }
+
+  // Rotate Joystick
+  @Override
   public double getRotate() {
     return -rotateJoystick.getX();
   }
 
   @Override
-  public Trigger fieldCentricButton() {
-    return rotateJoystickButtons[3];
+  public Trigger IntakeOrScoreButton() {
+    return rotateJoystickButtons[1];
   }
 
   @Override
+  public Trigger ampModeButton() {
+    return rotateJoystickButtons[2];
+  }
+
+  @Override
+  public Trigger speakerModeButton() {
+    return rotateJoystickButtons[3];
+  }
+
+  // @Override
+  // public Trigger groundIntakeButton() {
+  //   return rotateJoystickButtons[1];
+  // }
+
+  // @Override
+  // public Trigger smartFeedButton() {
+  //   return rotateJoystickButtons[2];
+  // }
+
+  // @Override
+  // public Trigger manualFeedButton() {
+  //   return rotateJoystickButtons[3];
+  // }
+
+  @Override
   public Trigger resetGyroButton() {
-    return translateJoystickButtons[3];
+    return rotateJoystickButtons[8];
+  }
+
+  @Override
+  public Trigger robotCentricButton() {
+    return rotateJoystickButtons[10];
+  }
+
+  @Override
+  public Trigger fieldCentricButton() {
+    return rotateJoystickButtons[11];
   }
 }

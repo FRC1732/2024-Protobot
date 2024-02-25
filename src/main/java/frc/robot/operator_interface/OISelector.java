@@ -78,10 +78,10 @@ public class OISelector {
       }
     }
 
-    if (firstPort != null && secondPort != null && xBoxPort != null && thirdPort != null) {
+    if (firstPort != null && secondPort != null && thirdPort != null) {
       noOperatorInterfaceWarning.set(false);
       nonCompetitionOperatorInterfaceWarning.set(false);
-      return new FullOperatorConsoleOI(firstPort, secondPort, xBoxPort, thirdPort);
+      return new FullOperatorConsoleOI(firstPort, secondPort, thirdPort);
     } else if (firstPort != null && secondPort != null) {
       noOperatorInterfaceWarning.set(false);
       nonCompetitionOperatorInterfaceWarning.set(true);

@@ -19,6 +19,7 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 public class VisionIOPhotonVision implements VisionIO {
   private Alert noCameraConnectedAlert =
       new Alert("specified camera not connected", AlertType.WARNING);
+
   private final PhotonCamera camera;
   private final PhotonPoseEstimator photonEstimator;
   private double lastTimestamp = 0;

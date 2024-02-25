@@ -21,12 +21,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
-import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import frc.lib.team3015.subsystem.FaultReporter;
 import frc.lib.team3061.RobotConfig;
@@ -35,7 +32,6 @@ import frc.lib.team3061.drivetrain.swerve.SwerveConstants.SwerveType;
 import frc.lib.team6328.util.Alert;
 import frc.lib.team6328.util.Alert.AlertType;
 import frc.lib.team6328.util.TunableNumber;
-import frc.robot.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -425,71 +421,69 @@ public class SwerveModuleIOTalonFXPhoenix6 implements SwerveModuleIO {
   }
 
   private void configSim() {
-    if (Constants.getMode() != Constants.Mode.SIM) {
-      return;
-    }
-    this.angleEncoderSimState = this.angleEncoder.getSimState();
-    this.angleEncoderSimState.Orientation =
-        this.canCoderInverted
-            ? ChassisReference.Clockwise_Positive
-            : ChassisReference.CounterClockwise_Positive;
-    this.angleMotorSimState = this.angleMotor.getSimState();
-    this.angleMotorSimState.Orientation =
-        this.angleMotorInverted
-            ? ChassisReference.Clockwise_Positive
-            : ChassisReference.CounterClockwise_Positive;
-    this.driveMotorSimState = this.driveMotor.getSimState();
-    this.driveMotorSimState.Orientation =
-        this.driveMotorInverted
-            ? ChassisReference.Clockwise_Positive
-            : ChassisReference.CounterClockwise_Positive;
+    return;
 
-    this.turnSim =
-        new LinearSystemSim<>(
-            LinearSystemId.identifyPositionSystem(
-                RobotConfig.getInstance().getSwerveAngleKV(),
-                RobotConfig.getInstance().getSwerveAngleKA()));
+    // this.angleEncoderSimState = this.angleEncoder.getSimState();
+    // this.angleEncoderSimState.Orientation =
+    //     this.canCoderInverted
+    //         ? ChassisReference.Clockwise_Positive
+    //         : ChassisReference.CounterClockwise_Positive;
+    // this.angleMotorSimState = this.angleMotor.getSimState();
+    // this.angleMotorSimState.Orientation =
+    //     this.angleMotorInverted
+    //         ? ChassisReference.Clockwise_Positive
+    //         : ChassisReference.CounterClockwise_Positive;
+    // this.driveMotorSimState = this.driveMotor.getSimState();
+    // this.driveMotorSimState.Orientation =
+    //     this.driveMotorInverted
+    //         ? ChassisReference.Clockwise_Positive
+    //         : ChassisReference.CounterClockwise_Positive;
 
-    this.driveSim =
-        new LinearSystemSim<>(
-            LinearSystemId.identifyVelocitySystem(
-                RobotConfig.getInstance().getDriveKV(), RobotConfig.getInstance().getDriveKA()));
+    // this.turnSim =
+    //     new LinearSystemSim<>(
+    //         LinearSystemId.identifyPositionSystem(
+    //             RobotConfig.getInstance().getSwerveAngleKV(),
+    //             RobotConfig.getInstance().getSwerveAngleKA()));
+
+    // this.driveSim =
+    //     new LinearSystemSim<>(
+    //         LinearSystemId.identifyVelocitySystem(
+    //             RobotConfig.getInstance().getDriveKV(), RobotConfig.getInstance().getDriveKA()));
   }
 
   private void updateSim() {
-    if (Constants.getMode() != Constants.Mode.SIM) {
-      return;
-    }
+    return;
 
-    // update the sim states supply voltage based on the simulated battery
-    this.angleEncoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    this.angleMotorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    this.driveMotorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    // // update the sim states supply voltage based on the simulated battery
+    // this.angleEncoderSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    // this.angleMotorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    // this.driveMotorSimState.setSupplyVoltage(RobotController.getBatteryVoltage());
 
-    // update the input voltages of the models based on the outputs of the simulated TalonFXs
-    this.turnSim.setInput(this.angleMotorSimState.getMotorVoltage());
-    this.driveSim.setInput(this.driveMotorSimState.getMotorVoltage());
+    // // update the input voltages of the models based on the outputs of the simulated TalonFXs
+    // this.turnSim.setInput(this.angleMotorSimState.getMotorVoltage());
+    // this.driveSim.setInput(this.driveMotorSimState.getMotorVoltage());
 
-    // update the models
-    this.driveSim.update(Constants.LOOP_PERIOD_SECS);
-    this.turnSim.update(Constants.LOOP_PERIOD_SECS);
+    // // update the models
+    // this.driveSim.update(Constants.LOOP_PERIOD_SECS);
+    // this.turnSim.update(Constants.LOOP_PERIOD_SECS);
 
-    // update the simulated TalonFXs and CANcoder based on the model outputs
-    double turnRadians = turnSim.getOutput(0);
-    double angleEncoderRotations = turnRadians / (2 * Math.PI);
-    double angleEncoderRPS =
-        (angleEncoderRotations - lastSimAnglePositionRot) / Constants.LOOP_PERIOD_SECS;
-    lastSimAnglePositionRot = angleEncoderRotations;
+    // // update the simulated TalonFXs and CANcoder based on the model outputs
+    // double turnRadians = turnSim.getOutput(0);
+    // double angleEncoderRotations = turnRadians / (2 * Math.PI);
+    // double angleEncoderRPS =
+    //     (angleEncoderRotations - lastSimAnglePositionRot) / Constants.LOOP_PERIOD_SECS;
+    // lastSimAnglePositionRot = angleEncoderRotations;
 
-    this.angleEncoderSimState.setRawPosition(angleEncoderRotations);
-    this.angleEncoderSimState.setVelocity(angleEncoderRPS);
-    this.angleMotorSimState.addRotorPosition(angleEncoderRotations / angleGearRatio);
-    this.angleMotorSimState.setRotorVelocity(angleEncoderRPS / angleGearRatio);
+    // this.angleEncoderSimState.setRawPosition(angleEncoderRotations);
+    // this.angleEncoderSimState.setVelocity(angleEncoderRPS);
+    // this.angleMotorSimState.addRotorPosition(angleEncoderRotations / angleGearRatio);
+    // this.angleMotorSimState.setRotorVelocity(angleEncoderRPS / angleGearRatio);
 
-    double driveMPS = driveSim.getOutput(0);
-    double driveMotorRPS = Conversions.mpsToFalconRPS(driveMPS, wheelCircumference, driveGearRatio);
-    double driveMotorRotations = driveMotorRPS * Constants.LOOP_PERIOD_SECS;
-    this.driveMotorSimState.addRotorPosition(driveMotorRotations);
-    this.driveMotorSimState.setRotorVelocity(driveMotorRPS);
+    // double driveMPS = driveSim.getOutput(0);
+    // double driveMotorRPS = Conversions.mpsToFalconRPS(driveMPS, wheelCircumference,
+    // driveGearRatio);
+    // double driveMotorRotations = driveMotorRPS * Constants.LOOP_PERIOD_SECS;
+    // this.driveMotorSimState.addRotorPosition(driveMotorRotations);
+    // this.driveMotorSimState.setRotorVelocity(driveMotorRPS);
   }
 }

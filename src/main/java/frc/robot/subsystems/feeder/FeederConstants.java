@@ -12,8 +12,14 @@ public class FeederConstants {
   public static final boolean TESTING = false;
   public static final String SUBSYSTEM_NAME = "Feeder";
 
-  public static final int FEEDER_MOTOR_LEFT_CAN_ID = 51;
-  public static final int FEEDER_MOTOR_RIGHT_CAN_ID = 54;
+  public static final int FEEDER_MOTOR_CAN_ID = 50;
   public static final boolean SHOOTER_MOTOR_LEFT_INVERTED = true;
   public static final boolean SHOOTER_MOTOR_RIGHT_INVERTED = false;
+
+  public static final int ANALOG_INPUT_LOCATION = 0;
+
+  public static final Double FEEDER_MOTOR_SPEED = .4;
+  public static final Double FEEDER_BRAKE_SPEED = 0.0; // -.04;
+
+  public static final boolean FEEDER_LOGGING = true;
 }
