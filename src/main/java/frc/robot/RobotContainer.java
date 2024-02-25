@@ -230,7 +230,7 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> this.lastAlliance == Alliance.Blue ? 90 : -90,
+                                            () -> this.lastAlliance == Alliance.Blue ? -90 : 90,
                                             () -> false)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
@@ -252,7 +252,7 @@ public class RobotContainer {
                                             oi::getRotate,
                                             () ->
                                                 drivetrain.getPose().getRotation().getDegrees()
-                                                    + visionSubsystem.getTX(),
+                                                    - visionSubsystem.getTX(),
                                             () -> !visionSubsystem.hasTarget())
                                         .asProxy())),
                     // Check ScoringMode

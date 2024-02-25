@@ -41,9 +41,10 @@ public class RotateToAngle extends Command {
   protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0);
   protected static final TunableNumber thetaMaxVelocity =
       new TunableNumber(
-          "RotateToAngle/ThetaMaxVelocity", RobotConfig.getInstance().getRobotMaxAngularVelocity());
+          "RotateToAngle/ThetaMaxVelocity",
+          RobotConfig.getInstance().getRobotMaxAngularVelocity() / 2);
   protected static final TunableNumber thetaMaxAcceleration =
-      new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 5.5 / 1.1);
+      new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 5);
   protected static final TunableNumber thetaTolerance =
       new TunableNumber("RotateToAngle/ThetaTolerance", 0.008);
 
@@ -165,9 +166,14 @@ public class RotateToAngle extends Command {
         thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
-    System.out.println("theta velocity: " + thetaVelocity); // FIXME: REMOVE
-    System.out.println("Setpoint: " + thetaController.getSetpoint().position);
-    System.out.println("Goal: " + thetaController.getGoal().position);
+    // System.out.println("Robot Angle: " + currentPose.getRotation().getDegrees()); // FIXME:
+    // REMOVE
+    // System.out.println("Current Target: " + this.targetAngleSupplier.getAsDouble()); // FIXME:
+    // REMOVE
+    // System.out.println("output velocity: " + thetaVelocity); // FIXME: REMOVE
+    // System.out.println("current Setpoint: " +
+    // Math.toDegrees(thetaController.getSetpoint().position));
+    // System.out.println("current Goal: " + Math.toDegrees(thetaController.getGoal().position));
     if (thetaController.atGoal()) {
       thetaVelocity = 0.0;
     }
@@ -180,9 +186,9 @@ public class RotateToAngle extends Command {
     double rotationalVelocity =
         rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
 
-    boolean hasTarget = manualRotationOverrideSupplier.getAsBoolean();
-    double rotVelCmd = hasTarget ? rotationalVelocity : thetaVelocity;
-    System.out.println(hasTarget + " " + rotVelCmd);
+    boolean usingOverride = manualRotationOverrideSupplier.getAsBoolean();
+    double rotVelCmd = usingOverride ? rotationalVelocity : thetaVelocity;
+    // System.out.println("using override: " + usingOverride);
     drivetrain.drive(xVelocity, yVelocity, rotVelCmd, true, drivetrain.getFieldRelative());
 
     lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();
