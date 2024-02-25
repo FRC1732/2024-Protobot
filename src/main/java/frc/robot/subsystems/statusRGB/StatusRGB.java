@@ -2,16 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.statusRGB;
+package frc.robot.subsystems.statusrgb;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.ScoringMode;
+
 import java.util.function.BooleanSupplier;
 
-public class StatusRGB extends SubsystemBase {
+public class StatusRgb extends SubsystemBase {
   private DigitalOutput out0 = new DigitalOutput(1);
   private DigitalOutput out1 = new DigitalOutput(2);
   private DigitalOutput out2 = new DigitalOutput(3);
@@ -30,7 +32,7 @@ public class StatusRGB extends SubsystemBase {
   private BooleanSupplier whenClimbing;
 
   /** Creates a new StatusRGB. */
-  public StatusRGB(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
+  public StatusRgb(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
     this.hasClearence = hasClearence;
     this.robotContainer = RobotContainer.getInstance();
     timer = new Timer();
@@ -82,9 +84,7 @@ public class StatusRGB extends SubsystemBase {
       out0.set(!false);
       out1.set(!true);
       out2.set(!false);
-    } else if (false) { // if (robotContainer.scoringMode == ScoringMode.SPEAKER) { FIXME uncomment
-      // when
-      // newControls is in this branch
+    } else if (robotContainer.scoringMode == ScoringMode.SPEAKER) { 
       out0.set(!true);
       out1.set(!false);
       out2.set(!false);
