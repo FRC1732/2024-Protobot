@@ -13,7 +13,7 @@ import frc.robot.RobotContainer.ScoringMode;
 
 import java.util.function.BooleanSupplier;
 
-public class StatusRgb extends SubsystemBase {
+public class StatusRGB2 extends SubsystemBase {
   private DigitalOutput out0 = new DigitalOutput(1);
   private DigitalOutput out1 = new DigitalOutput(2);
   private DigitalOutput out2 = new DigitalOutput(3);
@@ -32,7 +32,7 @@ public class StatusRgb extends SubsystemBase {
   private BooleanSupplier whenClimbing;
 
   /** Creates a new StatusRGB. */
-  public StatusRgb(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
+  public StatusRGB2(BooleanSupplier hasClearence, BooleanSupplier whenClimbing) {
     this.hasClearence = hasClearence;
     this.robotContainer = RobotContainer.getInstance();
     timer = new Timer();

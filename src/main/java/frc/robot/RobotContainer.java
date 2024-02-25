@@ -170,7 +170,7 @@ public class RobotContainer {
 
     visionSubsystem = new VisionSubsystem();
 
-    statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), ()-> {return false;});
+    statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), ()-> climber.isClimbing());
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
