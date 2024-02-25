@@ -42,6 +42,7 @@ import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.limelightVision.VisionSubsystem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
@@ -69,6 +70,7 @@ public class RobotContainer {
   public Feeder feeder;
   public ShooterWheels shooterWheels;
   public ShooterPose shooterPose;
+  public Climber climber;
   public StatusRgb statusRgb;
 
   public enum ScoringMode {
@@ -164,6 +166,7 @@ public class RobotContainer {
     feeder = new Feeder();
     shooterWheels = new ShooterWheels();
     shooterPose = new ShooterPose();
+    climber = new Climber();
 
     visionSubsystem = new VisionSubsystem();
 
@@ -282,6 +285,12 @@ public class RobotContainer {
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
 
+    oi.climbUp().onTrue(new SetShooterPose(shooterPose, Pose.SOURCE).andThen(new InstantCommand(()->climber.ClimberUp())));
+    oi.climbUp().onFalse(new InstantCommand(()->climber.ClimberStop()).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+    oi.climbDown().onTrue(new SetShooterPose(shooterPose, Pose.SOURCE).andThen(new InstantCommand(()->climber.ClimberDown())));
+    oi.climbDown().onFalse(new InstantCommand(()->climber.ClimberStop()).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+    
+    
     // oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
 
     // oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
