@@ -44,6 +44,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
+import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -65,6 +66,7 @@ public class RobotContainer {
   public ShooterWheels shooterWheels;
   public ShooterPose shooterPose;
   public Climber climber;
+  public StatusRgb statusRgb;
 
   public enum ScoringMode {
     AMP,
@@ -162,6 +164,8 @@ public class RobotContainer {
     climber = new Climber();
 
     visionSubsystem = new VisionSubsystem();
+
+    statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), () -> climber.isClimbing());
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();

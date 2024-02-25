@@ -290,10 +290,13 @@ public class ShooterPose extends SubsystemBase {
     shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
     shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
 
-    // shooterPoseTab.addDouble("Elevator Height", () -> shooterHeightEncoder.getPosition());
-    // shooterPoseTab.addDouble("Elevator Velocity", () -> shooterHeightEncoder.getVelocity());
+    // shooterPoseTab.addDouble("Elevator Height", () ->
+    // shooterHeightEncoder.getPosition());
+    // shooterPoseTab.addDouble("Elevator Velocity", () ->
+    // shooterHeightEncoder.getVelocity());
 
-    // shooterPoseTab.addBoolean("Lower Limit Switch", () -> shooterHeightLimitSwitch.isPressed());
+    // shooterPoseTab.addBoolean("Lower Limit Switch", () ->
+    // shooterHeightLimitSwitch.isPressed());
 
     shooterPoseTab.addDouble(
         "Feed Forward",
@@ -410,5 +413,12 @@ public class ShooterPose extends SubsystemBase {
 
   private double angleModulusDeg(double angleDeg) {
     return Math.toDegrees(MathUtil.angleModulus(Math.toRadians(angleDeg)));
+  }
+
+  public boolean hasClearence() {
+    // shooterTiltEncoder.getPosition()
+    // shooterHeightEncoder.getPosition()
+
+    return false;
   }
 }
