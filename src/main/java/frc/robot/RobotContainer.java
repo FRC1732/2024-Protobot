@@ -20,10 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
-import frc.lib.team3061.drivetrain.swerve.SwerveModuleIO;
-import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
-import frc.lib.team3061.gyro.GyroIO;
-import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
 import frc.lib.team3061.leds.LEDs;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
@@ -139,23 +135,23 @@ public class RobotContainer {
     int[] steerMotorCANDIDs = config.getSwerveSteerMotorCANIDs();
     int[] steerEncoderCANDIDs = config.getSwerveSteerEncoderCANIDs();
     double[] steerOffsets = config.getSwerveSteerOffsets();
-    SwerveModuleIO flModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0], steerOffsets[0]);
+    /*SwerveModuleIO flModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0], steerOffsets[0]);
 
-    SwerveModuleIO frModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            1, driveMotorCANIDs[1], steerMotorCANDIDs[1], steerEncoderCANDIDs[1], steerOffsets[1]);
+        SwerveModuleIO frModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                1, driveMotorCANIDs[1], steerMotorCANDIDs[1], steerEncoderCANDIDs[1], steerOffsets[1]);
 
-    SwerveModuleIO blModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            2, driveMotorCANIDs[2], steerMotorCANDIDs[2], steerEncoderCANDIDs[2], steerOffsets[2]);
+        SwerveModuleIO blModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                2, driveMotorCANIDs[2], steerMotorCANDIDs[2], steerEncoderCANDIDs[2], steerOffsets[2]);
 
-    SwerveModuleIO brModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
-
-    GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
+        SwerveModuleIO brModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
+    */
+    // GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
     // DrivetrainIO drivetrainIO =
     //     new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
     DrivetrainIOCTRE drivetrainIO = new DrivetrainIOCTRE();
@@ -376,7 +372,8 @@ public class RobotContainer {
                 Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
                 Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
                 Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
-  }
+  
+}
 
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {

@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooterPose;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
@@ -106,6 +107,10 @@ public class ShooterPose extends SubsystemBase {
 
     shooterHeightRightMotor.restoreFactoryDefaults();
     shooterHeightLeftMotor.restoreFactoryDefaults();
+
+    shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
+    shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
     Timer.delay(0.050);
 
     shooterHeightRightMotor.setInverted(true);
@@ -162,6 +167,10 @@ public class ShooterPose extends SubsystemBase {
         new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterTiltMotor.restoreFactoryDefaults();
+    
+    shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+    shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
     Timer.delay(0.050);
     shooterTiltMotor.setInverted(false);
     shooterTiltMotor.enableVoltageCompensation(12);
@@ -210,13 +219,13 @@ public class ShooterPose extends SubsystemBase {
     shooterHeightRightMotor.stopMotor();
     shooterTiltMotor.stopMotor();
 
-    Timer.delay(0.25);
+    /*Timer.delay(0.25);
     shooterHeightRightMotor.burnFlash();
     Timer.delay(0.25);
     shooterHeightLeftMotor.burnFlash();
     Timer.delay(0.25);
     shooterTiltMotor.burnFlash();
-    Timer.delay(0.25);
+    Timer.delay(0.25);*/
   }
 
   public void setShooterDistance(double distanceInches) {
