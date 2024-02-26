@@ -332,7 +332,7 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
 
     inputs.connected = (this.m_yawGetter.getStatus() == StatusCode.OK);
     inputs.yawDeg =
-        BaseStatusSignal.getLatencyCompensatedValue(this.m_yawGetter, this.m_angularVelocity);
+        -1 * BaseStatusSignal.getLatencyCompensatedValue(this.m_yawGetter, this.m_angularVelocity);
     inputs.pitchDeg =
         BaseStatusSignal.getLatencyCompensatedValue(
             this.pitchStatusSignal, this.angularVelocityYStatusSignal);
@@ -341,7 +341,7 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
             this.rollStatusSignal, this.angularVelocityXStatusSignal);
     inputs.rollDegPerSec = this.angularVelocityXStatusSignal.getValue();
     inputs.pitchDegPerSec = this.angularVelocityYStatusSignal.getValue();
-    inputs.yawDegPerSec = this.m_angularVelocity.getValue();
+    inputs.yawDegPerSec = -1 * this.m_angularVelocity.getValue();
   }
 
   private void updateSwerveModuleInputs(

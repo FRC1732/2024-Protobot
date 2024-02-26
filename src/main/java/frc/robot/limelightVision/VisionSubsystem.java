@@ -48,7 +48,7 @@ public class VisionSubsystem extends SubsystemBase {
     double cameraHeight = 22;
     double targetHeight = 56.375;
     double heightDiff = targetHeight - cameraHeight;
-    double cameraAngle = 12;
+    double cameraAngle = 10;
     double theta = Math.toRadians(cameraAngle + getTY());
     return heightDiff / Math.tan(theta);
   }
@@ -60,6 +60,7 @@ public class VisionSubsystem extends SubsystemBase {
     tab = Shuffleboard.getTab("Vision");
     tab.addDouble("Tx", () -> this.getTX());
     tab.addDouble("Ty", () -> this.getTY());
+    tab.addDouble("Distance", () -> this.getDistanceToTarget());
     tab.addDouble("Latency Capture", () -> this.getLatencyCapture());
     tab.addDouble("Latency Pipeline", () -> this.getLatencyPipeline());
     tab.addBoolean("Has Target", () -> this.hasTarget());

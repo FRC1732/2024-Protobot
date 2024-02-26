@@ -163,17 +163,10 @@ public class RotateToAngle extends Command {
       thetaController.reset(currentPose.getRotation().getRadians(), lastAngularVelocity);
     }
     double thetaVelocity =
-        thetaController.calculate(
+        -thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
-    // System.out.println("Robot Angle: " + currentPose.getRotation().getDegrees()); // FIXME:
-    // REMOVE
-    // System.out.println("Current Target: " + this.targetAngleSupplier.getAsDouble()); // FIXME:
-    // REMOVE
-    // System.out.println("output velocity: " + thetaVelocity); // FIXME: REMOVE
-    // System.out.println("current Setpoint: " +
-    // Math.toDegrees(thetaController.getSetpoint().position));
-    // System.out.println("current Goal: " + Math.toDegrees(thetaController.getGoal().position));
+
     if (thetaController.atGoal()) {
       thetaVelocity = 0.0;
     }
@@ -188,7 +181,7 @@ public class RotateToAngle extends Command {
 
     boolean usingOverride = manualRotationOverrideSupplier.getAsBoolean();
     double rotVelCmd = usingOverride ? rotationalVelocity : thetaVelocity;
-    // System.out.println("using override: " + usingOverride);
+
     drivetrain.drive(xVelocity, yVelocity, rotVelCmd, true, drivetrain.getFieldRelative());
 
     lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();

@@ -551,15 +551,13 @@ public class RobotContainer {
     // reset gyro to 0 degrees
     oi.resetGyroButton()
         .onTrue(
-            Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)
-                .andThen(
-                    Commands.runOnce(
-                        () ->
-                            drivetrain.resetPose(
-                                new Pose2d(
-                                    drivetrain.getPose().getTranslation(),
-                                    Rotation2d.fromDegrees(0))),
-                        drivetrain)));
+            Commands.runOnce(
+                    () ->
+                        drivetrain.resetPose(
+                            new Pose2d(
+                                drivetrain.getPose().getTranslation(), Rotation2d.fromDegrees(0))),
+                    drivetrain)
+                .andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
 
     // @reference code
     // reset pose based on vision
