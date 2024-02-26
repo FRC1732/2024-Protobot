@@ -221,10 +221,17 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
     for (SwerveModule swerveModule : this.Modules) {
       CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
       swerveModule.getDriveMotor().getConfigurator().refresh(currentLimits);
-      BaseStatusSignal.setUpdateFrequencyForAll(100, swerveModule.getDriveMotor().getPosition(), swerveModule.getDriveMotor().getVelocity());
-      BaseStatusSignal.setUpdateFrequencyForAll(100, swerveModule.getSteerMotor().getPosition(), swerveModule.getSteerMotor().getVelocity());
-      BaseStatusSignal.setUpdateFrequencyForAll(100, swerveModule.getCANcoder().getPosition(), swerveModule.getCANcoder().getVelocity());
-     
+      BaseStatusSignal.setUpdateFrequencyForAll(
+          100,
+          swerveModule.getDriveMotor().getPosition(),
+          swerveModule.getDriveMotor().getVelocity());
+      BaseStatusSignal.setUpdateFrequencyForAll(
+          100,
+          swerveModule.getSteerMotor().getPosition(),
+          swerveModule.getSteerMotor().getVelocity());
+      BaseStatusSignal.setUpdateFrequencyForAll(
+          100, swerveModule.getCANcoder().getPosition(), swerveModule.getCANcoder().getVelocity());
+
       swerveModule.getDriveMotor().optimizeBusUtilization();
       swerveModule.getSteerMotor().optimizeBusUtilization();
       swerveModule.getCANcoder().optimizeBusUtilization();

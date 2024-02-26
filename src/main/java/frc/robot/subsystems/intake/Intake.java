@@ -41,9 +41,11 @@ public class Intake extends SubsystemBase {
             IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     intakeMainMotor.restoreFactoryDefaults();
-    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
     intakeMainMotor.setInverted(false);
     intakeMainMotor.enableVoltageCompensation(12);
@@ -52,18 +54,20 @@ public class Intake extends SubsystemBase {
 
     intakeCentererMotor.restoreFactoryDefaults();
 
-    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
     intakeCentererMotor.setInverted(false);
     intakeCentererMotor.enableVoltageCompensation(12);
     intakeCentererMotor.setIdleMode(IdleMode.kCoast);
     intakeCentererMotor.stopMotor();
     Timer.delay(0.25);
-    //intakeCentererMotor.burnFlash();
+    // intakeCentererMotor.burnFlash();
     Timer.delay(0.25);
-    //intakeMainMotor.burnFlash();
+    // intakeMainMotor.burnFlash();
     Timer.delay(0.25);
 
     setupShuffleboard();

@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
-import frc.lib.team3061.leds.LEDs;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.commands.RotateToAngle;
@@ -98,7 +97,7 @@ public class RobotContainer {
      */
     createRobotConfig();
 
-    LEDs.getInstance();
+    // LEDs.getInstance();
 
     createSubsystems();
 
@@ -355,25 +354,25 @@ public class RobotContainer {
                 DriverStation.isTeleopEnabled()
                     && DriverStation.getMatchTime() > 0.0
                     && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
-        .onTrue(
-            Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
-                .withTimeout(1.5)
-                .andThen(
-                    Commands.run(() -> LEDs.getInstance().setEndgameAlert(false))
-                        .withTimeout(1.0)));
+        .onTrue(new PrintCommand("End Game Alert 1."));
+    /*Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
+    .withTimeout(1.5)
+    .andThen(
+        Commands.run(() -> LEDs.getInstance().setEndgameAlert(false))
+            .withTimeout(1.0)));*/
     new Trigger(
             () ->
                 DriverStation.isTeleopEnabled()
                     && DriverStation.getMatchTime() > 0.0
                     && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
-        .onTrue(
-            Commands.sequence(
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
-  
-}
+        .onTrue(new PrintCommand("End Game Alert 2."));
+    /*Commands.sequence(
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));*/
+
+  }
 
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {
