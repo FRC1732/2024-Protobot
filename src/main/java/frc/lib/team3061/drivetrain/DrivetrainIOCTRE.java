@@ -492,7 +492,7 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
   @Override
   public void driveRobotRelative(
       double xVelocity, double yVelocity, double rotationalVelocity, boolean isOpenLoop) {
-    this.targetChassisSpeeds =
+        this.targetChassisSpeeds =
         ChassisSpeeds.discretize(
             new ChassisSpeeds(xVelocity, yVelocity, rotationalVelocity),
             Constants.LOOP_PERIOD_SECS);
