@@ -98,7 +98,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void stopIntake() {
-    //intakeMainMotor.set(0);
+    // intakeMainMotor.set(0);
     intakeCentererMotor.set(0);
     intakeGoal = 0;
   }
@@ -111,12 +111,12 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     intakeMainMotor.set(intakeSetpoint);
-    if(intakeSetpoint < intakeGoal && intakeGoal > 0) {
+    if (intakeSetpoint < intakeGoal && intakeGoal > 0) {
       intakeSetpoint += .7;
     } else if (intakeSetpoint > intakeGoal && intakeGoal < 0) {
       intakeSetpoint -= .7;
     }
-    if(intakeGoal == 0) {
+    if (intakeGoal == 0) {
       intakeSetpoint = 0;
     }
     if (IntakeConstants.INTAKE_LOGGING) {

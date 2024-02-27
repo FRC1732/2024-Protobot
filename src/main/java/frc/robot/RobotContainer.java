@@ -403,7 +403,6 @@ public class RobotContainer {
     Command testAmpSide = new PathPlannerAuto("Amp Side Test");
     autoChooser.addOption("TestAmpSide", testAmpSide);
 
-
     /************ Start Point ************
      *
      * useful for initializing the pose of the robot to a known location
