@@ -12,8 +12,8 @@
 #define OUTPUT_D3 6
 #define OUTPUT_D4 7
 
-#define LEDSTRIP_FRONT A5
-#define LEDSTRIP_SIDES A4 
+#define LEDSTRIP_FRONT A4
+#define LEDSTRIP_SIDES A5
 
 #define NUMPIXELS_FRONT 38  // number of neopixels in strip
 #define NUMPIXELS_SIDES 48  // number of neopixels in strip
