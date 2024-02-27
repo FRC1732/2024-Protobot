@@ -106,12 +106,12 @@ public class ShooterPose extends SubsystemBase {
   public ShooterPose() {
     angleLookupTable = new TreeMap<>();
     angleLookupTable.put(36.0, -57.26477); // (distance, optimal angle)
-    angleLookupTable.put(80.0, -32.5); // (distance, optimal angle)
-    angleLookupTable.put(95.0, -32.5); // (distance, optimal angle)
-    angleLookupTable.put(105.0, -32.0); // (distance, optimal angle)
+    angleLookupTable.put(80.0, -32.5);
+    angleLookupTable.put(95.0, -32.5);
+    angleLookupTable.put(105.0, -32.0);
     angleLookupTable.put(115.0, -31.0);
     angleLookupTable.put(125.0, -30.0);
-    angleLookupTable.put(135.0, -29.0);
+    angleLookupTable.put(135.0, -29.0); // add 157
 
     shooterHeightLeftMotor =
         new CANSparkMax(

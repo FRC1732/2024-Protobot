@@ -222,7 +222,7 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> this.lastAlliance == Alliance.Blue ? 90 : -90,
+                                            () -> this.lastAlliance == Alliance.Blue ? -90 : 90,
                                             () -> false)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
@@ -380,6 +380,9 @@ public class RobotContainer {
     Command testLine = new PathPlannerAuto("DistanceTest");
     autoChooser.addOption("Test Auto", autoTest);
     autoChooser.addOption("Distance Test", testLine);
+    Command testAmpSide = new PathPlannerAuto("Amp Side Test");
+    autoChooser.addOption("TestAmpSide", testAmpSide);
+
 
     /************ Start Point ************
      *

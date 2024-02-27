@@ -163,7 +163,7 @@ public class RotateToAngle extends Command {
       thetaController.reset(currentPose.getRotation().getRadians(), lastAngularVelocity);
     }
     double thetaVelocity =
-        -thetaController.calculate(
+        thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
 

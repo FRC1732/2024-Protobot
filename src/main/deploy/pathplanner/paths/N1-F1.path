@@ -40,7 +40,7 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 19.885165113855482,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Amp Side",
