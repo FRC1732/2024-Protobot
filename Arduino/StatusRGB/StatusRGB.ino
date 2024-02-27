@@ -12,21 +12,25 @@
 #define OUTPUT_D3 6
 #define OUTPUT_D4 7
 
-#define LEDSTRIP_1 A5
-#define LEDSTRIP_2 A7  // FIXME change this when the board is rewired
+#define LEDSTRIP_FRONT A5
+#define LEDSTRIP_SIDES A4 
 
-#define NUMPIXELS 28  // number of neopixels in strip
+#define NUMPIXELS_FRONT 38  // number of neopixels in strip
+#define NUMPIXELS_SIDES 48  // number of neopixels in strip
+
 #define DELAY_TIME 200
 #define INTENSITY 255
 
 #define IDLE_CYCLE 100
 #define IDLE_BLOCK 8
 
-Adafruit_NeoPixel pixels1(NUMPIXELS, LEDSTRIP_1, NEO_GRB + NEO_KHZ800);
-uint32_t lowBlue = pixels1.Color(0, 0, INTENSITY / 3);
-uint32_t highBlue = pixels1.Color(0, 0, INTENSITY);
-uint32_t lowGold = pixels1.Color(INTENSITY / 3, INTENSITY / 6, 0);
-uint32_t highGold = pixels1.Color(INTENSITY, INTENSITY / 2, 0);
+Adafruit_NeoPixel pixelsFront(NUMPIXELS_FRONT, LEDSTRIP_FRONT, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixelsSides(NUMPIXELS_SIDES, LEDSTRIP_SIDES, NEO_GRB + NEO_KHZ800);
+
+uint32_t lowBlue = pixelsFront.Color(0, 0, INTENSITY / 3);
+uint32_t highBlue = pixelsFront.Color(0, 0, INTENSITY);
+uint32_t lowGold = pixelsFront.Color(INTENSITY / 3, INTENSITY / 6, 0);
+uint32_t highGold = pixelsFront.Color(INTENSITY, INTENSITY / 2, 0);
 
 
 int mode = 0;
@@ -49,23 +53,23 @@ void setup() {
   pinMode(OUTPUT_D3, OUTPUT);
   pinMode(OUTPUT_D4, OUTPUT);
 
-  pixels1.begin();
+  pixelsFront.begin();
 }
 
-void setColor(bool red, bool green, bool blue) {
-  pixels1.clear();
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels1.setPixelColor(i, pixels1.Color(INTENSITY * (int)red, INTENSITY * (int)green * .50, INTENSITY * (int)blue));
+void setColor(bool red, bool green, bool blue, Adafruit_NeoPixel pixels, int size) {
+  pixels.clear();
+  for (int i = 0; i < size; i++) {
+    pixels.setPixelColor(i, pixels.Color(INTENSITY * (int)red, INTENSITY * (int)green * .50, INTENSITY * (int)blue));
   }
-  pixels1.show();
+  pixels.show();
 }
 
-void setColorInt(int red, int green, int blue) {
-  pixels1.clear();
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels1.setPixelColor(i, pixels1.Color(red, green, blue));
+void setColorInt(int red, int green, int blue, Adafruit_NeoPixel pixels, int size) {
+  pixels.clear();
+  for (int i = 0; i < size; i++) {
+    pixels.setPixelColor(i, pixels.Color(red, green, blue));
   }
-  pixels1.show();
+  pixels.show();
 }
 
 int elapsedTime = 0;
@@ -91,28 +95,35 @@ void loop() {
   Serial.println(mode);
 
   if (mode >= 16) {
-    flashFast(false, true, false);
+    flashFast(false, true, false, pixelsFront, NUMPIXELS_FRONT);
+    flashFast(false, true, false, pixelsSides, NUMPIXELS_SIDES);
   } else {
     switch (mode) {
       case 0:  // idle
-        idleMode();
+        idleMode(pixelsFront, NUMPIXELS_FRONT);
+        idleMode(pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 1:  // mode == speaker
-        setColorInt(255, 255, 255);
+        setColorInt(255, 255, 255, pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 255, 255, pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 2:  // !hasClearance
-        setColorInt(255, 0, 0);
+        setColorInt(255, 0, 0, pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 255, 255, pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 3:  // target ready
-        setColorInt(0, 125, 0);
+        setColorInt(0, 125, 0, pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 255, 255, pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 4:  // climbing
-        //climberColors(true, true, true); unsure which one of these to use
-        climberColorsRainbow();
+        // climberColors(true, true, true, pixelsFront, NUMPIXELS_FRONT);
+        // climberColors(true, true, true, pixelsSides, NUMPIXELS_SIDES);
+        climberColorsRainbow(pixelsFront, NUMPIXELS_FRONT);
+        climberColorsRainbow(pixelsSides, NUMPIXELS_SIDES);
         break;
 
       default:
@@ -126,16 +137,16 @@ void loop() {
   elapsedTime += myTime - millis();
 }
 
-void idleMode() {
-  pixels1.clear();
-
+void idleMode(Adafruit_NeoPixel pixels, int size) {
+  pixels.clear();
+  
   if (timer > IDLE_BLOCK * IDLE_CYCLE || timer < 0) {
     timer = 0;
   }
 
   int offset = timer / IDLE_CYCLE;
 
-  for (int i = 0; i < NUMPIXELS; i++) {
+  for (int i = 0; i < size; i++) {
     uint32_t color;
     int pos = (offset + i) % IDLE_BLOCK;
     if (pos == 0 || pos == 3) {
@@ -147,21 +158,21 @@ void idleMode() {
     } else if (pos == 5 || pos == 6) {
       color = highGold;
     } else {
-      color = pixels1.Color(0, 0, 0);
+      color = pixels.Color(0, 0, 0);
     }
-    pixels1.setPixelColor(i, color);
+    pixels.setPixelColor(i, color);
   }
 
-  pixels1.show();
+  pixels.show();
 }
 
-void flashFast(bool red, bool green, bool blue) {
+void flashFast(bool red, bool green, bool blue, Adafruit_NeoPixel pixels, int size ) {
   if (timer < 15) {
-    setColor(red, green, blue);
+    setColor(red, green, blue, pixels, size);
   }
 
   if (timer < 30 && timer > 15) {
-    setColor(false, false, false);
+    setColor(false, false, false, pixels, size);
   }
 
   if (timer > 31 || timer < 0) {
@@ -169,113 +180,168 @@ void flashFast(bool red, bool green, bool blue) {
   }
 }
 
-int currentlyFlashing[NUMPIXELS];
-void climberColors(bool red, bool green, bool blue) {
+int currentlyFlashingFront[NUMPIXELS_FRONT];
+int currentlyFlashingSide[NUMPIXELS_SIDES];
+
+void climberColors(bool red, bool green, bool blue, Adafruit_NeoPixel pixels, int size) {
   if (myTime % 15 == 0) {
-    pixels1.clear();
-    for (int i = 0; i < NUMPIXELS; i++) {
+    int pickTable[size] = {};
+    // there isnt a better way to do this sadly
+    for (int i = 0; i < size; i++) {
+      if (size == NUMPIXELS_FRONT) {
+        pickTable[i] = currentlyFlashingFront[i];
+      } else {
+        pickTable[i] = currentlyFlashingSide[i];
+      }
+    }
+
+    pixels.clear();
+    for (int i = 0; i < size; i++) {
       int rng = random(1, 25);
-      if (rng == 1 && currentlyFlashing[i] == 0) {
-        currentlyFlashing[i] = 250;
-      } else if (currentlyFlashing[i] > 0) {
-        currentlyFlashing[i] = max(0, currentlyFlashing[i] - 20);
+      if (rng == 1 && pickTable[i] == 0) {
+        pickTable[i] = 250;
+      } else if (pickTable[i] > 0) {
+        pickTable[i] = max(0, pickTable[i] - 20);
       }
 
-      pixels1.setPixelColor(i, pixels1.Color(red * currentlyFlashing[i], green * currentlyFlashing[i], blue * currentlyFlashing[i]));
+      pixels.setPixelColor(i, pixels.Color(red * pickTable[i], green * pickTable[i], blue * pickTable[i]));
     }
-    pixels1.show();
+    pixels.show();
+    
+    // and convert the table back
+    for (int i = 0; i < size; i++) {
+      if (size == NUMPIXELS_FRONT) {
+        currentlyFlashingFront[i] = pickTable[i];
+      } else {
+        currentlyFlashingSide[i] = pickTable[i];
+      }
+    }
   }
 }
 
 // RAINBOW verison of the climber
-int currentlyFlashingColor[NUMPIXELS][3];
-void climberColorsRainbow() {
+int currentlyFlashingColorFront[NUMPIXELS_FRONT][3];
+int currentlyFlashingColorSide[NUMPIXELS_SIDES][3];
+
+void climberColorsRainbow(Adafruit_NeoPixel pixels, int size) {
   if (myTime % 20 == 0) {
-    pixels1.clear();
-    for (int i = 0; i < NUMPIXELS; i++) {
+    int pickTable[size] = {};
+    int pickTableColor[size][3] = {};
+
+    for (int i = 0; i < size; i++) {
+      if (size == NUMPIXELS_FRONT) {
+        pickTable[i] = currentlyFlashingFront[i];
+        pickTableColor[i][0] = currentlyFlashingColorFront[i][0];
+        pickTableColor[i][1] = currentlyFlashingColorFront[i][1];
+        pickTableColor[i][2] = currentlyFlashingColorFront[i][2];
+      } else {
+        pickTable[i] = currentlyFlashingSide[i];
+        pickTableColor[i][0] = currentlyFlashingColorSide[i][0];
+        pickTableColor[i][1] = currentlyFlashingColorSide[i][1];
+        pickTableColor[i][2] = currentlyFlashingColorSide[i][2];
+      }
+    }
+
+    pixels.clear();
+    for (int i = 0; i < size; i++) {
       int rng = random(1, 15);
 
-      if (rng == 1 && currentlyFlashing[i] == 0) {
-        currentlyFlashing[i] = 250;
-        currentlyFlashingColor[i][0] = random(5, 255);
-        currentlyFlashingColor[i][1] = random(5, 255);
-        currentlyFlashingColor[i][2] = random(5, 255);
+      if (rng == 1 && pickTable[i] == 0) {
+        pickTable[i] = 250;
+        pickTableColor[i][0] = random(5, 255);
+        pickTableColor[i][1] = random(5, 255);
+        pickTableColor[i][2] = random(5, 255);
 
-      } else if (currentlyFlashing[i] > 0) {
-        currentlyFlashing[i] = max(0, currentlyFlashing[i] - 20);
+      } else if (pickTable[i] > 0) {
+        pickTable[i] = max(0, pickTable[i] - 20);
       }
 
-      pixels1.setPixelColor(i, pixels1.Color(currentlyFlashingColor[i][0] * (currentlyFlashing[i] / 250.0), currentlyFlashingColor[i][1] * (currentlyFlashing[i] / 250.0), currentlyFlashingColor[i][2] * (currentlyFlashing[i] / 250.0)));
+      pixels.setPixelColor(i, pixels.Color(pickTableColor[i][0] * (pickTable[i] / 250.0), pickTableColor[i][1] * (pickTable[i] / 250.0), pickTableColor[i][2] * (pickTable[i] / 250.0)));
     }
-    pixels1.show();
-  }
-}
+    pixels.show();
 
-
-int currentlyFlashingColorOld[NUMPIXELS][3];
-int waitTime = 50;
-bool colorDirection = true;
-
-// different take on the idle state, currently broken
-void topperLine() {
-  if (myTime % waitTime == 0) {
-    if (colorDirection == false) {
-      waitTime++;
-    } else {
-      waitTime--;
-    }
-
-    if (waitTime == 1 || waitTime == 55) {
-      colorDirection = !colorDirection;
-    }
-    
-    bool doColor = false;
-    if (timer >= 125 && waitTime <= 60) {
-      timer = 0;
-      doColor = true;
-    }
-    pixels1.clear();
-
-    for (int i = 0; i < NUMPIXELS; i++) {
-      if (currentlyFlashingColor[i][0] == 0 && currentlyFlashingColor[i][2] == 0) {
-          currentlyFlashingColor[i][0] = 0;
-          currentlyFlashingColor[i][1] = 0;
-          currentlyFlashingColor[i][2] = 255;
-      }
-    }
-
-    for (int i = 0; i < NUMPIXELS; i++) {
-      currentlyFlashingColorOld[i][0] = currentlyFlashingColor[i][0];
-      currentlyFlashingColorOld[i][1] = currentlyFlashingColor[i][1];
-      currentlyFlashingColorOld[i][2] = currentlyFlashingColor[i][2];      
-    }
-
-    for (int i = 0; i < NUMPIXELS ; i++) {
-      int putPosition = i;
-
-      if (putPosition == 0) {
-        if (!doColor) {
-          currentlyFlashingColor[putPosition][0] = 0;
-          currentlyFlashingColor[putPosition][1] = 0;
-          currentlyFlashingColor[putPosition][2] = 255;
-        } else {
-          currentlyFlashingColor[putPosition][0] = 255;
-          currentlyFlashingColor[putPosition][1] = 125;
-          currentlyFlashingColor[putPosition][2] = 0;
-        }
-
+    for (int i = 0; i < size; i++) {
+      if (size == NUMPIXELS_FRONT) {
+        currentlyFlashingFront[i] = pickTable[i];
+        currentlyFlashingColorFront[i][0] = pickTableColor[i][0];
+        currentlyFlashingColorFront[i][1] = pickTableColor[i][1];
+        currentlyFlashingColorFront[i][2] = pickTableColor[i][2];
       } else {
-        shiftColor(putPosition, 1);
+        currentlyFlashingSide[i] = pickTable[i];
+        currentlyFlashingColorSide[i][0] = pickTableColor[i][0];
+        currentlyFlashingColorSide[i][1] = pickTableColor[i][1];
+        currentlyFlashingColorSide[i][2] = pickTableColor[i][2];
       }
-
-      pixels1.setPixelColor(putPosition, pixels1.Color(currentlyFlashingColor[putPosition][0], currentlyFlashingColor[putPosition][1], currentlyFlashingColor[putPosition][2]));
     }
-    pixels1.show();
+
   }
 }
 
-void shiftColor(int pos, int direction) {
-  currentlyFlashingColor[pos][0] = currentlyFlashingColorOld[pos - direction][0];
-  currentlyFlashingColor[pos][1] = currentlyFlashingColorOld[pos - direction][1];
-  currentlyFlashingColor[pos][2] = currentlyFlashingColorOld[pos - direction][2];
-}
+
+// int currentlyFlashingColorOld[NUMPIXELS][3];
+// int waitTime = 50;
+// bool colorDirection = true;
+
+// // different take on the idle state, currently broken
+// void topperLine() {
+//   if (myTime % waitTime == 0) {
+//     if (colorDirection == false) {
+//       waitTime++;
+//     } else {
+//       waitTime--;
+//     }
+
+//     if (waitTime == 1 || waitTime == 55) {
+//       colorDirection = !colorDirection;
+//     }
+    
+//     bool doColor = false;
+//     if (timer >= 125 && waitTime <= 60) {
+//       timer = 0;
+//       doColor = true;
+//     }
+//     pixelsFront.clear();
+
+//     for (int i = 0; i < NUMPIXELS; i++) {
+//       if (currentlyFlashingColor[i][0] == 0 && currentlyFlashingColor[i][2] == 0) {
+//           currentlyFlashingColor[i][0] = 0;
+//           currentlyFlashingColor[i][1] = 0;
+//           currentlyFlashingColor[i][2] = 255;
+//       }
+//     }
+
+//     for (int i = 0; i < NUMPIXELS; i++) {
+//       currentlyFlashingColorOld[i][0] = currentlyFlashingColor[i][0];
+//       currentlyFlashingColorOld[i][1] = currentlyFlashingColor[i][1];
+//       currentlyFlashingColorOld[i][2] = currentlyFlashingColor[i][2];      
+//     }
+
+//     for (int i = 0; i < NUMPIXELS ; i++) {
+//       int putPosition = i;
+
+//       if (putPosition == 0) {
+//         if (!doColor) {
+//           currentlyFlashingColor[putPosition][0] = 0;
+//           currentlyFlashingColor[putPosition][1] = 0;
+//           currentlyFlashingColor[putPosition][2] = 255;
+//         } else {
+//           currentlyFlashingColor[putPosition][0] = 255;
+//           currentlyFlashingColor[putPosition][1] = 125;
+//           currentlyFlashingColor[putPosition][2] = 0;
+//         }
+
+//       } else {
+//         shiftColor(putPosition, 1);
+//       }
+
+//       pixelsFront.setPixelColor(putPosition, pixelsFront.Color(currentlyFlashingColor[putPosition][0], currentlyFlashingColor[putPosition][1], currentlyFlashingColor[putPosition][2]));
+//     }
+//     pixelsFront.show();
+//   }
+// }
+
+// void shiftColor(int pos, int direction) {
+//   currentlyFlashingColor[pos][0] = currentlyFlashingColorOld[pos - direction][0];
+//   currentlyFlashingColor[pos][1] = currentlyFlashingColorOld[pos - direction][1];
+//   currentlyFlashingColor[pos][2] = currentlyFlashingColorOld[pos - direction][2];
+// }
