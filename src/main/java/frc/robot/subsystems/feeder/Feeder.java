@@ -38,10 +38,11 @@ public class Feeder extends SubsystemBase {
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     feederMotor.restoreFactoryDefaults();
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
-    
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
     feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
     feederMotor.enableVoltageCompensation(12);
@@ -61,7 +62,7 @@ public class Feeder extends SubsystemBase {
     }
 
     Timer.delay(0.25);
-    //feederMotor.burnFlash();
+    // feederMotor.burnFlash();
     Timer.delay(0.25);
 
     // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());

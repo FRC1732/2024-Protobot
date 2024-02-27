@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -42,10 +41,18 @@ public class ShooterWheels extends SubsystemBase {
         new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterHighMotor.restoreFactoryDefaults();
+
+    // leader
     shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
     shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
-    
+    shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 60);
+    shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 70);
+    // follower
+    shooterLowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    shooterLowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    shooterLowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    shooterLowMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
 
     shooterHighMotor.setInverted(true);

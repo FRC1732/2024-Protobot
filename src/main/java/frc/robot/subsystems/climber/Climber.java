@@ -1,9 +1,8 @@
 package frc.robot.subsystems.climber;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -47,11 +46,19 @@ public class Climber extends SubsystemBase {
             ClimberConstants.CLIMBER_RIGHT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
     climberLeftMotor.setIdleMode(IdleMode.kBrake);
     climberRightMotor.setIdleMode(IdleMode.kBrake);
-    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
-    
+
+    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
+    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 50);
+    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 250);
+    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 300);
+    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 350);
+
     climberRightMotor.follow(climberLeftMotor, true);
+
     climberLeftPID =
         new PIDController(
             ClimberConstants.CLIMBER_LEFT_P,
@@ -99,6 +106,8 @@ public class Climber extends SubsystemBase {
   public void RetractClimber() {
     climberLeftPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
     climberRightPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
+
+    isClimbing = true;
   }
 
   public void setUpShuffleBoard() {

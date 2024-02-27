@@ -108,9 +108,18 @@ public class ShooterPose extends SubsystemBase {
     shooterHeightRightMotor.restoreFactoryDefaults();
     shooterHeightLeftMotor.restoreFactoryDefaults();
 
+    // leader
     shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
     shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 200);
+    shooterHeightRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 300);
+
+    // follower
+    shooterHeightLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    shooterHeightLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 200);
+    shooterHeightLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+    shooterHeightLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
 
     shooterHeightRightMotor.setInverted(true);
@@ -167,10 +176,12 @@ public class ShooterPose extends SubsystemBase {
         new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 
     shooterTiltMotor.restoreFactoryDefaults();
-    
+
     shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
     shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
-    shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20);
+    shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 100);
+
     Timer.delay(0.050);
     shooterTiltMotor.setInverted(false);
     shooterTiltMotor.enableVoltageCompensation(12);

@@ -31,8 +31,14 @@ public class Intake extends SubsystemBase {
 
   private ShuffleboardTab tab = Shuffleboard.getTab("Intake");
 
+  private double intakeSetpoint;
+  private double intakeGoal;
+
   /** Creates a new Intake. */
   public Intake() {
+
+    intakeSetpoint = 0;
+    intakeGoal = 0;
 
     intakeMainMotor =
         new CANSparkMax(IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
@@ -41,9 +47,11 @@ public class Intake extends SubsystemBase {
             IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     intakeMainMotor.restoreFactoryDefaults();
-    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
     intakeMainMotor.setInverted(false);
     intakeMainMotor.enableVoltageCompensation(12);
@@ -52,18 +60,20 @@ public class Intake extends SubsystemBase {
 
     intakeCentererMotor.restoreFactoryDefaults();
 
-    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
-    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
-    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
     intakeCentererMotor.setInverted(false);
     intakeCentererMotor.enableVoltageCompensation(12);
     intakeCentererMotor.setIdleMode(IdleMode.kCoast);
     intakeCentererMotor.stopMotor();
     Timer.delay(0.25);
-    //intakeCentererMotor.burnFlash();
+    // intakeCentererMotor.burnFlash();
     Timer.delay(0.25);
-    //intakeMainMotor.burnFlash();
+    // intakeMainMotor.burnFlash();
     Timer.delay(0.25);
 
     setupShuffleboard();
@@ -72,11 +82,14 @@ public class Intake extends SubsystemBase {
   private void setupShuffleboard() {
     tab.addBoolean("Has Note", () -> isNoteInIntake());
     tab.addDouble("Sensore Value", () -> intakeAnalogSensor.getValue());
+    tab.addDouble("Intake Current", () -> intakeMainMotor.getOutputCurrent());
+    tab.addDouble("Centerer Current", () -> intakeCentererMotor.getOutputCurrent());
   }
 
   public void runIntake() {
-    intakeMainMotor.set(intakeMainMotorSpeed);
+    // intakeMainMotor.set(intakeMainMotorSpeed);
     intakeCentererMotor.set(intakeCentererMotorSpeed);
+    intakeGoal = intakeMainMotorSpeed;
   }
 
   public void runIntakeOut() {
@@ -85,8 +98,9 @@ public class Intake extends SubsystemBase {
   }
 
   public void stopIntake() {
-    intakeMainMotor.set(0);
+    //intakeMainMotor.set(0);
     intakeCentererMotor.set(0);
+    intakeGoal = 0;
   }
 
   public boolean isNoteInIntake() {
@@ -96,6 +110,15 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    intakeMainMotor.set(intakeSetpoint);
+    if(intakeSetpoint < intakeGoal && intakeGoal > 0) {
+      intakeSetpoint += .7;
+    } else if (intakeSetpoint > intakeGoal && intakeGoal < 0) {
+      intakeSetpoint -= .7;
+    }
+    if(intakeGoal == 0) {
+      intakeSetpoint = 0;
+    }
     if (IntakeConstants.INTAKE_LOGGING) {
       updateInputs();
     }
