@@ -48,7 +48,7 @@ public class VisionSubsystem extends SubsystemBase {
     double cameraHeight = 22;
     double targetHeight = 56.375;
     double heightDiff = targetHeight - cameraHeight;
-    double cameraAngle = 10;
+    double cameraAngle = 23;
     double theta = Math.toRadians(cameraAngle + getTY());
     return heightDiff / Math.tan(theta);
   }

@@ -151,12 +151,12 @@ public class Climber extends SubsystemBase {
     }
 
     leftClimberHeight = climberLeftMotor.getEncoder().getPosition();
-    if(leftClimberHeight >= ClimberConstants.MAX_SETPOINT_INCHES) {
-      ClimberStop();
-    }
-    if(leftClimberHeight <= ClimberConstants.MIN_SETPOINT_INCHES) {
-      ClimberStop();
-    }
+    // if(leftClimberHeight >= ClimberConstants.MAX_SETPOINT_INCHES) {
+    //   ClimberStop();
+    // }
+    // if(leftClimberHeight <= ClimberConstants.MIN_SETPOINT_INCHES) {
+    //   ClimberStop();
+    // }
 
     /*
      * climberLeftMotor.set(
