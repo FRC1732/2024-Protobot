@@ -263,7 +263,7 @@ public class RobotContainer {
     oi.IntakeOrScoreButton()
         .whileTrue(
             new ConditionalCommand(
-                new RunShooterSlow(shooterWheels).andThen(new FeedShooterManual(feeder).asProxy()),
+                (new FeedShooterManual(feeder).asProxy()),
                 new IntakeNote(intake, feeder, shooterPose).asProxy(),
                 feeder::hasNote));
 

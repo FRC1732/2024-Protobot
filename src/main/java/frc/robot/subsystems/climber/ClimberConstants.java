@@ -13,11 +13,11 @@ public class ClimberConstants {
   public static final double CLIMBER_RIGHT_I = 0;
   public static final double CLIMBER_RIGHT_D = 0;
 
-  public static final double HIGH_SETPOINT_INCHES = 0;
-  public static final double LOW_SETPOINT_INCHES = 0;
+  public static final double MAX_SETPOINT_INCHES = 22.6;
+  public static final double MIN_SETPOINT_INCHES = 0.25;
 
-  public static final double CLIMBER_CONVERSION_FACTOR = 0;
+  public static final double CLIMBER_CONVERSION_FACTOR = 1.0 /27 * 1.5 * Math.PI; //
 
-  public static final boolean CLIMBER_TESTING = false;
+  public static final boolean CLIMBER_TESTING = true;
   public static final boolean CLIMBER_LOGGING = true;
 }

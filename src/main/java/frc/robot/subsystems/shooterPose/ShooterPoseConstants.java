@@ -18,7 +18,7 @@ public class ShooterPoseConstants {
   public static final double MIN_SHOOTER_TILT_DEGREES = -32.5;
   public static final double MAX_SHOOTER_TILT_DEGREES = 102.5;
   public static final double SHOOTER_TILT_ABSOLUTE_OFFSET =
-      60.5 - 36.366 + 4.428 + 291.062; // 0 is a flat shot, CCW is positive, shooter facing left
+      60.5 - 36.366 + 4.428 + 291.062 - 11.8; // 0 is a flat shot, CCW is positive, shooter facing left
   public static final double SHOOTER_TILT_GOAL_TOLERANCE_DEGREES = 2;
   public static final double SHOOTER_TILT_MAX_ABOLUTE_RELATIVE_ERROR_DEG = 10;
   public static final double SHOOTER_TILT_COG_OFFSET = 37.79;
@@ -52,9 +52,9 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_HEIGHT_RPM_TO_INCHES_PER_SECOND =
       0.006109; // RPM to inch/sec (spool diam * 3.14 / reduction / 60 = 1.75 * 3.14 / 15 / 60)
 
-  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -17;
+  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -17 - 11.7;
   public static final double SHOOTER_TILT_SUBWOOFER_SETPOINT = -60;
-  public static final double SHOOTER_TILT_AMP_SETPOINT = 40 + 10;
+  public static final double SHOOTER_TILT_AMP_SETPOINT = 40 ;
   public static final double SHOOTER_TILT_TRAP_SETPOINT = 30;
   public static final double SHOOTER_TILT_SOURCE_SETPOINT = 100;
 

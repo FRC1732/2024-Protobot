@@ -5,20 +5,19 @@
 package frc.robot.commands.intakeCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 
-public class IntakeNote extends Command {
+public class FinishIntakingCommand extends Command {
   /** Creates a new IntakeNote. */
   private Intake intake;
 
   private Feeder feeder;
   private ShooterPose shooterPose;
 
-  public IntakeNote(Intake intake, Feeder feeder, ShooterPose shooterPose) {
+  public FinishIntakingCommand(Intake intake, Feeder feeder, ShooterPose shooterPose) {
     addRequirements(intake, feeder, shooterPose);
 
     this.intake = intake;
@@ -45,17 +44,13 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(intake.hasNote()) {
-      new FinishIntakingCommand(intake, feeder, shooterPose).schedule();
-    } else {
       intake.stopIntake();
       feeder.stopFeeder();
-    }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.hasNote();
+    return feeder.hasNote();
   }
 }

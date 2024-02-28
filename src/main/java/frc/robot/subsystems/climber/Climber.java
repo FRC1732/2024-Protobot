@@ -1,8 +1,11 @@
 package frc.robot.subsystems.climber;
 
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,6 +36,9 @@ public class Climber extends SubsystemBase {
   private GenericEntry climberRightP, climberRightI, climberRightD;
   private PIDController climberLeftPID, climberRightPID;
 
+  private double leftClimberHeight;
+  private RelativeEncoder climberLeftEncoder;
+
   private boolean isClimbing = false;
 
   private ShuffleboardTab tab;
@@ -46,29 +52,32 @@ public class Climber extends SubsystemBase {
             ClimberConstants.CLIMBER_RIGHT_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
     climberLeftMotor.setIdleMode(IdleMode.kBrake);
     climberRightMotor.setIdleMode(IdleMode.kBrake);
+    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
+    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
 
-    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
-    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
-    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
-    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
+    climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
 
-    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 50);
-    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 250);
-    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 300);
-    climberLeftMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 350);
+    climberLeftMotor.getEncoder().setPositionConversionFactor(ClimberConstants.CLIMBER_CONVERSION_FACTOR);
+    climberLeftEncoder = climberLeftMotor.getEncoder();
+    climberLeftEncoder.setPosition(0);
+
+    climberLeftMotor.setInverted(true);
 
     climberRightMotor.follow(climberLeftMotor, true);
 
-    climberLeftPID =
-        new PIDController(
-            ClimberConstants.CLIMBER_LEFT_P,
-            ClimberConstants.CLIMBER_LEFT_I,
-            ClimberConstants.CLIMBER_LEFT_D);
-    climberRightPID =
-        new PIDController(
-            ClimberConstants.CLIMBER_RIGHT_P,
-            ClimberConstants.CLIMBER_RIGHT_I,
-            ClimberConstants.CLIMBER_RIGHT_D);
+    // climberLeftPID =
+    //     new PIDController(
+    //         ClimberConstants.CLIMBER_LEFT_P,
+    //         ClimberConstants.CLIMBER_LEFT_I,
+    //         ClimberConstants.CLIMBER_LEFT_D);
+    // climberRightPID =
+    //     new PIDController(
+    //         ClimberConstants.CLIMBER_RIGHT_P,
+    //         ClimberConstants.CLIMBER_RIGHT_I,
+    //         ClimberConstants.CLIMBER_RIGHT_D);
 
     if (ClimberConstants.CLIMBER_TESTING) {
       setUpShuffleBoard();
@@ -76,14 +85,14 @@ public class Climber extends SubsystemBase {
   }
 
   public void ClimberUp() {
-    climberLeftMotor.set(-.3);
+    climberLeftMotor.set(.3);
     // climberRightMotor.set(.1);
 
     isClimbing = true;
   }
 
   public void ClimberDown() {
-    climberLeftMotor.set(.3);
+    climberLeftMotor.set(-.3);
     // climberRightMotor.set(-.1);
 
     isClimbing = true;
@@ -96,23 +105,23 @@ public class Climber extends SubsystemBase {
     isClimbing = true;
   }
 
-  public void ExtendClimber() {
-    climberLeftPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
-    climberRightPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
+  // public void ExtendClimber() {
+  //   climberLeftPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
+  //   climberRightPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
 
-    isClimbing = true;
-  }
+  //   isClimbing = true;
+  // }
 
-  public void RetractClimber() {
-    climberLeftPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
-    climberRightPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
+  // public void RetractClimber() {
+  //   climberLeftPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
+  //   climberRightPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
 
-    isClimbing = true;
-  }
+  //   isClimbing = true;
+  // }
 
   public void setUpShuffleBoard() {
     tab = Shuffleboard.getTab("Climber");
-
+    tab.addDouble("Climber Height (inches)", () -> climberLeftEncoder.getPosition());
     /*
      * climberLeftP = new TunableNumber("Climber Left P",
      * ClimberConstants.CLIMBER_LEFT_P);
@@ -127,18 +136,26 @@ public class Climber extends SubsystemBase {
      * climberRightD = new TunableNumber("Climber Right D",
      * ClimberConstants.CLIMBER_RIGHT_D);
      */
-    climberLeftP = tab.add("Climber Left P", 0).getEntry();
-    climberLeftI = tab.add("Climber Left I", 0).getEntry();
-    climberLeftD = tab.add("Climber Left D", 0).getEntry();
-    climberRightP = tab.add("Climber Right P", 0).getEntry();
-    climberRightI = tab.add("Climber Right I", 0).getEntry();
-    climberRightD = tab.add("Climber Right D", 0).getEntry();
+    // climberLeftP = tab.add("Climber Left P", 0).getEntry();
+    // climberLeftI = tab.add("Climber Left I", 0).getEntry();
+    // climberLeftD = tab.add("Climber Left D", 0).getEntry();
+    // climberRightP = tab.add("Climber Right P", 0).getEntry();
+    // climberRightI = tab.add("Climber Right I", 0).getEntry();
+    // climberRightD = tab.add("Climber Right D", 0).getEntry();
   }
 
   @Override
   public void periodic() {
     if (isClimbing && DriverStation.isDisabled()) {
       isClimbing = false;
+    }
+
+    leftClimberHeight = climberLeftMotor.getEncoder().getPosition();
+    if(leftClimberHeight >= ClimberConstants.MAX_SETPOINT_INCHES) {
+      ClimberStop();
+    }
+    if(leftClimberHeight <= ClimberConstants.MIN_SETPOINT_INCHES) {
+      ClimberStop();
     }
 
     /*
@@ -174,8 +191,8 @@ public class Climber extends SubsystemBase {
     inputs.climberRightMotorSpeed = climberRightMotor.get();
     inputs.climberLeftMotorPosition = climberLeftMotor.getEncoder().getPosition();
     inputs.climberRightMotorPosition = climberRightMotor.getEncoder().getPosition();
-    inputs.climberLeftMotorSetpoint = climberLeftPID.getSetpoint();
-    inputs.climberRightMotorSetpoint = climberRightPID.getSetpoint();
+    // inputs.climberLeftMotorSetpoint = climberLeftPID.getSetpoint();
+    // inputs.climberRightMotorSetpoint = climberRightPID.getSetpoint();
 
     Logger.processInputs("Climber", inputs);
   }

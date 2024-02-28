@@ -12,21 +12,31 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * panel.
  */
 public class FullOperatorConsoleOI extends DualJoysticksOI {
-  private final CommandJoystick operatorPanel;
-  private final Trigger[] operatorPanelButtons;
+  private final CommandJoystick operatorPanelOne;
+  private final CommandJoystick operatorPanelTwo;
+  
+  private final Trigger[] operatorPanelButtonsOne;
+  private final Trigger[] operatorPanelButtonsTwo;
 
-  public FullOperatorConsoleOI(int translatePort, int rotatePort, int operatorPanelPort) {
+
+  public FullOperatorConsoleOI(int translatePort, int rotatePort, int operatorPanelPortOne, int operatorPanelPortTwo) {
     super(translatePort, rotatePort);
-    operatorPanel = new CommandJoystick(operatorPanelPort);
+    operatorPanelOne = new CommandJoystick(operatorPanelPortOne);
+    operatorPanelTwo = new CommandJoystick(operatorPanelPortTwo);
 
-    this.operatorPanelButtons = new Trigger[13];
-    for (int i = 1; i < operatorPanelButtons.length; i++) {
-      operatorPanelButtons[i] = operatorPanel.button(i);
+    this.operatorPanelButtonsOne = new Trigger[13];
+    for (int i = 1; i < operatorPanelButtonsOne.length; i++) {
+      operatorPanelButtonsOne[i] = operatorPanelOne.button(i);
     }
+
+    this.operatorPanelButtonsTwo = new Trigger[13];
+    for(int i = 1; i < operatorPanelButtonsTwo.length; i++) {
+      operatorPanelButtonsTwo[i] = operatorPanelTwo.button(i);
+    } 
   }
 
   // Operator Panel
   public Trigger slowModeSwitch() {
-    return operatorPanelButtons[1];
+    return operatorPanelButtonsOne[1];
   }
 }

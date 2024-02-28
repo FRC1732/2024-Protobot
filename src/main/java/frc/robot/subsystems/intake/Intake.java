@@ -76,8 +76,8 @@ public class Intake extends SubsystemBase {
   }
 
   private void setupShuffleboard() {
-    tab.addBoolean("Has Note", () -> isNoteInIntake());
-    tab.addDouble("Sensore Value", () -> intakeAnalogSensor.getValue());
+    tab.addBoolean("Has Note", () -> hasNote());
+    tab.addDouble("Sensor Value", () -> intakeAnalogSensor.getValue());
   }
 
   public void runIntake() {
@@ -95,9 +95,10 @@ public class Intake extends SubsystemBase {
     intakeCentererMotor.set(0);
   }
 
-  public boolean isNoteInIntake() {
-    return intakeAnalogSensor.getValue() > 500;
+  public boolean hasNote() {
+    return intakeAnalogSensor.getValue() > 700;
   }
+
 
   @Override
   public void periodic() {
