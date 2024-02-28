@@ -85,14 +85,14 @@ public class Climber extends SubsystemBase {
   }
 
   public void ClimberUp() {
-    climberLeftMotor.set(.3);
+    climberLeftMotor.set(.5);
     // climberRightMotor.set(.1);
 
     isClimbing = true;
   }
 
   public void ClimberDown() {
-    climberLeftMotor.set(-.3);
+    climberLeftMotor.set(-.5);
     // climberRightMotor.set(-.1);
 
     isClimbing = true;
@@ -184,6 +184,10 @@ public class Climber extends SubsystemBase {
 
   public boolean isClimbing() {
     return isClimbing;
+  }
+
+  public double getHeight() {
+    return leftClimberHeight;
   }
 
   private void updateInputs() {

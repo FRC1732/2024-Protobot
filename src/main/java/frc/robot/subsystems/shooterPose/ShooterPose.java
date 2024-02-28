@@ -106,13 +106,16 @@ public class ShooterPose extends SubsystemBase {
 
   public ShooterPose() {
     angleLookupTable = new TreeMap<>();
-    angleLookupTable.put(36.0, -57.26477); // (distance, optimal angle)
-    angleLookupTable.put(80.0, -32.5);
+    angleLookupTable.put(40.0, -47.0); // (distance, optimal angle)
+    angleLookupTable.put(60.0, -42.0);
+    angleLookupTable.put(70.0, -39.0);
+    angleLookupTable.put(80.0, -35.0);
     angleLookupTable.put(95.0, -32.5);
     angleLookupTable.put(105.0, -32.0);
     angleLookupTable.put(115.0, -31.0);
     angleLookupTable.put(125.0, -30.0);
-    angleLookupTable.put(135.0, -29.0); // add 157
+    angleLookupTable.put(135.0, -29.0);
+    angleLookupTable.put(157.0, -28.0);
 
     shooterHeightLeftMotor =
         new CANSparkMax(
@@ -283,7 +286,11 @@ public class ShooterPose extends SubsystemBase {
     }
 
     // @TODO check targetAngle, raise elevator if it is too low
-    shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
+    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 9) {
+      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 1);
+    } else {
+      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
+    }
 
     shooterTiltPID.setGoal(
         MathUtil.clamp(

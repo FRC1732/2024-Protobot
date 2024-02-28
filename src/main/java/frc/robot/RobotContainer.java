@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
+import frc.robot.commands.ClimberCommands.AutoClimb;
 import frc.robot.commands.FeedForwardCharacterization;
 import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.commands.RotateToAngle;
@@ -279,14 +280,13 @@ public class RobotContainer {
         .onFalse(
             new InstantCommand(() -> climber.ClimberStop())
                 .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
-    oi.autoClimbButton()
-        .onTrue(
-            new SetShooterPose(shooterPose, Pose.TRAP)
-                .andThen(new InstantCommand(() -> climber.ClimberDown())));
-    oi.autoClimbButton()
-        .onFalse(
-            new InstantCommand(() -> climber.ClimberStop())
-                .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+    oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
+    // new SetShooterPose(shooterPose, Pose.TRAP)
+    //     .andThen(new InstantCommand(() -> climber.ClimberDown())));
+    // oi.autoClimbButton()
+    //     .onFalse(
+    //         new InstantCommand(() -> climber.ClimberStop())
+    //             .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
     // oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
 

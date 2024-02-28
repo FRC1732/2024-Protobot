@@ -4,6 +4,7 @@
 
 package frc.robot.commands.ClimberCommands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.feeder.Feeder;
@@ -17,10 +18,13 @@ public class AutoClimb extends Command {
   private ShooterPose shooterPose;
   private Climber climber;
 
-  private static final double MAX_HEIGHT = 26.0;
-  private static final double CHAIN_GRAB_HEIGHT = 24.0;
-  private static final double SCORING_HEIGHT = 5.0;
-  private static final double MIN_HEIGHT = 2.0;
+  private static final double MAX_HEIGHT = 22.6;
+  private static final double CHAIN_GRAB_HEIGHT = 20.5;
+  private static final double SCORING_HEIGHT = 3.0;
+  private static final double MIN_HEIGHT = 0.0;
+  private boolean firstTimeFlag;
+
+  private Timer timer;
 
   public AutoClimb(
       Climber climber, ShooterPose shooterPose, ShooterWheels shooterWheels, Feeder feeder) {
@@ -33,11 +37,13 @@ public class AutoClimb extends Command {
     this.shooterWheels = shooterWheels;
     this.climber = climber;
     this.shooterPose = shooterPose;
+    timer = new Timer();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    firstTimeFlag = true;
     // since this can be interrupted and resumed, no starting state is assumed
   }
 
@@ -46,25 +52,40 @@ public class AutoClimb extends Command {
   public void execute() {
     // state is based on climber height
 
-    // climber is below MIN_HEIGHT
-    climber.ClimberStop();
-    feeder.stopFeeder();
-    shooterWheels.stopShooter();
-    shooterPose.setShooterPose(Pose.HANDOFF);
-    // return
-
-    // climber is above CHAIN_GRAB_HEIGHT
-    climber.ClimberDown();
-    // return
-
-    // climber is below CHAIN_GRAB_HEIGHT
-    if (feeder.hasNote()) {
-      shooterPose.setShooterPose(Pose.TRAP);
+    if (climber.getHeight() < MIN_HEIGHT) {
+      if (firstTimeFlag) {
+        timer.restart();
+        firstTimeFlag = false;
+      }
+      climber.ClimberStop();
+      if (timer.get() > 2) {
+        feeder.stopFeeder();
+        shooterWheels.stopShooter();
+        shooterPose.setShooterPose(Pose.HANDOFF);
+      } else {
+shooterWheels.setShooterSpeedSlow();
+      feeder.runFeeder();
+      }
+      return;
     }
 
-    // climber is below SCORING_HEIGHT
-    shooterWheels.setShooterSpeedSlow();
-    feeder.runFeeder();
+    climber.ClimberDown();
+
+    if (climber.getHeight() > CHAIN_GRAB_HEIGHT) {
+      
+      return;
+    }
+
+    if (climber.getHeight() < CHAIN_GRAB_HEIGHT) {
+      if (feeder.hasNote()) {
+        shooterPose.setShooterPose(Pose.TRAP);
+      }
+    }
+
+    // if (climber.getHeight() < SCORING_HEIGHT) {
+    //   shooterWheels.setShooterSpeedSlow();
+    //   feeder.runFeeder();
+    // }
   }
 
   // Called once the command ends or is interrupted.
