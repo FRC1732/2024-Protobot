@@ -44,8 +44,8 @@ public class FinishIntakingCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-      intake.stopIntake();
-      feeder.stopFeeder();
+    intake.stopIntake();
+    feeder.stopFeeder();
   }
 
   // Returns true when the command should end.

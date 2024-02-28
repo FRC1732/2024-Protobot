@@ -14,12 +14,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class FullOperatorConsoleOI extends DualJoysticksOI {
   private final CommandJoystick operatorPanelOne;
   private final CommandJoystick operatorPanelTwo;
-  
+
   private final Trigger[] operatorPanelButtonsOne;
   private final Trigger[] operatorPanelButtonsTwo;
 
-
-  public FullOperatorConsoleOI(int translatePort, int rotatePort, int operatorPanelPortOne, int operatorPanelPortTwo) {
+  public FullOperatorConsoleOI(
+      int translatePort, int rotatePort, int operatorPanelPortOne, int operatorPanelPortTwo) {
     super(translatePort, rotatePort);
     operatorPanelOne = new CommandJoystick(operatorPanelPortOne);
     operatorPanelTwo = new CommandJoystick(operatorPanelPortTwo);
@@ -30,9 +30,9 @@ public class FullOperatorConsoleOI extends DualJoysticksOI {
     }
 
     this.operatorPanelButtonsTwo = new Trigger[13];
-    for(int i = 1; i < operatorPanelButtonsTwo.length; i++) {
+    for (int i = 1; i < operatorPanelButtonsTwo.length; i++) {
       operatorPanelButtonsTwo[i] = operatorPanelTwo.button(i);
-    } 
+    }
   }
 
   // Operator Panel

@@ -73,7 +73,7 @@ public class OISelector {
           firstPort = port;
         } else if (secondPort == null) {
           secondPort = port;
-        } else if(thirdPort == null){ // thirdPort == null
+        } else if (thirdPort == null) { // thirdPort == null
           thirdPort = port;
         } else {
           fourthPort = port;

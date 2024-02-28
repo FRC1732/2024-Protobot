@@ -1,11 +1,9 @@
 package frc.robot.subsystems.climber;
 
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -60,7 +58,9 @@ public class Climber extends SubsystemBase {
     climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
     climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
 
-    climberLeftMotor.getEncoder().setPositionConversionFactor(ClimberConstants.CLIMBER_CONVERSION_FACTOR);
+    climberLeftMotor
+        .getEncoder()
+        .setPositionConversionFactor(ClimberConstants.CLIMBER_CONVERSION_FACTOR);
     climberLeftEncoder = climberLeftMotor.getEncoder();
     climberLeftEncoder.setPosition(0);
 
@@ -151,10 +151,10 @@ public class Climber extends SubsystemBase {
     }
 
     leftClimberHeight = climberLeftMotor.getEncoder().getPosition();
-    // if(leftClimberHeight >= ClimberConstants.MAX_SETPOINT_INCHES) {
+    // if (leftClimberHeight >= ClimberConstants.MAX_SETPOINT_INCHES) {
     //   ClimberStop();
     // }
-    // if(leftClimberHeight <= ClimberConstants.MIN_SETPOINT_INCHES) {
+    // if (leftClimberHeight <= ClimberConstants.MIN_SETPOINT_INCHES) {
     //   ClimberStop();
     // }
 

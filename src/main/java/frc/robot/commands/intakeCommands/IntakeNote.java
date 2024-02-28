@@ -5,7 +5,6 @@
 package frc.robot.commands.intakeCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
@@ -45,7 +44,7 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(intake.hasNote()) {
+    if (intake.hasNote()) {
       new FinishIntakingCommand(intake, feeder, shooterPose).schedule();
     } else {
       intake.stopIntake();
