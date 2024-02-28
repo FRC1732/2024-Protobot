@@ -384,10 +384,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
         "FinishIntakingNote", new FinishIntakingCommand(intake, feeder, shooterPose));
-    NamedCommands.registerCommand("SetShooterDistance115", new SetShooterDistance(shooterPose, 80.0));
-    NamedCommands.registerCommand("SetShooterDistance125", new SetShooterDistance(shooterPose, 87.0)); //new StopShooter(shooterWheels));
+    NamedCommands.registerCommand("SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0));
+    NamedCommands.registerCommand("SetShooterDistance125", new SetShooterDistance(shooterPose, 84.0)); //new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
-        "SetShooterDistance150", new SetShooterDistance(shooterPose, 130.0)); //new StopShooter(shooterWheels));
+        "SetShooterDistance150", new SetShooterDistance(shooterPose, 135.0)); //new StopShooter(shooterWheels));
 
     // build auto path commands
 
