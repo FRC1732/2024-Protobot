@@ -271,19 +271,19 @@ public class RobotContainer {
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
 
-    oi.climbUp()
+    oi.armClimberSwitch()
         .onTrue(
             new SetShooterPose(shooterPose, Pose.SOURCE)
                 .andThen(new InstantCommand(() -> climber.ClimberUp())));
-    oi.climbUp()
+    oi.armClimberSwitch()
         .onFalse(
             new InstantCommand(() -> climber.ClimberStop())
                 .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
-    oi.climbDown()
+    oi.autoClimbButton()
         .onTrue(
             new SetShooterPose(shooterPose, Pose.TRAP)
                 .andThen(new InstantCommand(() -> climber.ClimberDown())));
-    oi.climbDown()
+    oi.autoClimbButton()
         .onFalse(
             new InstantCommand(() -> climber.ClimberStop())
                 .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));

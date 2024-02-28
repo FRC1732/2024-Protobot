@@ -89,11 +89,11 @@ public interface OperatorInterface {
     return new Trigger(() -> false);
   }
 
-  public default Trigger climbUp() {
+  public default Trigger armClimberSwitch() {
     return new Trigger(() -> false);
   }
 
-  public default Trigger climbDown() {
+  public default Trigger autoClimbButton() {
     return new Trigger(() -> false);
   }
 }
