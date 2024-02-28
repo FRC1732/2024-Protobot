@@ -63,8 +63,8 @@ public class AutoClimb extends Command {
         shooterWheels.stopShooter();
         shooterPose.setShooterPose(Pose.HANDOFF);
       } else {
-shooterWheels.setShooterSpeedSlow();
-      feeder.runFeeder();
+        shooterWheels.setShooterSpeedSlow();
+        feeder.runFeeder();
       }
       return;
     }
@@ -72,7 +72,7 @@ shooterWheels.setShooterSpeedSlow();
     climber.ClimberDown();
 
     if (climber.getHeight() > CHAIN_GRAB_HEIGHT) {
-      
+
       return;
     }
 

@@ -29,10 +29,12 @@ import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
+import frc.robot.commands.intakeCommands.FinishIntakingCommand;
 import frc.robot.commands.intakeCommands.IntakeNote;
 import frc.robot.commands.intakeCommands.IntakeSourceNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
+import frc.robot.commands.shooterCommands.SetShooterDistance;
 import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
@@ -369,22 +371,23 @@ public class RobotContainer {
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {
     // Waypoints
-    NamedCommands.registerCommand("command1", Commands.print("passed marker 1"));
+    NamedCommands.registerCommand("command1", Commands.print("passed marker 1")); //
     NamedCommands.registerCommand("command2", Commands.print("passed marker 2"));
     NamedCommands.registerCommand(
         "enableXStance", Commands.runOnce(drivetrain::enableXstance, drivetrain));
     NamedCommands.registerCommand(
         "disableXStance", Commands.runOnce(drivetrain::disableXstance, drivetrain));
-    NamedCommands.registerCommand("wait5Seconds", Commands.waitSeconds(5.0));
-    NamedCommands.registerCommand("SpinShooter", new PrintCommand("Spin Shooter Command"));
-    NamedCommands.registerCommand("ShootNote", new PrintCommand("Shoot Note Command"));
-    NamedCommands.registerCommand("IntakeNote", new PrintCommand("Intake Note Command"));
+    NamedCommands.registerCommand("wait5Seconds", Commands.print("passed marker 1")); //Commands.waitSeconds(5.0));
+    NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
+    NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, feeder, shooterPose));
+    NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
-        "SetShooterDistance115", new PrintCommand("Set Shooter Distance 115 Command"));
+        "FinishIntakingNote", new FinishIntakingCommand(intake, feeder, shooterPose));
+    NamedCommands.registerCommand("SetShooterDistance115", new SetShooterDistance(shooterPose, 80.0));
+    NamedCommands.registerCommand("SetShooterDistance125", new SetShooterDistance(shooterPose, 87.0)); //new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
-        "SetShooterDistance125", new PrintCommand("Set Shooter Distance 125 Command"));
-    NamedCommands.registerCommand(
-        "SetShooterDistance150", new PrintCommand("Set Shooter Distance 150 Command"));
+        "SetShooterDistance150", new SetShooterDistance(shooterPose, 130.0)); //new StopShooter(shooterWheels));
 
     // build auto path commands
 

@@ -10,7 +10,7 @@ public class SetShooterDistance extends Command {
   public SetShooterDistance(ShooterPose shooterPose, double distanceInches) {
     addRequirements(shooterPose);
     this.shooterPose = shooterPose;
-    distanceInches = distanceInches;
+    this.distanceInches = distanceInches;
   }
 
   public void initialize() {
@@ -22,6 +22,6 @@ public class SetShooterDistance extends Command {
   public void end(boolean isInterupted) {}
 
   public boolean isFinished() {
-    return shooterPose.isAtGoal();
+    return true;
   }
 }
