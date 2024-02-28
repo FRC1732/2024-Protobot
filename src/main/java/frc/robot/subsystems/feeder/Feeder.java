@@ -62,7 +62,7 @@ public class Feeder extends SubsystemBase {
     }
 
     Timer.delay(0.25);
-    // feederMotor.burnFlash();
+    feederMotor.burnFlash();
     Timer.delay(0.25);
 
     // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
