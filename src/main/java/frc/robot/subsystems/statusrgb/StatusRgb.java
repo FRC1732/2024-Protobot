@@ -55,6 +55,7 @@ public class StatusRgb extends SubsystemBase {
       if (timer.hasElapsed(targetElapsedTimeSeconds)) {
         specialMode = SpecialMode.NONE;
         timer.stop();
+        timer.reset();
       } else {
         switch (specialMode) {
           case NOTE_CAPTURED:
