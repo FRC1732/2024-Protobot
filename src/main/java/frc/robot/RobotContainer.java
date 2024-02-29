@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,8 +22,6 @@ import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
 import frc.robot.commands.ClimberCommands.AutoClimb;
-import frc.robot.commands.FeedForwardCharacterization;
-import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.BrakeFeeder;
@@ -377,34 +374,40 @@ public class RobotContainer {
         "enableXStance", Commands.runOnce(drivetrain::enableXstance, drivetrain));
     NamedCommands.registerCommand(
         "disableXStance", Commands.runOnce(drivetrain::disableXstance, drivetrain));
-    NamedCommands.registerCommand("wait5Seconds", Commands.print("passed marker 1")); //Commands.waitSeconds(5.0));
+    NamedCommands.registerCommand(
+        "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
     NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, feeder, shooterPose));
     NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
         "FinishIntakingNote", new FinishIntakingCommand(intake, feeder, shooterPose));
-    NamedCommands.registerCommand("SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0));
-    NamedCommands.registerCommand("SetShooterDistance125", new SetShooterDistance(shooterPose, 84.0)); //new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
-        "SetShooterDistance150", new SetShooterDistance(shooterPose, 135.0)); //new StopShooter(shooterWheels));
+        "SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0));
+    NamedCommands.registerCommand(
+        "SetShooterDistance125",
+        new SetShooterDistance(shooterPose, 84.0)); // new StopShooter(shooterWheels));
+    NamedCommands.registerCommand(
+        "SetShooterDistance150",
+        new SetShooterDistance(shooterPose, 135.0)); // new StopShooter(shooterWheels));
 
     // build auto path commands
 
     // add commands to the auto chooser
-    autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    autoChooser.addOption("Do Nothing", new InstantCommand());
 
     /************ Test Path ************
      *
      * demonstration of PathPlanner path group with event markers
      *
      */
-    Command autoTest = new PathPlannerAuto("TestAuto");
-    Command testLine = new PathPlannerAuto("DistanceTest");
-    autoChooser.addOption("Test Auto", autoTest);
-    autoChooser.addOption("Distance Test", testLine);
     Command testAmpSide = new PathPlannerAuto("Amp Side Test");
-    autoChooser.addOption("TestAmpSide", testAmpSide);
+    autoChooser.addDefaultOption("Amp Side 4 Piece", testAmpSide);
+
+    // Command autoTest = new PathPlannerAuto("TestAuto");
+    // Command testLine = new PathPlannerAuto("DistanceTest");
+    // autoChooser.addOption("Test Auto", autoTest);
+    // autoChooser.addOption("Distance Test", testLine);
 
     /************ Start Point ************
      *
@@ -412,119 +415,130 @@ public class RobotContainer {
      *
      */
 
-    Command startPoint =
-        Commands.runOnce(
-            () ->
-                drivetrain.resetPose(
-                    PathPlannerPath.fromPathFile("StartPoint").getPreviewStartingHolonomicPose()),
-            drivetrain);
-    autoChooser.addOption("Start Point", startPoint);
+    // Command startPoint =
+    //     Commands.runOnce(
+    //         () ->
+    //             drivetrain.resetPose(
+    //
+    // PathPlannerPath.fromPathFile("StartPoint").getPreviewStartingHolonomicPose()),
+    //         drivetrain);
+    // autoChooser.addOption("Start Point", startPoint);
 
     /************ Drive Characterization ************
      *
      * useful for characterizing the swerve modules for driving (i.e, determining kS and kV)
      *
      */
-    autoChooser.addOption(
-        "Swerve Drive Characterization",
-        new FeedForwardCharacterization(
-            drivetrain,
-            true,
-            new FeedForwardCharacterizationData("drive"),
-            drivetrain::runDriveCharacterizationVolts,
-            drivetrain::getDriveCharacterizationVelocity,
-            drivetrain::getDriveCharacterizationAcceleration));
+    // autoChooser.addOption(
+    //     "Swerve Drive Characterization",
+    //     new FeedForwardCharacterization(
+    //         drivetrain,
+    //         true,
+    //         new FeedForwardCharacterizationData("drive"),
+    //         drivetrain::runDriveCharacterizationVolts,
+    //         drivetrain::getDriveCharacterizationVelocity,
+    //         drivetrain::getDriveCharacterizationAcceleration));
 
     /************ Swerve Rotate Characterization ************
      *
      * useful for characterizing the swerve modules for rotating (i.e, determining kS and kV)
      *
      */
-    autoChooser.addOption(
-        "Swerve Rotate Characterization",
-        new FeedForwardCharacterization(
-            drivetrain,
-            true,
-            new FeedForwardCharacterizationData("rotate"),
-            drivetrain::runRotateCharacterizationVolts,
-            drivetrain::getRotateCharacterizationVelocity,
-            drivetrain::getRotateCharacterizationAcceleration));
+    // autoChooser.addOption(
+    //     "Swerve Rotate Characterization",
+    //     new FeedForwardCharacterization(
+    //         drivetrain,
+    //         true,
+    //         new FeedForwardCharacterizationData("rotate"),
+    //         drivetrain::runRotateCharacterizationVolts,
+    //         drivetrain::getRotateCharacterizationVelocity,
+    //         drivetrain::getRotateCharacterizationAcceleration));
 
     /************ Distance Test ************
      *
      * used for empirically determining the wheel diameter
      *
      */
-    Command distanceTestPathCommand = new PathPlannerAuto("DistanceTest");
-    autoChooser.addOption("Distance Path", distanceTestPathCommand);
+    // Command distanceTestPathCommand = new PathPlannerAuto("DistanceTest");
+    // autoChooser.addOption("Distance Path", distanceTestPathCommand);
 
     /************ Auto Tuning ************
      *
      * useful for tuning the autonomous PID controllers
      *
      */
-    Command tuningCommand = new PathPlannerAuto("Tuning");
-    autoChooser.addOption("Auto Tuning", tuningCommand);
+    // Command tuningCommand = new PathPlannerAuto("Tuning");
+    // autoChooser.addOption("Auto Tuning", tuningCommand);
 
     /************ Drive Velocity Tuning ************
      *
      * useful for tuning the drive velocity PID controller
      *
      */
-    autoChooser.addOption(
-        "Drive Velocity Tuning",
-        Commands.sequence(
-            Commands.runOnce(drivetrain::disableFieldRelative, drivetrain),
-            Commands.repeatingSequence(
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(2.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(-0.5, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(3.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(() -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-3.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(
-                        () -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)))));
+    // autoChooser.addOption(
+    //     "Drive Velocity Tuning",
+    //     Commands.sequence(
+    //         Commands.runOnce(drivetrain::disableFieldRelative, drivetrain),
+    //         Commands.repeatingSequence(
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(1.0),
+    //                 Commands.run(() -> drivetrain.drive(2.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(1.0),
+    //                 Commands.run(() -> drivetrain.drive(-0.5, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(1.0),
+    //                 Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(3.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(2.0),
+    //                 Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(2.0),
+    //                 Commands.run(() -> drivetrain.drive(-1.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(-3.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(2.0),
+    //                 Commands.run(
+    //                     () -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)))));
 
     /************ Swerve Rotation Tuning ************
      *
      * useful for tuning the swerve module rotation PID controller
      *
      */
-    autoChooser.addOption(
-        "Swerve Rotation Tuning",
-        Commands.sequence(
-            Commands.runOnce(drivetrain::enableFieldRelative, drivetrain),
-            Commands.repeatingSequence(
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(0.1, 0.1, 0.0, true, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-0.1, 0.1, 0.0, true, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-0.1, -0.1, 0.0, true, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(
-                        () -> drivetrain.drive(0.1, -0.1, 0.0, true, false), drivetrain)))));
+    // autoChooser.addOption(
+    //     "Swerve Rotation Tuning",
+    //     Commands.sequence(
+    //         Commands.runOnce(drivetrain::enableFieldRelative, drivetrain),
+    //         Commands.repeatingSequence(
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(0.1, 0.1, 0.0, true, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(-0.1, 0.1, 0.0, true, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(-0.1, -0.1, 0.0, true, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(
+    //                     () -> drivetrain.drive(0.1, -0.1, 0.0, true, false), drivetrain)))));
 
     Shuffleboard.getTab("MAIN").add(autoChooser.getSendableChooser());
   }
