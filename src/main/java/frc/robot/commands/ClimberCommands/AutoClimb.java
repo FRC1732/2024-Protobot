@@ -58,7 +58,7 @@ public class AutoClimb extends Command {
         firstTimeFlag = false;
       }
       climber.ClimberStop();
-      if (timer.get() > 2) {
+      if (timer.get() > 1.25) {
         feeder.stopFeeder();
         shooterWheels.stopShooter();
         shooterPose.setShooterPose(Pose.HANDOFF);

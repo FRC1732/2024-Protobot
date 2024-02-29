@@ -337,6 +337,12 @@ public class ShooterPose extends SubsystemBase {
         shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_SOURCE_SETPOINT);
         shooterTiltPID.setGoal(angleModulusDeg(ShooterPoseConstants.SHOOTER_TILT_SOURCE_SETPOINT));
         break;
+      case CLIMBER:
+        shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_SOURCE_SETPOINT);
+        shooterTiltPID.setGoal(angleModulusDeg(ShooterPoseConstants.SHOOTER_TILT_SOURCE_SETPOINT));
+        break;
+      default:
+        break;
     }
   }
 

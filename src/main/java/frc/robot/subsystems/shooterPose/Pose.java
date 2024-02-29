@@ -5,5 +5,6 @@ public enum Pose {
   SUBWOOFER,
   AMP,
   TRAP,
-  SOURCE
+  SOURCE,
+  CLIMBER
 }

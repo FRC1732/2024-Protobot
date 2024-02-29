@@ -21,14 +21,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
+import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
+import frc.robot.commands.ClimberCommands.DisarmClimber;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
+import frc.robot.commands.intakeCommands.Eject;
+import frc.robot.commands.intakeCommands.FeedThrough;
 import frc.robot.commands.intakeCommands.FinishIntakingCommand;
 import frc.robot.commands.intakeCommands.IntakeNote;
-import frc.robot.commands.intakeCommands.IntakeSourceNote;
 import frc.robot.commands.intakeCommands.StartIntakingNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
@@ -253,7 +256,8 @@ public class RobotContainer {
                     // Check ScoringMode
                     () -> scoringMode == ScoringMode.AMP),
                 // Does NOT have note
-                new IntakeSourceNote(feeder, shooterPose).asProxy(),
+                // new IntakeSourceNote(feeder, shooterPose).asProxy(),
+                Commands.print("attempted to do source load"),
                 // Check hasNote
                 feeder::hasNote));
 
@@ -268,18 +272,13 @@ public class RobotContainer {
                 new IntakeNote(intake, feeder, shooterPose).asProxy(),
                 feeder::hasNote));
 
-    oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
-
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
+    oi.operatorSpeakerButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
+    oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
+    oi.operatorAmpButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
 
-    oi.armClimberSwitch()
-        .onTrue(
-            new SetShooterPose(shooterPose, Pose.SOURCE)
-                .andThen(new InstantCommand(() -> climber.ClimberUp())));
-    oi.armClimberSwitch()
-        .onFalse(
-            new InstantCommand(() -> climber.ClimberStop())
-                .andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+    oi.armClimberSwitch().onTrue(new ArmClimber(climber, shooterPose));
+    oi.armClimberSwitch().onFalse(new DisarmClimber(climber, shooterPose));
     oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
     // new SetShooterPose(shooterPose, Pose.TRAP)
     //     .andThen(new InstantCommand(() -> climber.ClimberDown())));
@@ -332,9 +331,11 @@ public class RobotContainer {
 
     // oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 
-    // oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
+    // oi.ejectButton().whileTrue(new Eject(feeder, intake, shooterWheels));
+    oi.operatorEjectButton().whileTrue(new Eject(feeder, intake, shooterWheels));
 
-    oi.feedThroughButton().whileTrue(new FeedShooterManual(feeder));
+    // oi.feedThroughButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
+    oi.operatorFeedButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
 
     configureDrivetrainCommands();
 

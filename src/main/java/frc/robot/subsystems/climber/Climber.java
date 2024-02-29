@@ -85,14 +85,28 @@ public class Climber extends SubsystemBase {
   }
 
   public void ClimberUp() {
-    climberLeftMotor.set(.5);
+    climberLeftMotor.set(.75);
+    // climberRightMotor.set(.1);
+
+    isClimbing = true;
+  }
+
+  public void ClimberUpSlow() {
+    climberLeftMotor.set(.25);
     // climberRightMotor.set(.1);
 
     isClimbing = true;
   }
 
   public void ClimberDown() {
-    climberLeftMotor.set(-.5);
+    climberLeftMotor.set(-.75);
+    // climberRightMotor.set(-.1);
+
+    isClimbing = true;
+  }
+
+  public void ClimberDownSlow() {
+    climberLeftMotor.set(-.25);
     // climberRightMotor.set(-.1);
 
     isClimbing = true;

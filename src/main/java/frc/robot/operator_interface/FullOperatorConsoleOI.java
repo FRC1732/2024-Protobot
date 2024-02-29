@@ -36,7 +36,31 @@ public class FullOperatorConsoleOI extends DualJoysticksOI {
   }
 
   // Operator Panel
+  public Trigger operatorSpeakerButton() {
+    return operatorPanelButtonsOne[5];
+  }
+
+  public Trigger operatorAmpButton() {
+    return operatorPanelButtonsOne[4];
+  }
+
+  public Trigger operatorFeedButton() {
+    return operatorPanelButtonsOne[6];
+  }
+
+  public Trigger operatorEjectButton() {
+    return operatorPanelButtonsOne[7];
+  }
+
   public Trigger slowModeSwitch() {
-    return operatorPanelButtonsOne[1];
+    return operatorPanelButtonsTwo[1];
+  }
+
+  public Trigger armClimberSwitch() {
+    return operatorPanelButtonsTwo[2];
+  }
+
+  public Trigger autoClimbButton() {
+    return operatorPanelButtonsTwo[3];
   }
 }

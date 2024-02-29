@@ -9,14 +9,14 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
-public class Eject extends Command {
+public class FeedThrough extends Command {
   /** Creates a new Eject. */
   private final Feeder feeder;
 
   private final Intake intake;
   private final ShooterWheels shooterWheels;
 
-  public Eject(Feeder feeder, Intake intake, ShooterWheels shooterWheels) {
+  public FeedThrough(Feeder feeder, Intake intake, ShooterWheels shooterWheels) {
     addRequirements(feeder, intake, shooterWheels);
     this.feeder = feeder;
     this.intake = intake;
@@ -26,9 +26,9 @@ public class Eject extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.runIntakeOut();
-    feeder.reverseFeeder();
-    shooterWheels.setShooterSpeedBackwards();
+    intake.runIntake();
+    feeder.runFeeder();
+    shooterWheels.setShooterSpeedFast();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
