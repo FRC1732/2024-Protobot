@@ -105,17 +105,20 @@ public class ShooterPose extends SubsystemBase {
   // new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
 
   public ShooterPose() {
+    double adjustmentFor3D = 9.0;
     angleLookupTable = new TreeMap<>();
-    angleLookupTable.put(40.0, -47.0); // (distance, optimal angle)
-    angleLookupTable.put(60.0, -42.0);
-    angleLookupTable.put(70.0, -39.0);
-    angleLookupTable.put(80.0, -35.0);
-    angleLookupTable.put(95.0, -32.5);
-    angleLookupTable.put(105.0, -32.0);
-    angleLookupTable.put(115.0, -31.0);
-    angleLookupTable.put(125.0, -30.0);
-    angleLookupTable.put(135.0, -29.0);
-    angleLookupTable.put(157.0, -28.0);
+    angleLookupTable.put(20.0 - adjustmentFor3D, -47.0); // (distance, optimal angle)
+    angleLookupTable.put(40.0 - adjustmentFor3D, -47.0);
+    angleLookupTable.put(60.0 - adjustmentFor3D, -42.0);
+    angleLookupTable.put(70.0 - adjustmentFor3D, -39.0);
+    angleLookupTable.put(80.0 - adjustmentFor3D, -35.0);
+    angleLookupTable.put(95.0 - adjustmentFor3D, -32.5);
+    angleLookupTable.put(105.0 - adjustmentFor3D, -32.0);
+    angleLookupTable.put(115.0 - adjustmentFor3D, -31.0);
+    angleLookupTable.put(125.0 - adjustmentFor3D, -30.0);
+    angleLookupTable.put(135.0 - adjustmentFor3D, -29.0);
+    angleLookupTable.put(157.0 - adjustmentFor3D, -28.0);
+    angleLookupTable.put(250.0 - adjustmentFor3D, -25.0);
 
     shooterHeightLeftMotor =
         new CANSparkMax(

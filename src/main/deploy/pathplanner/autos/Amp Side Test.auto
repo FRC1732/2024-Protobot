@@ -124,7 +124,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FinishIntakingNote"
+                  "name": "StartIntakingNote"
                 }
               }
             ]
@@ -143,13 +143,26 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SetShooterDistance150"
+                  "name": "SpinShooter"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "SpinShooter"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FinishIntakingNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SetShooterDistance115"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -193,7 +206,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FinishIntakingNote"
+                  "name": "StartIntakingNote"
                 }
               }
             ]
@@ -212,13 +225,26 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SetShooterDistance150"
+                  "name": "SpinShooter"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "SpinShooter"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FinishIntakingNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SetShooterDistance115"
+                      }
+                    }
+                  ]
                 }
               }
             ]

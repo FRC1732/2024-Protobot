@@ -29,6 +29,7 @@ import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.intakeCommands.FinishIntakingCommand;
 import frc.robot.commands.intakeCommands.IntakeNote;
 import frc.robot.commands.intakeCommands.IntakeSourceNote;
+import frc.robot.commands.intakeCommands.StartIntakingNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
 import frc.robot.commands.shooterCommands.SetShooterDistance;
@@ -379,17 +380,19 @@ public class RobotContainer {
     NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
     NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, feeder, shooterPose));
+    NamedCommands.registerCommand(
+        "StartIntakingNote", new StartIntakingNote(intake, feeder, shooterPose));
     NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
         "FinishIntakingNote", new FinishIntakingCommand(intake, feeder, shooterPose));
     NamedCommands.registerCommand(
-        "SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0));
+        "SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0 - 9));
     NamedCommands.registerCommand(
         "SetShooterDistance125",
-        new SetShooterDistance(shooterPose, 84.0)); // new StopShooter(shooterWheels));
+        new SetShooterDistance(shooterPose, 84.0 - 9)); // new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
         "SetShooterDistance150",
-        new SetShooterDistance(shooterPose, 135.0)); // new StopShooter(shooterWheels));
+        new SetShooterDistance(shooterPose, 135.0 - 9)); // new StopShooter(shooterWheels));
 
     // build auto path commands
 
