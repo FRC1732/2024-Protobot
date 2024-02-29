@@ -221,6 +221,8 @@ public class Robot extends LoggedRobot {
     }
   }
 
+
+
   /** This method is invoked at the start of the teleop period. */
   @Override
   public void teleopInit() {
@@ -245,4 +247,10 @@ public class Robot extends LoggedRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
+
+  @Override
+  public void disabledInit() {
+    robotContainer.disableInit();
+  }
+
 }

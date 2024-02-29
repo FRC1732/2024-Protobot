@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
@@ -37,6 +38,7 @@ public class ShooterPose extends SubsystemBase {
     double AngleSetpoint = 0.0;
     double AngleSpeed = 0.0;
     double AngleFeedforward = 0.0;
+    boolean AbsoluteIsConnected = false;
   }
 
   @AutoLog
@@ -84,6 +86,7 @@ public class ShooterPose extends SubsystemBase {
 
   private int limitSwitchCounter;
   private boolean elevatorPIDOverride;
+  private boolean encoderReset;
 
   private NavigableMap<Double, Double> angleLookupTable;
 
@@ -223,7 +226,7 @@ public class ShooterPose extends SubsystemBase {
         ShooterPoseConstants.SHOOTER_TILT_DEGREES_PER_ROTATION);
     shooterTiltEncoder.setVelocityConversionFactor(
         ShooterPoseConstants.SHOOTER_TILT_RPM_TO_DEGREES_PER_SECOND);
-    shooterTiltEncoder.setPosition(angleModulusDeg(-100));
+    shooterTiltEncoder.setPosition(angleModulusDeg(-44.44));
 
     shooterTiltPID =
         new ProfiledPIDController(
@@ -244,6 +247,8 @@ public class ShooterPose extends SubsystemBase {
             ShooterPoseConstants.SHOOTER_TILT_KG,
             ShooterPoseConstants.SHOOTER_TILT_KV,
             ShooterPoseConstants.SHOOTER_TILT_KA);
+    
+    encoderReset = false;
 
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
       setUpShuffleboard();
@@ -404,6 +409,12 @@ public class ShooterPose extends SubsystemBase {
             .getEntry();
   }
 
+  public void resetToAbsoluteEncoder() {
+    if(shooterTiltAbsoluteEncoder.isConnected()) {
+      shooterTiltEncoder.setPosition(getAbsolutePosition());
+    }
+  }
+
   public void periodic() {
     if (DriverStation.isDisabled()) {
       shooterHeightPID.reset(shooterHeightEncoder.getPosition());
@@ -433,10 +444,6 @@ public class ShooterPose extends SubsystemBase {
               + shooterHeightFeedforward.calculate(shooterHeightEncoder.getVelocity()));
     }
 
-    if (Math.abs(shooterTiltEncoder.getPosition() - getAbsolutePosition())
-        > ShooterPoseConstants.SHOOTER_TILT_MAX_ABOLUTE_RELATIVE_ERROR_DEG) {
-      shooterTiltEncoder.setPosition(getAbsolutePosition());
-    }
     shooterTiltMotor.set(
         MathUtil.clamp(shooterTiltPID.calculate(shooterTiltEncoder.getPosition()), -0.5, 0.5)
             + shooterTiltFeedforward.calculate(
@@ -473,6 +480,7 @@ public class ShooterPose extends SubsystemBase {
             Math.toRadians(
                 shooterTiltEncoder.getPosition() + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
             shooterTiltEncoder.getVelocity());
+    loggedTiltIO.AbsoluteIsConnected = shooterTiltAbsoluteEncoder.isConnected();
 
     loggedHeightIO.Height = shooterHeightEncoder.getPosition();
     loggedHeightIO.HeightVelocity = shooterHeightEncoder.getVelocity();
@@ -498,9 +506,10 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public boolean hasClearence() {
-    // shooterTiltEncoder.getPosition()
-    // shooterHeightEncoder.getPosition()
-
-    return false;
+    if(shooterHeightEncoder.getPosition() <= 0.25 && shooterTiltEncoder.getPosition() <= ShooterPoseConstants.SHOOTER_TILT_HANDOFF_SETPOINT + 2) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

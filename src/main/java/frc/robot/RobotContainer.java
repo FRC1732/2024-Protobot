@@ -64,7 +64,7 @@ public class RobotContainer {
   private OperatorInterface oi = new OperatorInterface() {};
   private RobotConfig config;
   private Drivetrain drivetrain;
-  private Alliance lastAlliance = DriverStation.Alliance.Red;
+  private Alliance lastAlliance = DriverStation.Alliance.Blue;
   private VisionSubsystem visionSubsystem;
   public Intake intake;
   public Feeder feeder;
@@ -160,7 +160,7 @@ public class RobotContainer {
 
     visionSubsystem = new VisionSubsystem();
 
-    statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), () -> climber.isClimbing());
+    statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), () -> climber.isClimbing(), this);
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -225,11 +225,12 @@ public class RobotContainer {
                                 .alongWith(
                                     new RotateToAngle(
                                             drivetrain,
-                                            oi::getTranslateX,
-                                            oi::getTranslateY,
+                                            ()->(oi.getTranslateX()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
+                                            ()->(oi.getTranslateY()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
                                             oi::getRotate,
                                             () -> this.lastAlliance == Alliance.Blue ? -90 : 90,
-                                            () -> false)
+                                            () -> false,
+                                            statusRgb)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
                     new RunShooterFast(shooterWheels)
@@ -245,13 +246,14 @@ public class RobotContainer {
                                     new BrakeFeeder(feeder, shooterWheels).asProxy(),
                                     new RotateToAngle(
                                             drivetrain,
-                                            oi::getTranslateX,
-                                            oi::getTranslateY,
+                                            ()->(oi.getTranslateX()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
+                                            ()->(oi.getTranslateY()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
                                             oi::getRotate,
                                             () ->
                                                 drivetrain.getPose().getRotation().getDegrees()
                                                     - visionSubsystem.getTX(),
-                                            () -> !visionSubsystem.hasTarget())
+                                            () -> !visionSubsystem.hasTarget(),
+                                            statusRgb)
                                         .asProxy())),
                     // Check ScoringMode
                     () -> scoringMode == ScoringMode.AMP),
@@ -269,7 +271,7 @@ public class RobotContainer {
         .whileTrue(
             new ConditionalCommand(
                 (new FeedShooterManual(feeder).asProxy()),
-                new IntakeNote(intake, feeder, shooterPose).asProxy(),
+                new IntakeNote(intake, feeder, shooterPose, statusRgb).asProxy(),
                 feeder::hasNote));
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
@@ -380,7 +382,7 @@ public class RobotContainer {
         "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
     NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, feeder, shooterPose));
+    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));
     NamedCommands.registerCommand(
         "StartIntakingNote", new StartIntakingNote(intake, feeder, shooterPose));
     NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
@@ -562,7 +564,7 @@ public class RobotContainer {
      * (0,0).____|____| y, x-> 0->
      */
     drivetrain.setDefaultCommand(
-        new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate));
+        new TeleopSwerve(drivetrain, ()->(oi.getTranslateX()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)), ()->(oi.getTranslateY()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)), oi::getRotate));
 
     // @reference code
     // lock rotation to the nearest 180° while driving
@@ -598,9 +600,10 @@ public class RobotContainer {
                     () ->
                         drivetrain.resetPose(
                             new Pose2d(
-                                drivetrain.getPose().getTranslation(), Rotation2d.fromDegrees(0))),
+                                drivetrain.getPose().getTranslation(), Rotation2d.fromDegrees(lastAlliance == Alliance.Blue?0:180))),
                     drivetrain)
-                .andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
+                //.andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
+                .andThen(Commands.runOnce(() -> drivetrain.setGyroOffset(lastAlliance == Alliance.Blue? 0: 180), drivetrain)));
 
     // @reference code
     // reset pose based on vision
@@ -608,6 +611,10 @@ public class RobotContainer {
     //     .onTrue(
     //         Commands.runOnce(() -> drivetrain.resetPoseToVision(() ->
     // vision.getBestRobotPose())));
+  }
+
+  public void disableInit() {
+    shooterPose.resetToAbsoluteEncoder();
   }
 
   private void configureSubsystemCommands() {

@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
+import frc.robot.subsystems.statusrgb.StatusRgb;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -32,6 +34,7 @@ public class RotateToAngle extends Command {
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
   private final BooleanSupplier manualRotationOverrideSupplier;
+  private final StatusRgb statusRgb;
 
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
@@ -64,8 +67,8 @@ public class RotateToAngle extends Command {
    * @param targetAngleSupplier the supplier of the target angle, in degrees. Zero degrees is away
    *     from the driver and increases in the CCW direction.
    */
-  public RotateToAngle(Drivetrain drivetrain, DoubleSupplier targetAngleSupplier) {
-    this(drivetrain, () -> 0, () -> 0, targetAngleSupplier);
+  public RotateToAngle(Drivetrain drivetrain, DoubleSupplier targetAngleSupplier, StatusRgb statusRgb) {
+    this(drivetrain, () -> 0, () -> 0, targetAngleSupplier, statusRgb);
   }
 
   /**
@@ -85,7 +88,8 @@ public class RotateToAngle extends Command {
       Drivetrain drivetrain,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
-      DoubleSupplier targetAngleSupplier) {
+      DoubleSupplier targetAngleSupplier,
+      StatusRgb statusRgb) {
     this.drivetrain = drivetrain;
     addRequirements(drivetrain);
     this.translationXSupplier = translationXSupplier;
@@ -93,6 +97,7 @@ public class RotateToAngle extends Command {
     this.targetAngleSupplier = targetAngleSupplier;
     this.rotationSupplier = () -> 0;
     this.manualRotationOverrideSupplier = () -> false;
+    this.statusRgb = statusRgb;
   }
 
   public RotateToAngle(
@@ -101,8 +106,10 @@ public class RotateToAngle extends Command {
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier,
       DoubleSupplier targetAngleSupplier,
-      BooleanSupplier manualRotationOverrideSupplier) {
+      BooleanSupplier manualRotationOverrideSupplier,
+      StatusRgb statusRgb) {
     this.drivetrain = drivetrain;
+    this.statusRgb = statusRgb;
     addRequirements(drivetrain);
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
@@ -169,6 +176,9 @@ public class RotateToAngle extends Command {
 
     if (thetaController.atGoal()) {
       thetaVelocity = 0.0;
+      statusRgb.targetReady(true);
+    } else {
+      statusRgb.targetReady(false);
     }
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
@@ -209,5 +219,6 @@ public class RotateToAngle extends Command {
   @Override
   public void end(boolean interrupted) {
     Logger.recordOutput("ActiveCommands/RotateToAngle", false);
+    statusRgb.targetReady(false);
   }
 }

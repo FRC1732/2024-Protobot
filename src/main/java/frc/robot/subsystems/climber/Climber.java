@@ -85,7 +85,7 @@ public class Climber extends SubsystemBase {
   }
 
   public void ClimberUp() {
-    climberLeftMotor.set(.75);
+    climberLeftMotor.set(.5);
     // climberRightMotor.set(.1);
 
     isClimbing = true;
@@ -99,7 +99,7 @@ public class Climber extends SubsystemBase {
   }
 
   public void ClimberDown() {
-    climberLeftMotor.set(-.75);
+    climberLeftMotor.set(-.5);
     // climberRightMotor.set(-.1);
 
     isClimbing = true;
