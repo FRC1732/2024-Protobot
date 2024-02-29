@@ -196,6 +196,7 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     // check if the operator interface (e.g., joysticks) has changed
     robotContainer.updateOI();
+    robotContainer.disablePeriodic();
 
     // check if the alliance color has changed based on the FMS data
     robotContainer.checkAllianceColor();
@@ -246,11 +247,6 @@ public class Robot extends LoggedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-  }
-
-  @Override
-  public void disabledInit() {
-    robotContainer.disableInit();
   }
 
 }

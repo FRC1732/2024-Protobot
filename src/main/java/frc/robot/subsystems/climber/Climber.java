@@ -62,7 +62,7 @@ public class Climber extends SubsystemBase {
         .getEncoder()
         .setPositionConversionFactor(ClimberConstants.CLIMBER_CONVERSION_FACTOR);
     climberLeftEncoder = climberLeftMotor.getEncoder();
-    climberLeftEncoder.setPosition(0);
+    climberLeftEncoder.setPosition(2.2);
 
     climberLeftMotor.setInverted(true);
 

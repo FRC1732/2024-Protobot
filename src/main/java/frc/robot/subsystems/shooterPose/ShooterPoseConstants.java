@@ -17,9 +17,7 @@ public class ShooterPoseConstants {
 
   public static final double MIN_SHOOTER_TILT_DEGREES = -47.0;
   public static final double MAX_SHOOTER_TILT_DEGREES = 102.5;
-  public static final double SHOOTER_TILT_ABSOLUTE_OFFSET =
-      60.5 - 36.366 + 4.428 + 291.062
-          - 11.8; // 0 is a flat shot, CCW is positive, shooter facing left
+  public static final double SHOOTER_TILT_ABSOLUTE_OFFSET = 126.1374; // 0 is a flat shot, CCW is positive, shooter facing left
   public static final double SHOOTER_TILT_GOAL_TOLERANCE_DEGREES = 2;
   public static final double SHOOTER_TILT_MAX_ABOLUTE_RELATIVE_ERROR_DEG = 10;
   public static final double SHOOTER_TILT_COG_OFFSET = 37.79;

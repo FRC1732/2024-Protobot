@@ -219,7 +219,7 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltMotor.setSoftLimit(
         SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
 
-    shooterTiltAbsoluteEncoder = new DutyCycleEncoder(9);
+    shooterTiltAbsoluteEncoder = new DutyCycleEncoder(8);
 
     shooterTiltEncoder = shooterTiltMotor.getEncoder();
     shooterTiltEncoder.setPositionConversionFactor(

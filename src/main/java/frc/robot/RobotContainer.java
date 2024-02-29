@@ -225,10 +225,10 @@ public class RobotContainer {
                                 .alongWith(
                                     new RotateToAngle(
                                             drivetrain,
-                                            ()->(oi.getTranslateX()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
-                                            ()->(oi.getTranslateY()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> this.lastAlliance == Alliance.Blue ? -90 : 90,
+                                            () -> -90,
                                             () -> false,
                                             statusRgb)
                                         .asProxy())),
@@ -246,8 +246,8 @@ public class RobotContainer {
                                     new BrakeFeeder(feeder, shooterWheels).asProxy(),
                                     new RotateToAngle(
                                             drivetrain,
-                                            ()->(oi.getTranslateX()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
-                                            ()->(oi.getTranslateY()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)),
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
                                             oi::getRotate,
                                             () ->
                                                 drivetrain.getPose().getRotation().getDegrees()
@@ -564,7 +564,7 @@ public class RobotContainer {
      * (0,0).____|____| y, x-> 0->
      */
     drivetrain.setDefaultCommand(
-        new TeleopSwerve(drivetrain, ()->(oi.getTranslateX()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)), ()->(oi.getTranslateY()* (lastAlliance == Alliance.Blue ? -1.0 : 1.0)), oi::getRotate));
+        new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate));
 
     // @reference code
     // lock rotation to the nearest 180° while driving
@@ -613,7 +613,7 @@ public class RobotContainer {
     // vision.getBestRobotPose())));
   }
 
-  public void disableInit() {
+  public void disablePeriodic() {
     shooterPose.resetToAbsoluteEncoder();
   }
 
