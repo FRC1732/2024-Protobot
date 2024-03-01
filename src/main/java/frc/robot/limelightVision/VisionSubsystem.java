@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase {
   private ShuffleboardTab tab;
+  private double lastDistance;
 
   public VisionSubsystem() {
     setUpShuffleboard();
@@ -45,12 +46,16 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public double getDistanceToTarget() {
+    if (!hasTarget()) {
+      return lastDistance;
+    }
     double cameraHeight = 22;
     double targetHeight = 56.375;
     double heightDiff = targetHeight - cameraHeight;
     double cameraAngle = 23;
     double theta = Math.toRadians(cameraAngle + getTY());
-    return heightDiff / Math.tan(theta);
+    lastDistance = heightDiff / Math.tan(theta);
+    return lastDistance;
   }
 
   @Override

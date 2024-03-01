@@ -59,7 +59,7 @@ public class StatusRgb extends SubsystemBase {
         timer.reset();
       } else {
         switch (specialMode) {
-          case NOTE_CAPTURED: //blue and gold
+          case NOTE_CAPTURED: // blue and gold
             out4.set(!true);
             break;
           default: // do nothing
@@ -70,28 +70,28 @@ public class StatusRgb extends SubsystemBase {
       out4.set(!false);
     }
 
-    if (DriverStation.isDisabled()) { //blue and gold
+    if (DriverStation.isDisabled()) { // blue and gold
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
       out4.set(!true);
-    } else if (targetReady) { //Blue and gold
+    } else if (targetReady) { // Blue and gold
       out0.set(!true);
       out1.set(!true);
       out2.set(!false);
-    } else if (whenClimbing.getAsBoolean()) { //Blue and gold
+    } else if (whenClimbing.getAsBoolean()) { // Blue and gold
       out0.set(!false);
       out1.set(!false);
       out2.set(!true);
-    } else if (!hasClearence.getAsBoolean()) {  //sparkley
+    } else if (!hasClearence.getAsBoolean()) { // sparkley
       out0.set(!false);
       out1.set(!true);
       out2.set(!false);
-    } else if (robotContainer.scoringMode == ScoringMode.SPEAKER) { //red
+    } else if (robotContainer.scoringMode == ScoringMode.SPEAKER) { // red
       out0.set(!true);
       out1.set(!false);
       out2.set(!false);
-    } else { //Blue and Gold
+    } else { // Blue and Gold
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);

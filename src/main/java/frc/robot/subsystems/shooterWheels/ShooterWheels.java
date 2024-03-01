@@ -60,7 +60,7 @@ public class ShooterWheels extends SubsystemBase {
 
     shooterHighMotor.enableVoltageCompensation(12);
     shooterHighMotor.setIdleMode(IdleMode.kCoast);
-    shooterHighMotor.setOpenLoopRampRate(1.0);
+    shooterHighMotor.setOpenLoopRampRate(0.75);
     shooterHighMotor.stopMotor();
 
     shooterSpeedBackwards =

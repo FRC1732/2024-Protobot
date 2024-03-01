@@ -78,6 +78,9 @@ public class RobotContainer {
     SPEAKER
   }
 
+  private double lastVisionError;
+  private double lastRotateGoal;
+
   public ScoringMode scoringMode = ScoringMode.AMP;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to ensure accurate logging
@@ -249,9 +252,7 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () ->
-                                                drivetrain.getPose().getRotation().getDegrees()
-                                                    - visionSubsystem.getTX(),
+                                            this::targetAngleHelper,
                                             () -> !visionSubsystem.hasTarget(),
                                             statusRgb)
                                         .asProxy())),
@@ -367,6 +368,16 @@ public class RobotContainer {
     Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
     Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));*/
 
+  }
+
+  public double targetAngleHelper() {
+    double curVisionError = visionSubsystem.getTX();
+    if (lastVisionError == curVisionError) {
+      return lastRotateGoal;
+    }
+    lastVisionError = curVisionError;
+    lastRotateGoal = drivetrain.getPose().getRotation().getDegrees() - curVisionError;
+    return lastRotateGoal;
   }
 
   /** Use this method to define your commands for autonomous mode. */
