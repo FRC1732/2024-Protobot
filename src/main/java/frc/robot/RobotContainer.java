@@ -382,7 +382,8 @@ public class RobotContainer {
         "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
     NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
-    NamedCommands.registerCommand("IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));
+    NamedCommands.registerCommand(
+        "IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));
     NamedCommands.registerCommand(
         "StartIntakingNote", new StartIntakingNote(intake, feeder, shooterPose));
     NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
@@ -600,10 +601,14 @@ public class RobotContainer {
                     () ->
                         drivetrain.resetPose(
                             new Pose2d(
-                                drivetrain.getPose().getTranslation(), Rotation2d.fromDegrees(lastAlliance == Alliance.Blue?0:180))),
+                                drivetrain.getPose().getTranslation(),
+                                Rotation2d.fromDegrees(lastAlliance == Alliance.Blue ? 0 : 180))),
                     drivetrain)
-                //.andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
-                .andThen(Commands.runOnce(() -> drivetrain.setGyroOffset(lastAlliance == Alliance.Blue? 0: 180), drivetrain)));
+                // .andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
+                .andThen(
+                    Commands.runOnce(
+                        () -> drivetrain.setGyroOffset(lastAlliance == Alliance.Blue ? 0 : 180),
+                        drivetrain)));
 
     // @reference code
     // reset pose based on vision

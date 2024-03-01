@@ -11,7 +11,6 @@ import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
 import frc.robot.subsystems.statusrgb.StatusRgb;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
@@ -67,7 +66,8 @@ public class RotateToAngle extends Command {
    * @param targetAngleSupplier the supplier of the target angle, in degrees. Zero degrees is away
    *     from the driver and increases in the CCW direction.
    */
-  public RotateToAngle(Drivetrain drivetrain, DoubleSupplier targetAngleSupplier, StatusRgb statusRgb) {
+  public RotateToAngle(
+      Drivetrain drivetrain, DoubleSupplier targetAngleSupplier, StatusRgb statusRgb) {
     this(drivetrain, () -> 0, () -> 0, targetAngleSupplier, statusRgb);
   }
 

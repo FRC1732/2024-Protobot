@@ -31,7 +31,8 @@ public class StatusRgb extends SubsystemBase {
   private BooleanSupplier whenClimbing;
 
   /** Creates a new StatusRGB. */
-  public StatusRgb(BooleanSupplier hasClearence, BooleanSupplier whenClimbing, RobotContainer robotContainer) {
+  public StatusRgb(
+      BooleanSupplier hasClearence, BooleanSupplier whenClimbing, RobotContainer robotContainer) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
