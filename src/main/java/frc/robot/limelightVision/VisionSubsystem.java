@@ -1,5 +1,9 @@
 package frc.robot.limelightVision;
 
+import org.littletonrobotics.junction.AutoLog;
+
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -8,6 +12,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase {
   private ShuffleboardTab tab;
   private double lastDistance;
+
+  @AutoLog
+  public static class VisionSubsystemIOInput {
+    double Distance = 0.0;
+    double LatencyCapture = 0.0;
+    double LatencyPipline = 0.0;
+    double TX = 0.0;
+    double TY = 0.0;
+    boolean hasTarget = false;
+  }
+
+  private VisionSubsystemIOInputAutoLogged inputs = new VisionSubsystemIOInputAutoLogged();
 
   public VisionSubsystem() {
     setUpShuffleboard();
@@ -59,7 +75,11 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    if(VisionConstants.LOGGING) {
+      updateInputs();
+    }
+  }
 
   private void setUpShuffleboard() {
     tab = Shuffleboard.getTab("Vision");
@@ -71,4 +91,15 @@ public class VisionSubsystem extends SubsystemBase {
     tab.addBoolean("Has Target", () -> this.hasTarget());
     tab.addDouble("April Tag", () -> this.getAprilTagId());
   }
+
+  private void updateInputs() { 
+     inputs.Distance = getDistanceToTarget();
+     inputs.LatencyCapture = getLatencyCapture();
+     inputs.LatencyPipline = getLatencyPipeline();
+     inputs.TX = getTX();
+     inputs.TY = getTY();
+     inputs.hasTarget = hasTarget();
+
+     Logger.processInputs("Visions", inputs);
+   }
 }

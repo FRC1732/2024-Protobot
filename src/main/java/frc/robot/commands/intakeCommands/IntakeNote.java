@@ -59,6 +59,6 @@ public class IntakeNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.hasNote();
+    return intake.hasNote() || feeder.hasNote();
   }
 }

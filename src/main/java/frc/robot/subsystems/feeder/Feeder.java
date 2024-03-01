@@ -32,6 +32,8 @@ public class Feeder extends SubsystemBase {
 
   private final AnalogInput analog;
 
+  private double previousValue;
+
   public Feeder() {
 
     feederMotor =
@@ -50,6 +52,8 @@ public class Feeder extends SubsystemBase {
     feederMotor.stopMotor();
 
     analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
+
+    previousValue = 0.0;
 
     // Create a Shuffleboard tab for this subsystem if testing is enabled. Add additional indicators
     // and controls as needed.
@@ -85,7 +89,10 @@ public class Feeder extends SubsystemBase {
   }
 
   public boolean hasNote() {
-    return analog.getValue() > 700;
+    double currentValue = analog.getValue();
+    double result = (currentValue + previousValue) /2.0;
+    previousValue = currentValue;
+    return result > 900;
   }
 
   public boolean checkStopped() {

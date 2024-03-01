@@ -17,6 +17,7 @@ public class Intake extends SubsystemBase {
   public static class IntakeIOInput {
     double intakeMainMotorSpeed = 0.0;
     double intakeCentererMotorSpeed = 0.0;
+    double intakeBeamBreak = 0.0;
   }
 
   private IntakeIOInputAutoLogged inputs = new IntakeIOInputAutoLogged();
@@ -26,6 +27,7 @@ public class Intake extends SubsystemBase {
 
   public static Double intakeMainMotorSpeed = 0.80;
   public static Double intakeCentererMotorSpeed = 0.80;
+  private double previousValue;
 
   private AnalogInput intakeAnalogSensor = new AnalogInput(IntakeConstants.INTAKE_ANALOG_SENSOR);
 
@@ -72,6 +74,8 @@ public class Intake extends SubsystemBase {
     intakeMainMotor.burnFlash();
     Timer.delay(0.25);
 
+    previousValue = 0.0;
+
     setupShuffleboard();
   }
 
@@ -94,9 +98,11 @@ public class Intake extends SubsystemBase {
     intakeMainMotor.set(0);
     intakeCentererMotor.set(0);
   }
-
   public boolean hasNote() {
-    return intakeAnalogSensor.getValue() > 700;
+    double currentValue = intakeAnalogSensor.getValue();
+    double result = (currentValue + previousValue) /2.0;
+    previousValue = currentValue;
+    return result > 900;
   }
 
   @Override
@@ -110,6 +116,7 @@ public class Intake extends SubsystemBase {
   private void updateInputs() {
     inputs.intakeMainMotorSpeed = intakeMainMotor.get();
     inputs.intakeCentererMotorSpeed = intakeCentererMotor.get();
+    inputs.intakeBeamBreak = intakeAnalogSensor.getValue();
 
     Logger.processInputs("Intake", inputs);
   }
