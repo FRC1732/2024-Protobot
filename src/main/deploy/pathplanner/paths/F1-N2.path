@@ -45,8 +45,8 @@
   "reversed": false,
   "folder": "Amp Side",
   "previewStartingState": {
-    "rotation": 29.0,
-    "velocity": 0
+    "rotation": 26.0,
+    "velocity": 0.0
   },
   "useDefaultConstraints": false
 }

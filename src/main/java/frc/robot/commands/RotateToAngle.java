@@ -182,7 +182,7 @@ public class RotateToAngle extends Command {
     }
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
-    double rotationPercentage = TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0);
+    double rotationPercentage = TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0) * 0.75;
 
     double xVelocity = xPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
     double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
