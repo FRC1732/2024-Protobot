@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
@@ -247,7 +246,7 @@ public class ShooterPose extends SubsystemBase {
             ShooterPoseConstants.SHOOTER_TILT_KG,
             ShooterPoseConstants.SHOOTER_TILT_KV,
             ShooterPoseConstants.SHOOTER_TILT_KA);
-    
+
     encoderReset = false;
 
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
@@ -410,7 +409,7 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void resetToAbsoluteEncoder() {
-    if(shooterTiltAbsoluteEncoder.isConnected()) {
+    if (shooterTiltAbsoluteEncoder.isConnected()) {
       shooterTiltEncoder.setPosition(getAbsolutePosition());
     }
   }
@@ -506,7 +505,9 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public boolean hasClearence() {
-    if(shooterHeightEncoder.getPosition() <= 0.25 && shooterTiltEncoder.getPosition() <= ShooterPoseConstants.SHOOTER_TILT_HANDOFF_SETPOINT + 2) {
+    if (shooterHeightEncoder.getPosition() <= 0.25
+        && shooterTiltEncoder.getPosition()
+            <= ShooterPoseConstants.SHOOTER_TILT_HANDOFF_SETPOINT + 2) {
       return true;
     } else {
       return false;
