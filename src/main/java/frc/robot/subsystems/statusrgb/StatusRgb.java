@@ -42,7 +42,7 @@ public class StatusRgb extends SubsystemBase {
 
   public void acquiredNote() {
     timer.start();
-    targetElapsedTimeSeconds = 0.5;
+    targetElapsedTimeSeconds = 1.5;
     specialMode = SpecialMode.NOTE_CAPTURED;
   }
 
