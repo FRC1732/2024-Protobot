@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
-import frc.robot.limelightVision.LimelightHelpers;
-import frc.robot.limelightVision.VisionConstants;
 import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -179,10 +177,8 @@ public class RotateToAngle extends Command {
     if (thetaController.atGoal()) {
       thetaVelocity = 0.0;
       statusRgb.targetReady(true);
-      LimelightHelpers.setLEDMode_ForceOn(VisionConstants.LIMELIGHT_NAME); //TODO: remove when LEDs are fixed
     } else {
       statusRgb.targetReady(false);
-      LimelightHelpers.setLEDMode_ForceOff(VisionConstants.LIMELIGHT_NAME); //TODO: remove when LEDs are fixed
     }
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
