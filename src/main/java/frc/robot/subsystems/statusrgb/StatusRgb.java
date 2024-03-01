@@ -13,11 +13,11 @@ import frc.robot.RobotContainer.ScoringMode;
 import java.util.function.BooleanSupplier;
 
 public class StatusRgb extends SubsystemBase {
-  private DigitalOutput out0 = new DigitalOutput(1);
-  private DigitalOutput out1 = new DigitalOutput(2);
-  private DigitalOutput out2 = new DigitalOutput(3);
-  private DigitalOutput out3 = new DigitalOutput(4);
-  private DigitalOutput out4 = new DigitalOutput(5);
+  private DigitalOutput out0 = new DigitalOutput(0);
+  private DigitalOutput out1 = new DigitalOutput(1);
+  private DigitalOutput out2 = new DigitalOutput(2);
+  private DigitalOutput out3 = new DigitalOutput(3);
+  private DigitalOutput out4 = new DigitalOutput(4);
 
   private SpecialMode specialMode = SpecialMode.NONE;
 
@@ -42,8 +42,9 @@ public class StatusRgb extends SubsystemBase {
 
   public void acquiredNote() {
     timer.start();
-    targetElapsedTimeSeconds = 0.5;
+    targetElapsedTimeSeconds = .5;
     specialMode = SpecialMode.NOTE_CAPTURED;
+    System.out.println("Started note special");
   }
 
   public void targetReady(boolean targetReady) {
@@ -61,6 +62,7 @@ public class StatusRgb extends SubsystemBase {
         switch (specialMode) {
           case NOTE_CAPTURED: // blue and gold
             out4.set(!true);
+            System.out.println("Special mode active");
             break;
           default: // do nothing
             break;
@@ -74,6 +76,7 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
+      out4.set(!true);
     } else if (targetReady) { // Blue and gold
       out0.set(!true);
       out1.set(!true);
