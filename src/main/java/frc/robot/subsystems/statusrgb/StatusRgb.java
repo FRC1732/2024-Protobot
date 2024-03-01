@@ -74,7 +74,6 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
-      out4.set(!true);
     } else if (targetReady) { // Blue and gold
       out0.set(!true);
       out1.set(!true);

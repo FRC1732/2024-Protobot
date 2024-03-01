@@ -5,6 +5,8 @@
 package frc.robot.commands.intakeCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.limelightVision.LimelightHelpers;
+import frc.robot.limelightVision.VisionConstants;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
@@ -46,6 +48,8 @@ public class FinishIntakingCommand extends Command {
   public void end(boolean interrupted) {
     intake.stopIntake();
     feeder.stopFeeder();
+    LimelightHelpers.setLEDMode_ForceOff(
+        VisionConstants.LIMELIGHT_NAME); // TODO: remove when LEDs are fixed
   }
 
   // Returns true when the command should end.

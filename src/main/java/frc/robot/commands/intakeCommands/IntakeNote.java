@@ -5,6 +5,8 @@
 package frc.robot.commands.intakeCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.limelightVision.LimelightHelpers;
+import frc.robot.limelightVision.VisionConstants;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
@@ -49,7 +51,9 @@ public class IntakeNote extends Command {
   public void end(boolean interrupted) {
     if (intake.hasNote()) {
       statusRgb.acquiredNote();
-      new FinishIntakingCommand(intake, feeder, shooterPose).schedule();
+      LimelightHelpers.setLEDMode_ForceOn(VisionConstants.LIMELIGHT_NAME);
+      new FinishIntakingCommand(intake, feeder, shooterPose)
+          .schedule(); // TODO: remove when LEDs are fixed
     } else {
       intake.stopIntake();
       feeder.stopFeeder();
