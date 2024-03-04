@@ -43,7 +43,7 @@ public class StartIntakingNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (!intake.hasNote()) {
+    if (!intake.hasNote() || feeder.hasNote()) {
       intake.stopIntake();
       feeder.stopFeeder();
     }
@@ -52,6 +52,6 @@ public class StartIntakingNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.hasNote();
+    return (intake.hasNote() || feeder.hasNote());
   }
 }

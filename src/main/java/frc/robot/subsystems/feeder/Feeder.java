@@ -33,6 +33,7 @@ public class Feeder extends SubsystemBase {
   private final AnalogInput analog;
 
   private double previousValue;
+  private double averageValue;
 
   public Feeder() {
 
@@ -54,6 +55,7 @@ public class Feeder extends SubsystemBase {
     analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
 
     previousValue = 0.0;
+    averageValue = 0.0;
 
     // Create a Shuffleboard tab for this subsystem if testing is enabled. Add additional indicators
     // and controls as needed.
@@ -61,7 +63,7 @@ public class Feeder extends SubsystemBase {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
       tab.add(SUBSYSTEM_NAME, this);
 
-      tab.addBoolean("Has Note", this::hasNote);
+      tab.addBoolean("Has Note", this::isAnalogTriggered);
       tab.addDouble("Sensor Value", () -> analog.getValue());
     }
 
@@ -90,9 +92,13 @@ public class Feeder extends SubsystemBase {
 
   public boolean hasNote() {
     double currentValue = analog.getValue();
-    double result = (currentValue + previousValue) /2.0;
+    averageValue = (currentValue + previousValue) /2.0;
     previousValue = currentValue;
-    return result > 900;
+    return averageValue > 900;
+  }
+
+  public boolean isAnalogTriggered() {
+    return averageValue > 900;
   }
 
   public boolean checkStopped() {
@@ -114,7 +120,7 @@ public class Feeder extends SubsystemBase {
 
   private void updateInputs() {
     inputs.feederMotorSpeed = feederMotor.get();
-    inputs.analogBeamBreakSensor = analog.getValue();
+    inputs.analogBeamBreakSensor = averageValue;
 
     Logger.processInputs("Feeder", inputs);
   }

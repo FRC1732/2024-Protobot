@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -28,6 +29,7 @@ public class Intake extends SubsystemBase {
   public static Double intakeMainMotorSpeed = 0.80;
   public static Double intakeCentererMotorSpeed = 0.80;
   private double previousValue;
+  private double averageValue;
 
   private AnalogInput intakeAnalogSensor = new AnalogInput(IntakeConstants.INTAKE_ANALOG_SENSOR);
 
@@ -75,12 +77,13 @@ public class Intake extends SubsystemBase {
     Timer.delay(0.25);
 
     previousValue = 0.0;
+    averageValue = 0.0;
 
     setupShuffleboard();
   }
 
   private void setupShuffleboard() {
-    tab.addBoolean("Has Note", () -> hasNote());
+    tab.addBoolean("Has Note", this::isAnalogTriggered);
     tab.addDouble("Sensor Value", () -> intakeAnalogSensor.getValue());
   }
 
@@ -100,9 +103,13 @@ public class Intake extends SubsystemBase {
   }
   public boolean hasNote() {
     double currentValue = intakeAnalogSensor.getValue();
-    double result = (currentValue + previousValue) /2.0;
+    averageValue = (currentValue + previousValue) /2.0;
     previousValue = currentValue;
-    return result > 900;
+    return averageValue > 900;
+  }
+
+  public boolean isAnalogTriggered() {
+    return averageValue > 900;
   }
 
   @Override
@@ -116,7 +123,7 @@ public class Intake extends SubsystemBase {
   private void updateInputs() {
     inputs.intakeMainMotorSpeed = intakeMainMotor.get();
     inputs.intakeCentererMotorSpeed = intakeCentererMotor.get();
-    inputs.intakeBeamBreak = intakeAnalogSensor.getValue();
+    inputs.intakeBeamBreak = averageValue;
 
     Logger.processInputs("Intake", inputs);
   }

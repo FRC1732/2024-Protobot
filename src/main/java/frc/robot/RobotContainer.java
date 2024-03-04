@@ -404,7 +404,7 @@ public class RobotContainer {
         "SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0 - 9));
     NamedCommands.registerCommand(
         "SetShooterDistance125",
-        new SetShooterDistance(shooterPose, 99.0 - 9)); // new StopShooter(shooterWheels));
+        new SetShooterDistance(shooterPose, 103.0 - 9)); // new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
         "SetShooterDistance150",
         new SetShooterDistance(shooterPose, 135.0 - 9)); // new StopShooter(shooterWheels));

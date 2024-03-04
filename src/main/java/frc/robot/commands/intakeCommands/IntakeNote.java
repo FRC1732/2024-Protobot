@@ -47,7 +47,7 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (intake.hasNote()) {
+    if (intake.hasNote() || feeder.hasNote()) {
       statusRgb.acquiredNote();
       new FinishIntakingCommand(intake, feeder, shooterPose).schedule();
     } else {
