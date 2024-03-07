@@ -57,6 +57,10 @@ public class VisionSubsystem extends SubsystemBase {
     return LimelightHelpers.getTV(getLimelightName());
   }
 
+  public boolean hasNoteTarget() {
+    return LimelightHelpers.getNeuralClassID(getLimelightName()) > 0;
+  }
+
   public double getAprilTagId() {
     return LimelightHelpers.getFiducialID(getLimelightName());
   }
