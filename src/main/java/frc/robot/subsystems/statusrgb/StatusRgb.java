@@ -29,13 +29,15 @@ public class StatusRgb extends SubsystemBase {
   private BooleanSupplier hasClearence;
   private boolean targetReady;
   private BooleanSupplier whenClimbing;
+  private BooleanSupplier noteTarget;
 
   /** Creates a new StatusRGB. */
   public StatusRgb(
-      BooleanSupplier hasClearence, BooleanSupplier whenClimbing, RobotContainer robotContainer) {
+      BooleanSupplier hasClearence, BooleanSupplier whenClimbing, RobotContainer robotContainer, BooleanSupplier noteTarget) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
+    this.noteTarget = noteTarget;
     timer = new Timer();
     out3.set(!false); // always off, not used
   }
@@ -80,6 +82,10 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!true);
       out1.set(!true);
       out2.set(!false);
+    } else if (noteTarget.getAsBoolean()) { // orange
+      out0.set(!true);
+      out1.set(!false);
+      out2.set(!true);
     } else if (whenClimbing.getAsBoolean()) { // Blue and gold
       out0.set(!false);
       out1.set(!false);
