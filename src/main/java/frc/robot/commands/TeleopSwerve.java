@@ -88,7 +88,8 @@ public class TeleopSwerve extends Command {
     // more responsive to small changes in the controller
     double xPercentage = modifyAxis(translationXSupplier.getAsDouble(), joystickPower.get());
     double yPercentage = modifyAxis(translationYSupplier.getAsDouble(), joystickPower.get());
-    double rotationPercentage = modifyAxis(rotationSupplier.getAsDouble(), joystickPower.get());
+    double rotationPercentage =
+        modifyAxis(rotationSupplier.getAsDouble(), joystickPower.get()) * .85;
 
     double xVelocity = xPercentage * maxVelocityMetersPerSecond;
     double yVelocity = yPercentage * maxVelocityMetersPerSecond;

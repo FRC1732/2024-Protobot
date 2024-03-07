@@ -120,4 +120,14 @@ public class DualJoysticksOI implements OperatorInterface {
   public Trigger fieldCentricButton() {
     return rotateJoystickButtons[11];
   }
+
+  // @Override
+  // public Trigger armClimberSwitch() {
+  //   return translateJoystickButtons[4];
+  // }
+
+  // @Override
+  // public Trigger autoClimbButton() {
+  //   return translateJoystickButtons[5];
+  // }
 }

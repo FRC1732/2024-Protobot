@@ -1,8 +1,12 @@
 package frc.robot.subsystems.intake;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
@@ -13,6 +17,7 @@ public class Intake extends SubsystemBase {
   public static class IntakeIOInput {
     double intakeMainMotorSpeed = 0.0;
     double intakeCentererMotorSpeed = 0.0;
+    double intakeBeamBreak = 0.0;
   }
 
   private IntakeIOInputAutoLogged inputs = new IntakeIOInputAutoLogged();
@@ -22,27 +27,46 @@ public class Intake extends SubsystemBase {
 
   public static Double intakeMainMotorSpeed = 0.80;
   public static Double intakeCentererMotorSpeed = 0.80;
+  private double previousValue;
+  private double averageValue;
+
+  private AnalogInput intakeAnalogSensor = new AnalogInput(IntakeConstants.INTAKE_ANALOG_SENSOR);
+
+  private ShuffleboardTab tab = Shuffleboard.getTab("Intake");
 
   /** Creates a new Intake. */
   public Intake() {
 
     intakeMainMotor =
+        new CANSparkMax(IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
+    intakeCentererMotor =
         new CANSparkMax(
             IntakeConstants.INTAKE_CENTERER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
-    intakeCentererMotor =
-        new CANSparkMax(IntakeConstants.INTAKE_MAIN_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     intakeMainMotor.restoreFactoryDefaults();
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
     intakeMainMotor.setInverted(false);
     intakeMainMotor.enableVoltageCompensation(12);
+    intakeMainMotor.setOpenLoopRampRate(0.3);
     intakeMainMotor.setIdleMode(IdleMode.kCoast);
     intakeMainMotor.stopMotor();
 
     intakeCentererMotor.restoreFactoryDefaults();
+
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
-    intakeCentererMotor.setInverted(true);
+    intakeCentererMotor.setInverted(false);
     intakeCentererMotor.enableVoltageCompensation(12);
+    intakeCentererMotor.setOpenLoopRampRate(0.3);
     intakeCentererMotor.setIdleMode(IdleMode.kCoast);
     intakeCentererMotor.stopMotor();
     Timer.delay(0.25);
@@ -50,6 +74,16 @@ public class Intake extends SubsystemBase {
     Timer.delay(0.25);
     intakeMainMotor.burnFlash();
     Timer.delay(0.25);
+
+    previousValue = 0.0;
+    averageValue = 0.0;
+
+    setupShuffleboard();
+  }
+
+  private void setupShuffleboard() {
+    tab.addBoolean("Has Note", this::isAnalogTriggered);
+    tab.addDouble("Sensor Value", () -> intakeAnalogSensor.getValue());
   }
 
   public void runIntake() {
@@ -67,6 +101,17 @@ public class Intake extends SubsystemBase {
     intakeCentererMotor.set(0);
   }
 
+  public boolean hasNote() {
+    double currentValue = intakeAnalogSensor.getValue();
+    averageValue = (currentValue + previousValue) / 2.0;
+    previousValue = currentValue;
+    return averageValue > 900;
+  }
+
+  public boolean isAnalogTriggered() {
+    return averageValue > 900;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -78,6 +123,7 @@ public class Intake extends SubsystemBase {
   private void updateInputs() {
     inputs.intakeMainMotorSpeed = intakeMainMotor.get();
     inputs.intakeCentererMotorSpeed = intakeCentererMotor.get();
+    inputs.intakeBeamBreak = averageValue;
 
     Logger.processInputs("Intake", inputs);
   }

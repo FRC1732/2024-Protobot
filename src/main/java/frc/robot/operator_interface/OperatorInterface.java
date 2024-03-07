@@ -88,4 +88,28 @@ public interface OperatorInterface {
   public default Trigger speakerModeButton() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger armClimberSwitch() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger autoClimbButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger operatorAmpButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger operatorSpeakerButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger operatorFeedButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger operatorEjectButton() {
+    return new Trigger(() -> false);
+  }
 }

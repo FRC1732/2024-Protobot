@@ -3,6 +3,7 @@ package frc.robot.subsystems.feeder;
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -31,12 +32,20 @@ public class Feeder extends SubsystemBase {
 
   private final AnalogInput analog;
 
+  private double previousValue;
+  private double averageValue;
+
   public Feeder() {
 
     feederMotor =
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     feederMotor.restoreFactoryDefaults();
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 100);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 600);
+    feederMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
+
     Timer.delay(0.050);
     feederMotor.setInverted(FeederConstants.SHOOTER_MOTOR_LEFT_INVERTED);
     feederMotor.enableVoltageCompensation(12);
@@ -45,13 +54,16 @@ public class Feeder extends SubsystemBase {
 
     analog = new AnalogInput(FeederConstants.ANALOG_INPUT_LOCATION);
 
+    previousValue = 0.0;
+    averageValue = 0.0;
+
     // Create a Shuffleboard tab for this subsystem if testing is enabled. Add additional indicators
     // and controls as needed.
     if (TESTING) {
       ShuffleboardTab tab = Shuffleboard.getTab(SUBSYSTEM_NAME);
       tab.add(SUBSYSTEM_NAME, this);
 
-      tab.addBoolean("Has Note", this::hasNote);
+      tab.addBoolean("Has Note", this::isAnalogTriggered);
       tab.addDouble("Sensor Value", () -> analog.getValue());
     }
 
@@ -79,7 +91,14 @@ public class Feeder extends SubsystemBase {
   }
 
   public boolean hasNote() {
-    return analog.getValue() > 300;
+    double currentValue = analog.getValue();
+    averageValue = (currentValue + previousValue) / 2.0;
+    previousValue = currentValue;
+    return averageValue > 900;
+  }
+
+  public boolean isAnalogTriggered() {
+    return averageValue > 900;
   }
 
   public boolean checkStopped() {
@@ -101,7 +120,7 @@ public class Feeder extends SubsystemBase {
 
   private void updateInputs() {
     inputs.feederMotorSpeed = feederMotor.get();
-    inputs.analogBeamBreakSensor = analog.getValue();
+    inputs.analogBeamBreakSensor = averageValue;
 
     Logger.processInputs("Feeder", inputs);
   }

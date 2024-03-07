@@ -5,27 +5,39 @@
 package frc.robot.commands.feederCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
+import frc.robot.RobotContainer.ScoringMode;
+import frc.robot.limelightVision.VisionSubsystem;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class FeedShooterSmart extends Command {
   private final Feeder feeder;
   private final ShooterWheels shooter;
+  private final VisionSubsystem vision;
 
   /**
    * Creates a new FeedShooterSmart.
    *
    * @param feeder feeder this command uses
    */
-  public FeedShooterSmart(Feeder feeder, ShooterWheels shooter) {
+  public FeedShooterSmart(Feeder feeder, ShooterWheels shooter, VisionSubsystem vision) {
     addRequirements(feeder);
     this.feeder = feeder;
     this.shooter = shooter;
+    this.vision = vision;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    RobotContainer ourRobot = RobotContainer.getInstance();
+    if (shooter.getShooterSpeed() > 0
+        && (ourRobot.scoringMode == ScoringMode.AMP
+            || ourRobot.scoringMode == ScoringMode.SPEAKER && vision.hasTarget())) {
+      feeder.runFeeder();
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

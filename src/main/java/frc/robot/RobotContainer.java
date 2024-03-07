@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -22,21 +21,18 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
-import frc.lib.team3061.drivetrain.swerve.SwerveModuleIO;
-import frc.lib.team3061.drivetrain.swerve.SwerveModuleIOTalonFXPhoenix6;
-import frc.lib.team3061.gyro.GyroIO;
-import frc.lib.team3061.gyro.GyroIOPigeon2Phoenix6;
-import frc.lib.team3061.leds.LEDs;
-import frc.robot.commands.FeedForwardCharacterization;
-import frc.robot.commands.FeedForwardCharacterization.FeedForwardCharacterizationData;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
+import frc.robot.commands.intakeCommands.Eject;
+import frc.robot.commands.intakeCommands.FeedThrough;
+import frc.robot.commands.intakeCommands.FinishIntakingCommand;
 import frc.robot.commands.intakeCommands.IntakeNote;
-import frc.robot.commands.intakeCommands.IntakeSourceNote;
+import frc.robot.commands.intakeCommands.StartIntakingNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
+import frc.robot.commands.shooterCommands.SetShooterDistance;
 import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
@@ -49,6 +45,7 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
+import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -63,17 +60,21 @@ public class RobotContainer {
   private OperatorInterface oi = new OperatorInterface() {};
   private RobotConfig config;
   private Drivetrain drivetrain;
-  private Alliance lastAlliance = DriverStation.Alliance.Red;
+  private Alliance lastAlliance = DriverStation.Alliance.Blue;
   private VisionSubsystem visionSubsystem;
   public Intake intake;
   public Feeder feeder;
   public ShooterWheels shooterWheels;
   public ShooterPose shooterPose;
+  public StatusRgb statusRgb;
 
   public enum ScoringMode {
     AMP,
     SPEAKER
   }
+
+  private double lastVisionError;
+  private double lastRotateGoal;
 
   public ScoringMode scoringMode = ScoringMode.AMP;
 
@@ -100,7 +101,7 @@ public class RobotContainer {
      */
     createRobotConfig();
 
-    LEDs.getInstance();
+    // LEDs.getInstance();
 
     createSubsystems();
 
@@ -127,23 +128,23 @@ public class RobotContainer {
     int[] steerMotorCANDIDs = config.getSwerveSteerMotorCANIDs();
     int[] steerEncoderCANDIDs = config.getSwerveSteerEncoderCANIDs();
     double[] steerOffsets = config.getSwerveSteerOffsets();
-    SwerveModuleIO flModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0], steerOffsets[0]);
+    /*SwerveModuleIO flModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0], steerOffsets[0]);
 
-    SwerveModuleIO frModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            1, driveMotorCANIDs[1], steerMotorCANDIDs[1], steerEncoderCANDIDs[1], steerOffsets[1]);
+        SwerveModuleIO frModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                1, driveMotorCANIDs[1], steerMotorCANDIDs[1], steerEncoderCANDIDs[1], steerOffsets[1]);
 
-    SwerveModuleIO blModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            2, driveMotorCANIDs[2], steerMotorCANDIDs[2], steerEncoderCANDIDs[2], steerOffsets[2]);
+        SwerveModuleIO blModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                2, driveMotorCANIDs[2], steerMotorCANDIDs[2], steerEncoderCANDIDs[2], steerOffsets[2]);
 
-    SwerveModuleIO brModule =
-        new SwerveModuleIOTalonFXPhoenix6(
-            3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
-
-    GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
+        SwerveModuleIO brModule =
+            new SwerveModuleIOTalonFXPhoenix6(
+                3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3], steerOffsets[3]);
+    */
+    // GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
     // DrivetrainIO drivetrainIO =
     //     new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
     DrivetrainIOCTRE drivetrainIO = new DrivetrainIOCTRE();
@@ -155,6 +156,14 @@ public class RobotContainer {
     shooterPose = new ShooterPose();
 
     visionSubsystem = new VisionSubsystem();
+
+    statusRgb =
+        new StatusRgb(
+            () -> shooterPose.hasClearence(),
+            () -> {
+              return false;
+            },
+            this);
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -222,8 +231,9 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> this.lastAlliance == Alliance.Blue ? -90 : 90,
-                                            () -> false)
+                                            () -> -90,
+                                            () -> false,
+                                            statusRgb)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
                     new RunShooterFast(shooterWheels)
@@ -242,15 +252,15 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () ->
-                                                drivetrain.getPose().getRotation().getDegrees()
-                                                    - visionSubsystem.getTX(),
-                                            () -> !visionSubsystem.hasTarget())
+                                            this::targetAngleHelper,
+                                            () -> !visionSubsystem.hasTarget(),
+                                            statusRgb)
                                         .asProxy())),
                     // Check ScoringMode
                     () -> scoringMode == ScoringMode.AMP),
                 // Does NOT have note
-                new IntakeSourceNote(feeder, shooterPose).asProxy(),
+                // new IntakeSourceNote(feeder, shooterPose).asProxy(),
+                Commands.print("attempted to do source load"),
                 // Check hasNote
                 feeder::hasNote));
 
@@ -261,11 +271,14 @@ public class RobotContainer {
     oi.IntakeOrScoreButton()
         .whileTrue(
             new ConditionalCommand(
-                new FeedShooterManual(feeder).asProxy(),
-                new IntakeNote(intake, feeder, shooterPose).asProxy(),
+                (new FeedShooterManual(feeder).asProxy()),
+                new IntakeNote(intake, feeder, shooterPose, statusRgb).asProxy(),
                 feeder::hasNote));
 
+    oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
+    oi.operatorSpeakerButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
     oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
+    oi.operatorAmpButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
 
@@ -313,9 +326,11 @@ public class RobotContainer {
 
     // oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 
-    // oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
+    // oi.ejectButton().whileTrue(new Eject(feeder, intake, shooterWheels));
+    oi.operatorEjectButton().whileTrue(new Eject(feeder, intake, shooterWheels));
 
-    oi.feedThroughButton().whileTrue(new FeedShooterManual(feeder));
+    // oi.feedThroughButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
+    oi.operatorFeedButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
 
     configureDrivetrainCommands();
 
@@ -327,62 +342,82 @@ public class RobotContainer {
                 DriverStation.isTeleopEnabled()
                     && DriverStation.getMatchTime() > 0.0
                     && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
-        .onTrue(
-            Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
-                .withTimeout(1.5)
-                .andThen(
-                    Commands.run(() -> LEDs.getInstance().setEndgameAlert(false))
-                        .withTimeout(1.0)));
+        .onTrue(new PrintCommand("End Game Alert 1."));
+    /*Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
+    .withTimeout(1.5)
+    .andThen(
+        Commands.run(() -> LEDs.getInstance().setEndgameAlert(false))
+            .withTimeout(1.0)));*/
     new Trigger(
             () ->
                 DriverStation.isTeleopEnabled()
                     && DriverStation.getMatchTime() > 0.0
                     && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
-        .onTrue(
-            Commands.sequence(
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
-                Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
+        .onTrue(new PrintCommand("End Game Alert 2."));
+    /*Commands.sequence(
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
+    Commands.run(() -> LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));*/
+
+  }
+
+  public double targetAngleHelper() {
+    double curVisionError = visionSubsystem.getTX();
+    if (lastVisionError == curVisionError) {
+      return lastRotateGoal;
+    }
+    lastVisionError = curVisionError;
+    lastRotateGoal = drivetrain.getPose().getRotation().getDegrees() - curVisionError;
+    return lastRotateGoal;
   }
 
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {
     // Waypoints
-    NamedCommands.registerCommand("command1", Commands.print("passed marker 1"));
+    NamedCommands.registerCommand("command1", Commands.print("passed marker 1")); //
     NamedCommands.registerCommand("command2", Commands.print("passed marker 2"));
     NamedCommands.registerCommand(
         "enableXStance", Commands.runOnce(drivetrain::enableXstance, drivetrain));
     NamedCommands.registerCommand(
         "disableXStance", Commands.runOnce(drivetrain::disableXstance, drivetrain));
-    NamedCommands.registerCommand("wait5Seconds", Commands.waitSeconds(5.0));
-    NamedCommands.registerCommand("SpinShooter", new PrintCommand("Spin Shooter Command"));
-    NamedCommands.registerCommand("ShootNote", new PrintCommand("Shoot Note Command"));
-    NamedCommands.registerCommand("IntakeNote", new PrintCommand("Intake Note Command"));
     NamedCommands.registerCommand(
-        "SetShooterDistance115", new PrintCommand("Set Shooter Distance 115 Command"));
+        "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
+    NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
+    NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
     NamedCommands.registerCommand(
-        "SetShooterDistance125", new PrintCommand("Set Shooter Distance 125 Command"));
+        "IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));
     NamedCommands.registerCommand(
-        "SetShooterDistance150", new PrintCommand("Set Shooter Distance 150 Command"));
+        "StartIntakingNote", new StartIntakingNote(intake, feeder, shooterPose));
+    NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
+    NamedCommands.registerCommand(
+        "FinishIntakingNote", new FinishIntakingCommand(intake, feeder, shooterPose));
+    NamedCommands.registerCommand(
+        "SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0 - 9));
+    NamedCommands.registerCommand(
+        "SetShooterDistance125",
+        new SetShooterDistance(shooterPose, 103.0 - 9)); // new StopShooter(shooterWheels));
+    NamedCommands.registerCommand(
+        "SetShooterDistance150",
+        new SetShooterDistance(shooterPose, 135.0 - 9)); // new StopShooter(shooterWheels));
 
     // build auto path commands
 
     // add commands to the auto chooser
-    autoChooser.addDefaultOption("Do Nothing", new InstantCommand());
+    autoChooser.addOption("Do Nothing", new InstantCommand());
 
     /************ Test Path ************
      *
      * demonstration of PathPlanner path group with event markers
      *
      */
-    Command autoTest = new PathPlannerAuto("TestAuto");
-    Command testLine = new PathPlannerAuto("DistanceTest");
-    autoChooser.addOption("Test Auto", autoTest);
-    autoChooser.addOption("Distance Test", testLine);
     Command testAmpSide = new PathPlannerAuto("Amp Side Test");
-    autoChooser.addOption("TestAmpSide", testAmpSide);
+    autoChooser.addDefaultOption("Amp Side 4 Piece", testAmpSide);
 
+    // Command autoTest = new PathPlannerAuto("TestAuto");
+    // Command testLine = new PathPlannerAuto("DistanceTest");
+    // autoChooser.addOption("Test Auto", autoTest);
+    // autoChooser.addOption("Distance Test", testLine);
 
     /************ Start Point ************
      *
@@ -390,119 +425,130 @@ public class RobotContainer {
      *
      */
 
-    Command startPoint =
-        Commands.runOnce(
-            () ->
-                drivetrain.resetPose(
-                    PathPlannerPath.fromPathFile("StartPoint").getPreviewStartingHolonomicPose()),
-            drivetrain);
-    autoChooser.addOption("Start Point", startPoint);
+    // Command startPoint =
+    //     Commands.runOnce(
+    //         () ->
+    //             drivetrain.resetPose(
+    //
+    // PathPlannerPath.fromPathFile("StartPoint").getPreviewStartingHolonomicPose()),
+    //         drivetrain);
+    // autoChooser.addOption("Start Point", startPoint);
 
     /************ Drive Characterization ************
      *
      * useful for characterizing the swerve modules for driving (i.e, determining kS and kV)
      *
      */
-    autoChooser.addOption(
-        "Swerve Drive Characterization",
-        new FeedForwardCharacterization(
-            drivetrain,
-            true,
-            new FeedForwardCharacterizationData("drive"),
-            drivetrain::runDriveCharacterizationVolts,
-            drivetrain::getDriveCharacterizationVelocity,
-            drivetrain::getDriveCharacterizationAcceleration));
+    // autoChooser.addOption(
+    //     "Swerve Drive Characterization",
+    //     new FeedForwardCharacterization(
+    //         drivetrain,
+    //         true,
+    //         new FeedForwardCharacterizationData("drive"),
+    //         drivetrain::runDriveCharacterizationVolts,
+    //         drivetrain::getDriveCharacterizationVelocity,
+    //         drivetrain::getDriveCharacterizationAcceleration));
 
     /************ Swerve Rotate Characterization ************
      *
      * useful for characterizing the swerve modules for rotating (i.e, determining kS and kV)
      *
      */
-    autoChooser.addOption(
-        "Swerve Rotate Characterization",
-        new FeedForwardCharacterization(
-            drivetrain,
-            true,
-            new FeedForwardCharacterizationData("rotate"),
-            drivetrain::runRotateCharacterizationVolts,
-            drivetrain::getRotateCharacterizationVelocity,
-            drivetrain::getRotateCharacterizationAcceleration));
+    // autoChooser.addOption(
+    //     "Swerve Rotate Characterization",
+    //     new FeedForwardCharacterization(
+    //         drivetrain,
+    //         true,
+    //         new FeedForwardCharacterizationData("rotate"),
+    //         drivetrain::runRotateCharacterizationVolts,
+    //         drivetrain::getRotateCharacterizationVelocity,
+    //         drivetrain::getRotateCharacterizationAcceleration));
 
     /************ Distance Test ************
      *
      * used for empirically determining the wheel diameter
      *
      */
-    Command distanceTestPathCommand = new PathPlannerAuto("DistanceTest");
-    autoChooser.addOption("Distance Path", distanceTestPathCommand);
+    // Command distanceTestPathCommand = new PathPlannerAuto("DistanceTest");
+    // autoChooser.addOption("Distance Path", distanceTestPathCommand);
 
     /************ Auto Tuning ************
      *
      * useful for tuning the autonomous PID controllers
      *
      */
-    Command tuningCommand = new PathPlannerAuto("Tuning");
-    autoChooser.addOption("Auto Tuning", tuningCommand);
+    // Command tuningCommand = new PathPlannerAuto("Tuning");
+    // autoChooser.addOption("Auto Tuning", tuningCommand);
 
     /************ Drive Velocity Tuning ************
      *
      * useful for tuning the drive velocity PID controller
      *
      */
-    autoChooser.addOption(
-        "Drive Velocity Tuning",
-        Commands.sequence(
-            Commands.runOnce(drivetrain::disableFieldRelative, drivetrain),
-            Commands.repeatingSequence(
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(2.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(-0.5, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(3.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(() -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-3.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(
-                        () -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)))));
+    // autoChooser.addOption(
+    //     "Drive Velocity Tuning",
+    //     Commands.sequence(
+    //         Commands.runOnce(drivetrain::disableFieldRelative, drivetrain),
+    //         Commands.repeatingSequence(
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(1.0),
+    //                 Commands.run(() -> drivetrain.drive(2.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(1.0),
+    //                 Commands.run(() -> drivetrain.drive(-0.5, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(1.0),
+    //                 Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(3.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(2.0),
+    //                 Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(2.0),
+    //                 Commands.run(() -> drivetrain.drive(-1.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(-3.0, 0.0, 0.0, false, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(2.0),
+    //                 Commands.run(
+    //                     () -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)))));
 
     /************ Swerve Rotation Tuning ************
      *
      * useful for tuning the swerve module rotation PID controller
      *
      */
-    autoChooser.addOption(
-        "Swerve Rotation Tuning",
-        Commands.sequence(
-            Commands.runOnce(drivetrain::enableFieldRelative, drivetrain),
-            Commands.repeatingSequence(
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(0.1, 0.1, 0.0, true, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-0.1, 0.1, 0.0, true, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-0.1, -0.1, 0.0, true, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(
-                        () -> drivetrain.drive(0.1, -0.1, 0.0, true, false), drivetrain)))));
+    // autoChooser.addOption(
+    //     "Swerve Rotation Tuning",
+    //     Commands.sequence(
+    //         Commands.runOnce(drivetrain::enableFieldRelative, drivetrain),
+    //         Commands.repeatingSequence(
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(0.1, 0.1, 0.0, true, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(-0.1, 0.1, 0.0, true, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(() -> drivetrain.drive(-0.1, -0.1, 0.0, true, false),
+    // drivetrain)),
+    //             Commands.deadline(
+    //                 Commands.waitSeconds(0.5),
+    //                 Commands.run(
+    //                     () -> drivetrain.drive(0.1, -0.1, 0.0, true, false), drivetrain)))));
 
     Shuffleboard.getTab("MAIN").add(autoChooser.getSendableChooser());
   }
@@ -558,9 +604,14 @@ public class RobotContainer {
                     () ->
                         drivetrain.resetPose(
                             new Pose2d(
-                                drivetrain.getPose().getTranslation(), Rotation2d.fromDegrees(0))),
+                                drivetrain.getPose().getTranslation(),
+                                Rotation2d.fromDegrees(lastAlliance == Alliance.Blue ? 0 : 180))),
                     drivetrain)
-                .andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
+                // .andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
+                .andThen(
+                    Commands.runOnce(
+                        () -> drivetrain.setGyroOffset(lastAlliance == Alliance.Blue ? 0 : 180),
+                        drivetrain)));
 
     // @reference code
     // reset pose based on vision
@@ -568,6 +619,10 @@ public class RobotContainer {
     //     .onTrue(
     //         Commands.runOnce(() -> drivetrain.resetPoseToVision(() ->
     // vision.getBestRobotPose())));
+  }
+
+  public void disablePeriodic() {
+    shooterPose.resetToAbsoluteEncoder();
   }
 
   private void configureSubsystemCommands() {

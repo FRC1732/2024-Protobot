@@ -9,23 +9,19 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
-import frc.robot.subsystems.statusrgb.StatusRgb;
 
-public class IntakeNote extends Command {
-  /** Creates a new IntakeNote. */
+public class StartIntakingNote extends Command {
   private Intake intake;
 
   private Feeder feeder;
   private ShooterPose shooterPose;
-  private StatusRgb statusRgb;
 
-  public IntakeNote(Intake intake, Feeder feeder, ShooterPose shooterPose, StatusRgb statusRgb) {
+  public StartIntakingNote(Intake intake, Feeder feeder, ShooterPose shooterPose) {
     addRequirements(intake, feeder, shooterPose);
 
     this.intake = intake;
     this.feeder = feeder;
     this.shooterPose = shooterPose;
-    this.statusRgb = statusRgb;
   }
 
   // Called when the command is initially scheduled.
@@ -47,10 +43,7 @@ public class IntakeNote extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (intake.hasNote() || feeder.hasNote()) {
-      statusRgb.acquiredNote();
-      new FinishIntakingCommand(intake, feeder, shooterPose).schedule();
-    } else {
+    if (!intake.hasNote() || feeder.hasNote()) {
       intake.stopIntake();
       feeder.stopFeeder();
     }
@@ -59,6 +52,6 @@ public class IntakeNote extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return intake.hasNote() || feeder.hasNote();
+    return (intake.hasNote() || feeder.hasNote());
   }
 }

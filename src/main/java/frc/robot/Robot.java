@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.lib.team3061.leds.LEDs;
+// import frc.lib.team3061.leds.LEDs;
 import frc.lib.team6328.util.Alert;
 import frc.lib.team6328.util.Alert.AlertType;
 import java.util.HashMap;
@@ -169,7 +169,7 @@ public class Robot extends LoggedRobot {
     }
     if (RobotController.getBatteryVoltage() < LOW_BATTERY_VOLTAGE
         && disabledTimer.hasElapsed(LOW_BATTERY_DISABLED_TIME)) {
-      LEDs.getInstance().setLowBatteryAlert(true);
+      // LEDs.getInstance().setLowBatteryAlert(true);
       lowBatteryAlert.set(true);
     }
 
@@ -185,7 +185,7 @@ public class Robot extends LoggedRobot {
                 "*** Auto cancelled in %.2f secs ***", Timer.getFPGATimestamp() - autoStart));
       }
       autoMessagePrinted = true;
-      LEDs.getInstance().setAutoFinished(true);
+      // LEDs.getInstance().setAutoFinished(true);
     }
 
     Threads.setCurrentThreadPriority(true, 10);
@@ -196,6 +196,7 @@ public class Robot extends LoggedRobot {
   public void disabledPeriodic() {
     // check if the operator interface (e.g., joysticks) has changed
     robotContainer.updateOI();
+    robotContainer.disablePeriodic();
 
     // check if the alliance color has changed based on the FMS data
     robotContainer.checkAllianceColor();
