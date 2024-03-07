@@ -95,42 +95,44 @@ void loop() {
   Serial.print("Mode: ");
   Serial.println(mode);
 
+  setColorInt(255, 0, 0, &pixelsFront, NUMPIXELS_FRONT);
+
   if (mode >= 16) {
     Serial.println("Fast Flash");
-    flashFast(false, true, false, &pixelsFront, NUMPIXELS_FRONT);
+    // flashFast(false, true, false, &pixelsFront, NUMPIXELS_FRONT);
     flashFast(false, true, false, &pixelsSides, NUMPIXELS_SIDES);
   } else {
     switch (mode) {
       case 0:  // idle
-        idleMode(&pixelsFront, NUMPIXELS_FRONT);
+        // idleMode(&pixelsFront, NUMPIXELS_FRONT);
         idleMode(&pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 1:  // mode == speaker
         Serial.println("Speaker Mode");
-        setColorInt(255, 255, 255, &pixelsFront, NUMPIXELS_FRONT);
+        // setColorInt(255, 255, 255, &pixelsFront, NUMPIXELS_FRONT);
         setColorInt(255, 255, 255, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 2:  // !hasClearance
         Serial.println("Clearance");
-        setColorInt(255, 0, 0, &pixelsFront, NUMPIXELS_FRONT);
+        // setColorInt(255, 0, 0, &pixelsFront, NUMPIXELS_FRONT);
         setColorInt(255, 0, 0, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 3:  // target ready
-        setColorInt(0, 125, 0, &pixelsFront, NUMPIXELS_FRONT);
+        // setColorInt(0, 125, 0, &pixelsFront, NUMPIXELS_FRONT);
         setColorInt(0, 125, 0, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 4:  // climbing
         // climberColors(true, true, true, pixelsFront, NUMPIXELS_FRONT);
         // climberColors(true, true, true, pixelsSides, NUMPIXELS_SIDES);
-        climberColorsRainbow(&pixelsFront, NUMPIXELS_FRONT);
+        // climberColorsRainbow(&pixelsFront, NUMPIXELS_FRONT);
         climberColorsRainbow(&pixelsSides, NUMPIXELS_SIDES);
         break;
       case 5:  // note seen by intake limelight
-        setColorInt(255, 165, 0, &pixelsFront, NUMPIXELS_FRONT);
+        // setColorInt(255, 165, 0, &pixelsFront, NUMPIXELS_FRONT);
         setColorInt(255, 165, 0, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
