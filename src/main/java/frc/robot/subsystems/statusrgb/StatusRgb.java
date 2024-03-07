@@ -82,7 +82,7 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!true);
       out1.set(!true);
       out2.set(!false);
-    } else if (noteTarget.getAsBoolean()) { // orange
+    } else if (noteTarget.getAsBoolean()) { // orange FIXME unsure if this is the right priority, move if want to change this
       out0.set(!true);
       out1.set(!false);
       out2.set(!true);
