@@ -208,7 +208,7 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 100);
 
     Timer.delay(0.050);
-    shooterTiltMotor.setInverted(false);
+    shooterTiltMotor.setInverted(true);
     shooterTiltMotor.enableVoltageCompensation(12);
     shooterTiltMotor.setIdleMode(IdleMode.kCoast);
 
@@ -219,7 +219,7 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltMotor.setSoftLimit(
         SoftLimitDirection.kReverse, (float) ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES);
 
-    shooterTiltAbsoluteEncoder = new DutyCycleEncoder(8);
+    shooterTiltAbsoluteEncoder = new DutyCycleEncoder(9);
 
     shooterTiltEncoder = shooterTiltMotor.getEncoder();
     shooterTiltEncoder.setPositionConversionFactor(

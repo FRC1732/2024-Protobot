@@ -8,7 +8,7 @@ public class IntakeConstants {
 
   public static final int INTAKE_ANALOG_SENSOR = 1;
 
-  public static final boolean INTAKE_MOTOR_L_INVERTED = false;
+  public static final boolean INTAKE_CENTERING_INVERTED = false;
   public static final boolean INTAKE_MAIN_MOTOR_INVERTED = true;
 
   public static final boolean INTAKE_LOGGING = true;

@@ -3,7 +3,6 @@ package frc.robot.subsystems.intake;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -30,7 +29,7 @@ public class Intake extends SubsystemBase {
   private double previousValue;
   private double averageValue;
 
-  private AnalogInput intakeAnalogSensor = new AnalogInput(IntakeConstants.INTAKE_ANALOG_SENSOR);
+  // private AnalogInput intakeAnalogSensor = new AnalogInput(IntakeConstants.INTAKE_ANALOG_SENSOR);
 
   private ShuffleboardTab tab = Shuffleboard.getTab("Intake");
 
@@ -50,7 +49,7 @@ public class Intake extends SubsystemBase {
     intakeMainMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
 
     Timer.delay(0.050);
-    intakeMainMotor.setInverted(false);
+    intakeMainMotor.setInverted(IntakeConstants.INTAKE_MAIN_MOTOR_INVERTED);
     intakeMainMotor.enableVoltageCompensation(12);
     intakeMainMotor.setOpenLoopRampRate(0.3);
     intakeMainMotor.setIdleMode(IdleMode.kCoast);
@@ -64,7 +63,7 @@ public class Intake extends SubsystemBase {
     intakeCentererMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 700);
 
     Timer.delay(0.050);
-    intakeCentererMotor.setInverted(false);
+    intakeCentererMotor.setInverted(IntakeConstants.INTAKE_CENTERING_INVERTED);
     intakeCentererMotor.enableVoltageCompensation(12);
     intakeCentererMotor.setOpenLoopRampRate(0.3);
     intakeCentererMotor.setIdleMode(IdleMode.kCoast);
@@ -82,8 +81,8 @@ public class Intake extends SubsystemBase {
   }
 
   private void setupShuffleboard() {
-    tab.addBoolean("Has Note", this::isAnalogTriggered);
-    tab.addDouble("Sensor Value", () -> intakeAnalogSensor.getValue());
+    // tab.addBoolean("Has Note", this::isAnalogTriggered);
+    // tab.addDouble("Sensor Value", () -> intakeAnalogSensor.getValue());
   }
 
   public void runIntake() {
@@ -102,14 +101,17 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean hasNote() {
-    double currentValue = intakeAnalogSensor.getValue();
+    return false;
+
+    /*double currentValue = intakeAnalogSensor.getValue();
     averageValue = (currentValue + previousValue) / 2.0;
     previousValue = currentValue;
-    return averageValue > 900;
+    return averageValue > 900;*/
   }
 
   public boolean isAnalogTriggered() {
-    return averageValue > 900;
+    return false;
+    // return averageValue > 900;
   }
 
   @Override
