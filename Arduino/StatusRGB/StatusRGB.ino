@@ -18,6 +18,9 @@
 #define NUMPIXELS_FRONT 38  // number of neopixels in strip
 #define NUMPIXELS_SIDES 48  // number of neopixels in strip
 
+#define EYES_START 6 // start of where we turn the eyes red
+#define EYES_LENGTH 9 // number of pixels we want to turn red for the ram
+
 #define DELAY_TIME 200
 #define INTENSITY 255
 
@@ -31,7 +34,7 @@ uint32_t lowBlue = pixelsFront.Color(0, 0, INTENSITY / 3);
 uint32_t highBlue = pixelsFront.Color(0, 0, INTENSITY);
 uint32_t lowGold = pixelsFront.Color(INTENSITY / 3, INTENSITY / 6, 0);
 uint32_t highGold = pixelsFront.Color(INTENSITY, INTENSITY / 2, 0);
-
+uint32_t fullRed = pixelsFront.Color(255, 0, 0);
 
 int mode = 0;
 int timer = 0;
@@ -57,10 +60,17 @@ void setup() {
   pixelsSides.begin();
 }
 
+void redEyes(Adafruit_NeoPixel *pixels) { // method that turns the ram eyes red
+  pixels->fill(fullRed, EYES_START, EYES_LENGTH);
+}
+
 void setColor(bool red, bool green, bool blue, Adafruit_NeoPixel *pixels, int size) {
   pixels->clear();
   for (int i = 0; i < size; i++) {
     pixels->setPixelColor(i, pixels->Color(INTENSITY * (int)red, INTENSITY * (int)green * .50, INTENSITY * (int)blue));
+  }
+  if (size == NUMPIXELS_FRONT) {
+    redEyes(pixels);
   }
   pixels->show();
 }
@@ -69,6 +79,9 @@ void setColorInt(int red, int green, int blue, Adafruit_NeoPixel *pixels, int si
   pixels->clear();
   for (int i = 0; i < size; i++) {
     pixels->setPixelColor(i, pixels->Color(red, green, blue));
+  }
+  if (size == NUMPIXELS_FRONT) {
+    redEyes(pixels);
   }
   pixels->show();
 }
@@ -95,53 +108,55 @@ void loop() {
   Serial.print("Mode: ");
   Serial.println(mode);
 
-  setColorInt(255, 0, 0, &pixelsFront, NUMPIXELS_FRONT);
-
   if (mode >= 16) {
     Serial.println("Fast Flash");
-    // flashFast(false, true, false, &pixelsFront, NUMPIXELS_FRONT);
+    flashFast(false, true, false, &pixelsFront, NUMPIXELS_FRONT);
     flashFast(false, true, false, &pixelsSides, NUMPIXELS_SIDES);
   } else {
     switch (mode) {
       case 0:  // idle
-        // idleMode(&pixelsFront, NUMPIXELS_FRONT);
+        idleMode(&pixelsFront, NUMPIXELS_FRONT);
         idleMode(&pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 1:  // mode == speaker
         Serial.println("Speaker Mode");
-        // setColorInt(255, 255, 255, &pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 255, 255, &pixelsFront, NUMPIXELS_FRONT);
         setColorInt(255, 255, 255, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 2:  // !hasClearance
         Serial.println("Clearance");
-        // setColorInt(255, 0, 0, &pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 0, 0, &pixelsFront, NUMPIXELS_FRONT);
         setColorInt(255, 0, 0, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 3:  // target ready
-        // setColorInt(0, 125, 0, &pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(0, 125, 0, &pixelsFront, NUMPIXELS_FRONT);
         setColorInt(0, 125, 0, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 4:  // climbing
         // climberColors(true, true, true, pixelsFront, NUMPIXELS_FRONT);
         // climberColors(true, true, true, pixelsSides, NUMPIXELS_SIDES);
-        // climberColorsRainbow(&pixelsFront, NUMPIXELS_FRONT);
+        climberColorsRainbow(&pixelsFront, NUMPIXELS_FRONT);
         climberColorsRainbow(&pixelsSides, NUMPIXELS_SIDES);
         break;
       case 5:  // note seen by intake limelight
-        // setColorInt(255, 165, 0, &pixelsFront, NUMPIXELS_FRONT);
-        setColorInt(255, 165, 0, &pixelsSides, NUMPIXELS_SIDES);
+        setColorInt(255, 80, 0, &pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 80, 0, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       default:
         break;
     }
+
+
+    // pixelsFront.show();
+
   }
 
-  //myTime = millis();
+  myTime = millis();
   timer++;
   delay(1);
   //elapsedTime += myTime - millis();
@@ -171,6 +186,10 @@ void idleMode(Adafruit_NeoPixel *pixels, int size) {
       color = pixels->Color(0, 0, 0);
     }
     pixels->setPixelColor(i, color);
+  }
+
+  if (size == NUMPIXELS_FRONT) {
+    redEyes(pixels);
   }
 
   pixels->show();
@@ -216,6 +235,11 @@ void climberColors(bool red, bool green, bool blue, Adafruit_NeoPixel *pixels, i
 
       pixels->setPixelColor(i, pixels->Color(red * pickTable[i], green * pickTable[i], blue * pickTable[i]));
     }
+
+    if (size == NUMPIXELS_FRONT) {
+      redEyes(pixels);
+    }
+
     pixels->show();
 
     // and convert the table back
@@ -234,7 +258,7 @@ int currentlyFlashingColorFront[NUMPIXELS_FRONT][3];
 int currentlyFlashingColorSide[NUMPIXELS_SIDES][3];
 
 void climberColorsRainbow(Adafruit_NeoPixel *pixels, int size) {
-  if (myTime % 20 == 0) {
+  if (myTime % 10 == 0) {
     int pickTable[size] = {};
     int pickTableColor[size][3] = {};
 
@@ -267,6 +291,9 @@ void climberColorsRainbow(Adafruit_NeoPixel *pixels, int size) {
       }
 
       pixels->setPixelColor(i, pixels->Color(pickTableColor[i][0] * (pickTable[i] / 250.0), pickTableColor[i][1] * (pickTable[i] / 250.0), pickTableColor[i][2] * (pickTable[i] / 250.0)));
+    }
+    if (size == NUMPIXELS_FRONT) {
+      redEyes(pixels);
     }
     pixels->show();
 
