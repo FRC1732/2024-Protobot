@@ -58,7 +58,6 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_TILT_TRAP_SETPOINT = 30;
   public static final double SHOOTER_TILT_TRAP_PREP_SETPOINT = -28.7;
 
-  
   public static final double SHOOTER_TILT_SOURCE_SETPOINT = 100;
   public static final double SHOOTER_TILT_CLIMBER_SETPOINT = 35;
 

@@ -40,7 +40,7 @@ import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
-import frc.robot.limelightVision.VisionSubsystem;
+import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.climber.Climber;
@@ -65,7 +65,7 @@ public class RobotContainer {
   private RobotConfig config;
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Blue;
-  private VisionSubsystem visionSubsystem;
+  private VisionApriltagSubsystem visionApriltagSubsystem;
   public Intake intake;
   public Feeder feeder;
   public ShooterWheels shooterWheels;
@@ -161,7 +161,7 @@ public class RobotContainer {
     shooterPose = new ShooterPose();
     climber = new Climber();
 
-    visionSubsystem = new VisionSubsystem();
+    visionApriltagSubsystem = new VisionApriltagSubsystem();
 
     statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), () -> climber.isClimbing(), this);
 
@@ -241,8 +241,8 @@ public class RobotContainer {
                             new SetShooterDistanceContinuous(
                                     shooterPose,
                                     () ->
-                                        visionSubsystem.hasTarget()
-                                            ? visionSubsystem.getDistanceToTarget()
+                                        visionApriltagSubsystem.hasTarget()
+                                            ? visionApriltagSubsystem.getDistanceToTarget()
                                             : 105)
                                 .asProxy()
                                 .alongWith(
@@ -253,7 +253,7 @@ public class RobotContainer {
                                             oi::getTranslateY,
                                             oi::getRotate,
                                             this::targetAngleHelper,
-                                            () -> !visionSubsystem.hasTarget(),
+                                            () -> !visionApriltagSubsystem.hasTarget(),
                                             statusRgb)
                                         .asProxy())),
                     // Check ScoringMode
@@ -371,7 +371,7 @@ public class RobotContainer {
   }
 
   public double targetAngleHelper() {
-    double curVisionError = visionSubsystem.getTX();
+    double curVisionError = visionApriltagSubsystem.getTX();
     if (lastVisionError == curVisionError) {
       return lastRotateGoal;
     }

@@ -1,20 +1,19 @@
-package frc.robot.limelightVision;
-
-import org.littletonrobotics.junction.AutoLog;
-
-import org.littletonrobotics.junction.Logger;
+package frc.robot.limelightVision.ApriltagVision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.limelightVision.LimelightHelpers;
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
 
-public class VisionSubsystem extends SubsystemBase {
+public class VisionApriltagSubsystem extends SubsystemBase {
   private ShuffleboardTab tab;
   private double lastDistance;
 
   @AutoLog
-  public static class VisionSubsystemIOInput {
+  public static class VisionApriltagSubsystemIOInput {
     double Distance = 0.0;
     double LatencyCapture = 0.0;
     double LatencyPipline = 0.0;
@@ -23,14 +22,15 @@ public class VisionSubsystem extends SubsystemBase {
     boolean hasTarget = false;
   }
 
-  private VisionSubsystemIOInputAutoLogged inputs = new VisionSubsystemIOInputAutoLogged();
+  private VisionApriltagSubsystemIOInputAutoLogged inputs =
+      new VisionApriltagSubsystemIOInputAutoLogged();
 
-  public VisionSubsystem() {
+  public VisionApriltagSubsystem() {
     setUpShuffleboard();
   }
 
   private String getLimelightName() {
-    return VisionConstants.LIMELIGHT_NAME;
+    return VisionApriltagConstants.LIMELIGHT_NAME;
   }
 
   public double getTX() {
@@ -76,7 +76,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(VisionConstants.LOGGING) {
+    if (VisionApriltagConstants.LOGGING) {
       updateInputs();
     }
   }
@@ -92,14 +92,14 @@ public class VisionSubsystem extends SubsystemBase {
     tab.addDouble("April Tag", () -> this.getAprilTagId());
   }
 
-  private void updateInputs() { 
-     inputs.Distance = getDistanceToTarget();
-     inputs.LatencyCapture = getLatencyCapture();
-     inputs.LatencyPipline = getLatencyPipeline();
-     inputs.TX = getTX();
-     inputs.TY = getTY();
-     inputs.hasTarget = hasTarget();
+  private void updateInputs() {
+    inputs.Distance = getDistanceToTarget();
+    inputs.LatencyCapture = getLatencyCapture();
+    inputs.LatencyPipline = getLatencyPipeline();
+    inputs.TX = getTX();
+    inputs.TY = getTY();
+    inputs.hasTarget = hasTarget();
 
-     Logger.processInputs("Visions", inputs);
-   }
+    Logger.processInputs("Visions", inputs);
+  }
 }

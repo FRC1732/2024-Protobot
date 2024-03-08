@@ -6,5 +6,6 @@ public enum Pose {
   AMP,
   TRAP,
   SOURCE,
-  CLIMBER, TRAP_PREP
+  CLIMBER,
+  TRAP_PREP
 }
