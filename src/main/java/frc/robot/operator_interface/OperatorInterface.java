@@ -112,4 +112,8 @@ public interface OperatorInterface {
   public default Trigger operatorEjectButton() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger operatorObjectDetectionAssistButton() {
+    return new Trigger(() -> false);
+  }
 }
