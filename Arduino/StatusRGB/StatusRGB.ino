@@ -19,6 +19,7 @@
 #define NUMPIXELS_SIDES 48  // number of neopixels in strip
 
 #define EYES_START 6 // start of where we turn the eyes red
+#define EYES_START_SECOND 24 // second start of where we turn the eyes red
 #define EYES_LENGTH 9 // number of pixels we want to turn red for the ram
 
 #define DELAY_TIME 200
@@ -62,6 +63,7 @@ void setup() {
 
 void redEyes(Adafruit_NeoPixel *pixels) { // method that turns the ram eyes red
   pixels->fill(fullRed, EYES_START, EYES_LENGTH);
+  pixels->fill(fullRed, EYES_START_SECOND, EYES_LENGTH);
 }
 
 void setColor(bool red, bool green, bool blue, Adafruit_NeoPixel *pixels, int size) {
