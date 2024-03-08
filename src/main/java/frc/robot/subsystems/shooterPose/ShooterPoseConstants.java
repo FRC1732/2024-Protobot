@@ -7,9 +7,9 @@ public class ShooterPoseConstants {
 
   public static final double SHOOTER_PID_PERIOD_SEC = 0.02;
 
-  public static final int SHOOTER_HEIGHT_LEFT_MOTOR_CAN_ID = 60; // TODO: assign correct CAN IDs
-  public static final int SHOOTER_HEIGHT_RIGHT_MOTOR_CAN_ID = 61; // TODO: assign correct CAN IDs
-  public static final int SHOOTER_TILT_MOTOR_CAN_ID = 62; // TODO: assign correct CAN IDs
+  public static final int SHOOTER_HEIGHT_LEFT_MOTOR_CAN_ID = 60; 
+  public static final int SHOOTER_HEIGHT_RIGHT_MOTOR_CAN_ID = 61; 
+  public static final int SHOOTER_TILT_MOTOR_CAN_ID = 62; 
 
   public static final double MIN_SHOOTER_HEIGHT_INCHES = 0;
   public static final double MAX_SHOOTER_HEIGHT_INCHES = 16;

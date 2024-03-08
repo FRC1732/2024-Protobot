@@ -280,8 +280,6 @@ public class RobotContainer {
     oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
     oi.operatorAmpButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
 
-    oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
-
     // oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
 
     // oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));

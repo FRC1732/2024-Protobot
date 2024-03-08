@@ -107,9 +107,20 @@ public class ShooterPose extends SubsystemBase {
   // new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
 
   public ShooterPose() {
+    angleLookupTable = new TreeMap<>();
+    angleLookupTable.put(36.0, -57.26477); // (distance, optimal angle)
+    angleLookupTable.put(80.0, -32.5);
+    angleLookupTable.put(95.0, -32.5);
+    angleLookupTable.put(105.0, -32.0);
+    angleLookupTable.put(115.0, -31.0);
+    angleLookupTable.put(125.0, -30.0);
+    angleLookupTable.put(135.0, -29.0); // add 157
+
+    // From Comp bot
+    /*
     double adjustmentFor3D = 9.0;
     double sweepingAngleAdjustment = 2;
-    angleLookupTable = new TreeMap<>();
+    
     angleLookupTable.put(20.0 - adjustmentFor3D, -47.0); // (distance, optimal angle)
     angleLookupTable.put(40.0 - adjustmentFor3D, -47.0);
     angleLookupTable.put(60.0 - adjustmentFor3D, -42.0 - sweepingAngleAdjustment);
@@ -122,6 +133,7 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(135.0 - adjustmentFor3D, -29.0 - sweepingAngleAdjustment / 2);
     angleLookupTable.put(157.0 - adjustmentFor3D, -28.0 - sweepingAngleAdjustment / 2);
     angleLookupTable.put(250.0 - adjustmentFor3D, -25.0 - sweepingAngleAdjustment / 2);
+    */
 
     shooterHeightLeftMotor =
         new CANSparkMax(
