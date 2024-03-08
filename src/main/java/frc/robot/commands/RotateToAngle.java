@@ -177,18 +177,12 @@ public class RotateToAngle extends Command {
         rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
 
     boolean hasTarget = manualRotationOverrideSupplier.getAsBoolean();
-     double rotVelCmd = hasTarget? rotationalVelocity : thetaVelocity;
-     System.out.println(hasTarget + " " + rotVelCmd);
-    drivetrain.drive( 
-        xVelocity,
-        yVelocity,
-        rotVelCmd,
-        true,
-        drivetrain.getFieldRelative());
+    double rotVelCmd = hasTarget ? rotationalVelocity : thetaVelocity;
+    System.out.println(hasTarget + " " + rotVelCmd);
+    drivetrain.drive(xVelocity, yVelocity, rotVelCmd, true, drivetrain.getFieldRelative());
 
     lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();
-    lastAngularVelocity =
-        rotVelCmd;
+    lastAngularVelocity = rotVelCmd;
   }
 
   /**
