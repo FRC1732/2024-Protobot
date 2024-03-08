@@ -80,8 +80,8 @@ public class RobotContainer {
     SPEAKER
   }
 
-  private double lastApriltagVisionError;
-  private double lastApriltagRotateGoal;
+  private double lastVisionError;
+  private double lastRotateGoal;
 
   private double lastObjectDetectionVisionError;
   private double lastObjectDetectionRotateGoal;
@@ -258,7 +258,7 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            this::targetApriltagAngleHelper,
+                                            () -> targetAngleHelper(visionApriltagSubsystem.getTX()),
                                             (() -> !visionApriltagSubsystem.hasTarget()),
                                             statusRgb)
                                         .asProxy())),
@@ -278,7 +278,6 @@ public class RobotContainer {
         .whileTrue(
             new ConditionalCommand( // scores if feeder has note
                 (new FeedShooterManual(feeder).asProxy()),
-                new ConditionalCommand(
                     new IntakeNote(intake, feeder, shooterPose, statusRgb)
                         .asProxy() // intakes with object detection
                         .alongWith(
@@ -287,12 +286,9 @@ public class RobotContainer {
                                 oi::getTranslateX,
                                 oi::getTranslateY,
                                 oi::getRotate,
-                                this::targetObjectDetectionAngleHelper,
-                                () -> !visionObjectDetectionSubsystem.hasTarget(),
+                                () -> targetAngleHelper(visionObjectDetectionSubsystem.getTX() + 180),
+                                visionObjectDetectionSubsystem::isAssistEnabled,
                                 statusRgb)),
-                    new IntakeNote(intake, feeder, shooterPose, statusRgb)
-                        .asProxy(), // intakes without object detection
-                    visionObjectDetectionSubsystem::isEnabled),
                 feeder::hasNote));
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
@@ -394,25 +390,16 @@ public class RobotContainer {
 
   }
 
-  public double targetApriltagAngleHelper() {
-    double curVisionError = visionApriltagSubsystem.getTX();
-    if (lastApriltagVisionError == curVisionError) {
-      return lastApriltagRotateGoal;
+  public double targetAngleHelper(double tx) {
+    double curVisionError = tx;
+    if (lastVisionError == curVisionError) {
+      return lastRotateGoal;
     }
-    lastApriltagVisionError = curVisionError;
-    lastApriltagRotateGoal = drivetrain.getPose().getRotation().getDegrees() - curVisionError;
-    return lastApriltagRotateGoal;
+    lastVisionError = curVisionError;
+    lastRotateGoal = drivetrain.getPose().getRotation().getDegrees() - curVisionError;
+    return lastRotateGoal;
   }
 
-  public double targetObjectDetectionAngleHelper() {
-    double curVisionError = visionObjectDetectionSubsystem.getTX();
-    if (lastObjectDetectionVisionError == curVisionError) {
-      return lastObjectDetectionRotateGoal;
-    }
-    lastObjectDetectionVisionError = curVisionError;
-    lastObjectDetectionRotateGoal = drivetrain.getPose().getRotation().getDegrees() - curVisionError + 180;
-    return lastObjectDetectionRotateGoal;
-  }
 
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {

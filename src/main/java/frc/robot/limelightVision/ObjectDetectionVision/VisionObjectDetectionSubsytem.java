@@ -58,8 +58,8 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
     assistEnabled = enabled;
   }
 
-  public boolean isEnabled() {
-    return assistEnabled;
+  public boolean isAssistEnabled() {
+    return assistEnabled && !hasTarget();
   }
 
   public double getDistanceToTarget() {
