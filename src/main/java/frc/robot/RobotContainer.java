@@ -53,17 +53,13 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot (including
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private OperatorInterface oi = new OperatorInterface() {
-  };
+  private OperatorInterface oi = new OperatorInterface() {};
   private RobotConfig config;
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Blue;
@@ -86,17 +82,19 @@ public class RobotContainer {
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to
   // ensure accurate logging
-  private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Routine");
+  private final LoggedDashboardChooser<Command> autoChooser =
+      new LoggedDashboardChooser<>("Auto Routine");
 
-  private final LoggedDashboardNumber endgameAlert1 = new LoggedDashboardNumber("Endgame Alert #1", 20.0);
-  private final LoggedDashboardNumber endgameAlert2 = new LoggedDashboardNumber("Endgame Alert #2", 10.0);
+  private final LoggedDashboardNumber endgameAlert1 =
+      new LoggedDashboardNumber("Endgame Alert #1", 20.0);
+  private final LoggedDashboardNumber endgameAlert2 =
+      new LoggedDashboardNumber("Endgame Alert #2", 10.0);
 
   // RobotContainer singleton
   private static RobotContainer robotContainer = new RobotContainer();
 
   /**
-   * Create the container for the robot. Contains subsystems, operator interface
-   * (OI) devices, and
+   * Create the container for the robot. Contains subsystems, operator interface (OI) devices, and
    * commands.
    */
   public RobotContainer() {
@@ -124,8 +122,7 @@ public class RobotContainer {
   }
 
   /**
-   * The RobotConfig subclass object *must* be created before any other objects
-   * that use it directly
+   * The RobotConfig subclass object *must* be created before any other objects that use it directly
    * or indirectly. If this isn't done, a null pointer exception will result.
    */
   private void createRobotConfig() {
@@ -142,17 +139,17 @@ public class RobotContainer {
      * new SwerveModuleIOTalonFXPhoenix6(
      * 0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0],
      * steerOffsets[0]);
-     * 
+     *
      * SwerveModuleIO frModule =
      * new SwerveModuleIOTalonFXPhoenix6(
      * 1, driveMotorCANIDs[1], steerMotorCANDIDs[1], steerEncoderCANDIDs[1],
      * steerOffsets[1]);
-     * 
+     *
      * SwerveModuleIO blModule =
      * new SwerveModuleIOTalonFXPhoenix6(
      * 2, driveMotorCANIDs[2], steerMotorCANDIDs[2], steerEncoderCANDIDs[2],
      * steerOffsets[2]);
-     * 
+     *
      * SwerveModuleIO brModule =
      * new SwerveModuleIOTalonFXPhoenix6(
      * 3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3],
@@ -171,12 +168,13 @@ public class RobotContainer {
 
     visionSubsystem = new VisionSubsystem();
 
-    statusRgb = new StatusRgb(
-        () -> shooterPose.hasClearence(),
-        () -> {
-          return false;
-        },
-        this);
+    statusRgb =
+        new StatusRgb(
+            () -> shooterPose.hasClearence(),
+            () -> {
+              return false;
+            },
+            this);
 
     // String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera
     // stuff
@@ -196,22 +194,18 @@ public class RobotContainer {
   }
 
   /**
-   * Creates the field from the defined regions and transition points from one
-   * region to its
+   * Creates the field from the defined regions and transition points from one region to its
    * neighbor. The field is used to generate paths.
    *
-   * <p>
-   * FIXME: update for 2024 regions
+   * <p>FIXME: update for 2024 regions
    */
   private void constructField() {
     Field2d.getInstance().setRegions(new Region2d[] {});
   }
 
   /**
-   * This method scans for any changes to the connected operator interface (e.g.,
-   * joysticks). If
-   * anything changed, it creates a new OI object and binds all of the buttons to
-   * commands.
+   * This method scans for any changes to the connected operator interface (e.g., joysticks). If
+   * anything changed, it creates a new OI object and binds all of the buttons to commands.
    */
   public void updateOI() {
     OperatorInterface prevOI = oi;
@@ -245,33 +239,34 @@ public class RobotContainer {
                                 .asProxy()
                                 .alongWith(
                                     new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        () -> -90,
-                                        () -> false,
-                                        statusRgb)
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            () -> -90,
+                                            () -> false,
+                                            statusRgb)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
                     new RunShooterFast(shooterWheels)
                         .andThen(
                             new SetShooterDistanceContinuous(
-                                shooterPose,
-                                () -> visionSubsystem.hasTarget()
-                                    ? visionSubsystem.getDistanceToTarget()
-                                    : 105)
+                                    shooterPose,
+                                    () ->
+                                        visionSubsystem.hasTarget()
+                                            ? visionSubsystem.getDistanceToTarget()
+                                            : 105)
                                 .asProxy()
                                 .alongWith(
                                     new BrakeFeeder(feeder, shooterWheels).asProxy(),
                                     new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        this::targetAngleHelper,
-                                        () -> !visionSubsystem.hasTarget(),
-                                        statusRgb)
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            this::targetAngleHelper,
+                                            () -> !visionSubsystem.hasTarget(),
+                                            statusRgb)
                                         .asProxy())),
                     // Check ScoringMode
                     () -> scoringMode == ScoringMode.AMP),
@@ -355,9 +350,10 @@ public class RobotContainer {
 
     // Endgame alerts
     new Trigger(
-        () -> DriverStation.isTeleopEnabled()
-            && DriverStation.getMatchTime() > 0.0
-            && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
+            () ->
+                DriverStation.isTeleopEnabled()
+                    && DriverStation.getMatchTime() > 0.0
+                    && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
         .onTrue(new PrintCommand("End Game Alert 1."));
     /*
      * Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
@@ -367,9 +363,10 @@ public class RobotContainer {
      * .withTimeout(1.0)));
      */
     new Trigger(
-        () -> DriverStation.isTeleopEnabled()
-            && DriverStation.getMatchTime() > 0.0
-            && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
+            () ->
+                DriverStation.isTeleopEnabled()
+                    && DriverStation.getMatchTime() > 0.0
+                    && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
         .onTrue(new PrintCommand("End Game Alert 2."));
     /*
      * Commands.sequence(
@@ -423,10 +420,22 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SetShooterDistance150",
         new SetShooterDistance(shooterPose, 135.0 - 9)); // new StopShooter(shooterWheels));
-    NamedCommands.registerCommand("Rotate 90 CW", new RotateToAngle(
-        drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate, () -> -90, () -> false, statusRgb));
-    NamedCommands.registerCommand("Move Left 1 m", new DriveToPose(drivetrain, () -> shiftBotPose(drivetrain, 1, 0)));
-    //    drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate, () -> -90, () -> false, statusRgb)
+    NamedCommands.registerCommand(
+        "Rotate 90 CW",
+        new RotateToAngle(
+            drivetrain,
+            oi::getTranslateX,
+            oi::getTranslateY,
+            oi::getRotate,
+            () -> -90,
+            () -> false,
+            statusRgb));
+    NamedCommands.registerCommand(
+        "Move Left 1 m", new DriveToPose(drivetrain, () -> shiftBotPose(drivetrain, 1, 0)));
+    NamedCommands.registerCommand("print checkpoint 1", new PrintCommand("at checkpoint 1"));
+    NamedCommands.registerCommand("print checkpoint 2", new PrintCommand("at checkpoint 2"));
+    //    drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate, () -> -90, () -> false,
+    // statusRgb)
     // build auto path commands
 
     // add commands to the auto chooser
@@ -646,11 +655,12 @@ public class RobotContainer {
     oi.resetGyroButton()
         .onTrue(
             Commands.runOnce(
-                () -> drivetrain.resetPose(
-                    new Pose2d(
-                        drivetrain.getPose().getTranslation(),
-                        Rotation2d.fromDegrees(lastAlliance == Alliance.Blue ? 0 : 180))),
-                drivetrain)
+                    () ->
+                        drivetrain.resetPose(
+                            new Pose2d(
+                                drivetrain.getPose().getTranslation(),
+                                Rotation2d.fromDegrees(lastAlliance == Alliance.Blue ? 0 : 180))),
+                    drivetrain)
                 // .andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
                 .andThen(
                     Commands.runOnce(
@@ -686,6 +696,7 @@ public class RobotContainer {
   private Pose2d shiftBotPose(Drivetrain drivetrain, double x, double y) {
     return drivetrain.getPose().transformBy(new Transform2d(x, y, new Rotation2d()));
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -696,8 +707,7 @@ public class RobotContainer {
   }
 
   /**
-   * Check if the alliance color has changed; if so, update the vision subsystem
-   * and Field2d
+   * Check if the alliance color has changed; if so, update the vision subsystem and Field2d
    * singleton.
    */
   public void checkAllianceColor() {

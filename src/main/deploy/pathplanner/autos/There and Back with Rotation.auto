@@ -20,7 +20,19 @@
         {
           "type": "named",
           "data": {
+            "name": "print checkpoint 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Rotate 90 CW"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "print checkpoint 2"
           }
         },
         {

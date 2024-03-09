@@ -208,7 +208,7 @@ public class ShooterPose extends SubsystemBase {
             ShooterPoseConstants.SHOOTER_HEIGHT_KG,
             ShooterPoseConstants.SHOOTER_HEIGHT_KV,
             ShooterPoseConstants.SHOOTER_HEIGHT_KA);
-    
+
     shooterTiltMotor =
         new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 

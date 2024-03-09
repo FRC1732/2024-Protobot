@@ -20,7 +20,19 @@
         {
           "type": "named",
           "data": {
+            "name": "print checkpoint 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Move Left 1 m"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "print checkpoint 2"
           }
         },
         {
