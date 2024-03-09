@@ -1,0 +1,87 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.4,
+      "y": 3.686787625827504
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "SpinShooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SetShooterDistance125"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S4-N5"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.5
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "ShootNote"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.25
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "StopShooter"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "StartIntakingNote"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FinishIntakingNote"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Source Side",
+  "choreoAuto": false
+}
