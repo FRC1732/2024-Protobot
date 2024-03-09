@@ -120,7 +120,7 @@ public class ShooterPose extends SubsystemBase {
     /*
     double adjustmentFor3D = 9.0;
     double sweepingAngleAdjustment = 2;
-    
+
     angleLookupTable.put(20.0 - adjustmentFor3D, -47.0); // (distance, optimal angle)
     angleLookupTable.put(40.0 - adjustmentFor3D, -47.0);
     angleLookupTable.put(60.0 - adjustmentFor3D, -42.0 - sweepingAngleAdjustment);
@@ -208,7 +208,7 @@ public class ShooterPose extends SubsystemBase {
             ShooterPoseConstants.SHOOTER_HEIGHT_KG,
             ShooterPoseConstants.SHOOTER_HEIGHT_KV,
             ShooterPoseConstants.SHOOTER_HEIGHT_KA);
-
+    
     shooterTiltMotor =
         new CANSparkMax(ShooterPoseConstants.SHOOTER_TILT_MOTOR_CAN_ID, MotorType.kBrushless);
 

@@ -7,9 +7,9 @@ public class ShooterPoseConstants {
 
   public static final double SHOOTER_PID_PERIOD_SEC = 0.02;
 
-  public static final int SHOOTER_HEIGHT_LEFT_MOTOR_CAN_ID = 60; 
-  public static final int SHOOTER_HEIGHT_RIGHT_MOTOR_CAN_ID = 61; 
-  public static final int SHOOTER_TILT_MOTOR_CAN_ID = 62; 
+  public static final int SHOOTER_HEIGHT_LEFT_MOTOR_CAN_ID = 60;
+  public static final int SHOOTER_HEIGHT_RIGHT_MOTOR_CAN_ID = 61;
+  public static final int SHOOTER_TILT_MOTOR_CAN_ID = 62;
 
   public static final double MIN_SHOOTER_HEIGHT_INCHES = 0;
   public static final double MAX_SHOOTER_HEIGHT_INCHES = 16;
@@ -52,7 +52,7 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_HEIGHT_RPM_TO_INCHES_PER_SECOND =
       0.006109; // RPM to inch/sec (spool diam * 3.14 / reduction / 60 = 1.75 * 3.14 / 15 / 60)
 
-  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -30;
+  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -33;
   public static final double SHOOTER_TILT_SUBWOOFER_SETPOINT = -60;
   public static final double SHOOTER_TILT_AMP_SETPOINT = 40 - 5;
   public static final double SHOOTER_TILT_TRAP_SETPOINT = 30;
