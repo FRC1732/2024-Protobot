@@ -23,6 +23,7 @@ import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
 import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
+import frc.robot.commands.ClimberCommands.ClimberUp;
 import frc.robot.commands.ClimberCommands.DisarmClimber;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
@@ -40,6 +41,7 @@ import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
+import frc.robot.limelightVision.LIMELIGHT;
 import frc.robot.limelightVision.VisionSubsystem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
@@ -66,6 +68,7 @@ public class RobotContainer {
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Blue;
   private VisionSubsystem visionSubsystem;
+  private VisionSubsystem AIvisionSubsystem;
   public Intake intake;
   public Feeder feeder;
   public ShooterWheels shooterWheels;
@@ -161,7 +164,8 @@ public class RobotContainer {
     shooterPose = new ShooterPose();
     climber = new Climber();
 
-    visionSubsystem = new VisionSubsystem();
+    visionSubsystem = new VisionSubsystem(LIMELIGHT.TOOTH);    
+    AIvisionSubsystem = new VisionSubsystem(LIMELIGHT.GRUMP);
 
     statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), () -> climber.isClimbing(), this);
 
@@ -280,9 +284,25 @@ public class RobotContainer {
     oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
     oi.operatorAmpButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
 
+    
     oi.armClimberSwitch().onTrue(new ArmClimber(climber, shooterPose));
     oi.armClimberSwitch().onFalse(new DisarmClimber(climber, shooterPose));
     oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
+
+    /*oi.armClimberSwitch().onTrue(new InstantCommand(()->{visionSubsystem.setPipeline(VisionSubsystem.PIPELINE.STAGE);}).andThen(new RotateToAngle(
+                                            drivetrain,
+                                            oi::getTranslateX,
+                                            oi::getTranslateY,
+                                            oi::getRotate,
+                                            this::targetAngleHelper,
+                                            () -> !visionSubsystem.hasTarget(),
+                                            statusRgb).raceWith(new ArmClimber(climber, shooterPose))));
+    oi.armClimberSwitch().onFalse(new InstantCommand(()->{visionSubsystem.setPipeline(VisionSubsystem.PIPELINE.SPEAKER);}).andThen(new DisarmClimber(climber, shooterPose)));
+    oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
+*/
+
+
+   
     // new SetShooterPose(shooterPose, Pose.TRAP)
     //     .andThen(new InstantCommand(() -> climber.ClimberDown())));
     // oi.autoClimbButton()

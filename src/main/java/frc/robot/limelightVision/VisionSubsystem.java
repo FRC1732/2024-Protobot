@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,6 +13,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class VisionSubsystem extends SubsystemBase {
   private ShuffleboardTab tab;
   private double lastDistance;
+  private LIMELIGHT limelight;
+
+public static enum PIPELINE {
+  SPEAKER, AMP, STAGE;
+}
 
   @AutoLog
   public static class VisionSubsystemIOInput {
@@ -25,12 +31,13 @@ public class VisionSubsystem extends SubsystemBase {
 
   private VisionSubsystemIOInputAutoLogged inputs = new VisionSubsystemIOInputAutoLogged();
 
-  public VisionSubsystem() {
+  public VisionSubsystem(LIMELIGHT limelight) {
+    this.limelight = limelight;
     setUpShuffleboard();
   }
 
   private String getLimelightName() {
-    return VisionConstants.LIMELIGHT_NAME;
+    return limelight.name();
   }
 
   public double getTX() {
@@ -61,6 +68,18 @@ public class VisionSubsystem extends SubsystemBase {
     return LimelightHelpers.getFiducialID(getLimelightName());
   }
 
+  public Pose3d getTargetPose() {
+    return LimelightHelpers.getTargetPose3d_RobotSpace(getLimelightName());
+  }
+
+  public Pose3d getRobotPose() {
+    return LimelightHelpers.getBotPose3d(getLimelightName());
+  }
+
+  public void setPipeline(PIPELINE pipeline) {
+    LimelightHelpers.setPipelineIndex(getLimelightName(),pipeline.ordinal());
+  }
+
   public double getDistanceToTarget() {
     if (!hasTarget()) {
       return lastDistance;
@@ -82,7 +101,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   private void setUpShuffleboard() {
-    tab = Shuffleboard.getTab("Vision");
+    tab = Shuffleboard.getTab(limelight.name);
     tab.addDouble("Tx", () -> this.getTX());
     tab.addDouble("Ty", () -> this.getTY());
     tab.addDouble("Distance", () -> this.getDistanceToTarget());

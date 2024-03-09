@@ -13,7 +13,7 @@ public class DisarmClimber extends Command {
   private ShooterPose shooterPose;
   private Climber climber;
 
-  private static final double MIN_HEIGHT = 0.0;
+  private static final double MIN_HEIGHT = 0.5;
 
   public DisarmClimber(Climber climber, ShooterPose shooterPose) {
     // Use addRequirements() here to declare subsystem dependencies.

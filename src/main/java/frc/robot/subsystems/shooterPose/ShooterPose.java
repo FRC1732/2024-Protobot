@@ -108,7 +108,7 @@ public class ShooterPose extends SubsystemBase {
 
   public ShooterPose() {
     double adjustmentFor3D = 9.0;
-    double sweepingAngleAdjustment = 2;
+    double sweepingAngleAdjustment = -1;
     angleLookupTable = new TreeMap<>();
     angleLookupTable.put(20.0 - adjustmentFor3D, -47.0); // (distance, optimal angle)
     angleLookupTable.put(40.0 - adjustmentFor3D, -47.0);
