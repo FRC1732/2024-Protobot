@@ -408,6 +408,12 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SetShooterDistance150",
         new SetShooterDistance(shooterPose, 135.0 - 9)); // new StopShooter(shooterWheels));
+    NamedCommands.registerCommand(
+        "SetShooterDistanceVision",
+        new SetShooterDistanceContinuous(
+            shooterPose,
+            () ->
+                visionSubsystem.hasTarget() ? visionSubsystem.getDistanceToTarget() : 105)); // new
 
     // build auto path commands
 

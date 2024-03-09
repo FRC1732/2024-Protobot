@@ -12,7 +12,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -24,7 +24,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "SetShooterDistance115"
+                  "name": "SetShooterDistanceVision"
                 }
               }
             ]
@@ -47,22 +47,9 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "IntakeNote"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "SetShooterDistance125"
-                      }
-                    }
-                  ]
+                  "name": "IntakeNote"
                 }
               }
             ]
@@ -94,19 +81,51 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "wait",
                 "data": {
-                  "pathName": "N5-F3"
+                  "waitTime": 0.2
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "SetShooterDistance125"
+                  "name": "SetShooterDistanceVision"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "M3-N5"
+                }
+              },
+              {
+                "type": "race",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SetShooterDistanceVision"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.2
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -138,7 +157,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "sequential",
           "data": {
             "commands": [
               {
@@ -148,9 +167,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "race",
                 "data": {
-                  "name": "SetShooterDistance125"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SetShooterDistanceVision"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.2
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -159,7 +191,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ShootNote"
+            "name": "Shoot Note"
           }
         }
       ]
