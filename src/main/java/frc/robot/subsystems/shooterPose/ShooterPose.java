@@ -108,19 +108,19 @@ public class ShooterPose extends SubsystemBase {
 
   public ShooterPose() {
     double adjustmentFor3D = 9.0;
-    double sweepingAngleAdjustment = 2;
+    double sweepingAngleAdjustment = -6.5;
     angleLookupTable = new TreeMap<>();
     angleLookupTable.put(20.0 - adjustmentFor3D, -47.0); // (distance, optimal angle)
     angleLookupTable.put(40.0 - adjustmentFor3D, -47.0);
-    angleLookupTable.put(60.0 - adjustmentFor3D, -42.0 - sweepingAngleAdjustment);
-    angleLookupTable.put(70.0 - adjustmentFor3D, -39.0 - sweepingAngleAdjustment);
-    angleLookupTable.put(80.0 - adjustmentFor3D, -35.0 - sweepingAngleAdjustment);
+    angleLookupTable.put(60.0 - adjustmentFor3D, -47.0 - sweepingAngleAdjustment);
+    angleLookupTable.put(70.0 - adjustmentFor3D, -44.0 - sweepingAngleAdjustment);
+    angleLookupTable.put(80.0 - adjustmentFor3D, -40.0 - sweepingAngleAdjustment);
     angleLookupTable.put(95.0 - adjustmentFor3D, -32.5 - sweepingAngleAdjustment);
     angleLookupTable.put(105.0 - adjustmentFor3D, -32.0 - sweepingAngleAdjustment);
     angleLookupTable.put(115.0 - adjustmentFor3D, -31.0 - sweepingAngleAdjustment);
-    angleLookupTable.put(125.0 - adjustmentFor3D, -30.0 - sweepingAngleAdjustment/2);
-    angleLookupTable.put(135.0 - adjustmentFor3D, -29.0 - sweepingAngleAdjustment/2);
-    angleLookupTable.put(157.0 - adjustmentFor3D, -28.0 - sweepingAngleAdjustment/2);
+    angleLookupTable.put(125.0 - adjustmentFor3D, -30.0 - sweepingAngleAdjustment);
+    angleLookupTable.put(135.0 - adjustmentFor3D, -29.0 - sweepingAngleAdjustment);
+    angleLookupTable.put(157.0 - adjustmentFor3D, -28.0 - sweepingAngleAdjustment);
     angleLookupTable.put(250.0 - adjustmentFor3D, -25.0 - sweepingAngleAdjustment/2);
 
     shooterHeightLeftMotor =

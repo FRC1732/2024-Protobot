@@ -6,6 +6,7 @@ package frc.robot.commands.ClimberCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.climber.Climber;
+import frc.robot.subsystems.climber.ClimberConstants;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 
@@ -13,7 +14,7 @@ public class DisarmClimber extends Command {
   private ShooterPose shooterPose;
   private Climber climber;
 
-  private static final double MIN_HEIGHT = 0.0;
+  private static final double MIN_HEIGHT = ClimberConstants.MIN_SETPOINT_INCHES;
 
   public DisarmClimber(Climber climber, ShooterPose shooterPose) {
     // Use addRequirements() here to declare subsystem dependencies.
