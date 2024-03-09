@@ -136,6 +136,7 @@ public class DriveToPose extends Command {
     thetaController.setTolerance(thetaTolerance.get());
     this.targetPose = poseSupplier.get();
 
+    Logger.recordOutput("DriveToPose/currentPose", currentPose);
     Logger.recordOutput("DriveToPose/targetPose", targetPose);
 
     this.timer.restart();

@@ -459,6 +459,9 @@ public class RobotContainer {
     Command thereAndBackWithTranslation = new PathPlannerAuto("There and Back with Translation");
     autoChooser.addOption("There and back w/Translation", thereAndBackWithTranslation);
 
+    Command thereAndBackAgain = new PathPlannerAuto("There and Back With Wait");
+    autoChooser.addOption("There and back Again", thereAndBackAgain);
+
     // Command autoTest = new PathPlannerAuto("TestAuto");
     // Command testLine = new PathPlannerAuto("DistanceTest");
     // autoChooser.addOption("Test Auto", autoTest);
