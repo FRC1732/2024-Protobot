@@ -272,7 +272,8 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> targetAngleHelper(visionApriltagSubsystem.getTX()),
+                                            () ->
+                                                targetAngleHelper(visionApriltagSubsystem.getTX()),
                                             (() -> !visionApriltagSubsystem.hasTarget()),
                                             statusRgb)
                                         .asProxy())),
@@ -292,17 +293,17 @@ public class RobotContainer {
         .whileTrue(
             new ConditionalCommand( // scores if feeder has note
                 (new FeedShooterManual(feeder).asProxy()),
-                    new IntakeNote(intake, feeder, shooterPose, statusRgb)
-                        .asProxy() // intakes with object detection
-                        .alongWith(
-                            new RotateToAngle(
-                                drivetrain,
-                                oi::getTranslateX,
-                                oi::getTranslateY,
-                                oi::getRotate,
-                                () -> targetAngleHelper(visionObjectDetectionSubsystem.getTX() + 180),
-                                visionObjectDetectionSubsystem::isAssistEnabled,
-                                statusRgb)),
+                new IntakeNote(intake, feeder, shooterPose, statusRgb)
+                    .asProxy() // intakes with object detection
+                    .alongWith(
+                        new RotateToAngle(
+                            drivetrain,
+                            oi::getTranslateX,
+                            oi::getTranslateY,
+                            oi::getRotate,
+                            () -> targetAngleHelper(visionObjectDetectionSubsystem.getTX() + 180),
+                            visionObjectDetectionSubsystem::isAssistEnabled,
+                            statusRgb)),
                 feeder::hasNote));
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
@@ -371,8 +372,10 @@ public class RobotContainer {
     // oi.feedThroughButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
     oi.operatorFeedButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
 
-    oi.operatorObjectDetectionAssistButton().whileTrue(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(true)));
-    oi.operatorObjectDetectionAssistButton().whileFalse(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(false)));
+    oi.operatorObjectDetectionAssistButton()
+        .whileTrue(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(true)));
+    oi.operatorObjectDetectionAssistButton()
+        .whileFalse(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(false)));
 
     configureDrivetrainCommands();
 
@@ -411,8 +414,8 @@ public class RobotContainer {
     }
     double captureTime =
         Timer.getFPGATimestamp()
-            - (visionSubsystem.getLatencyPipeline())
-            - (visionSubsystem.getLatencyCapture());
+            - (visionApriltagSubsystem.getLatencyPipeline())
+            - (visionApriltagSubsystem.getLatencyCapture());
     double angleAtTime = getInterpolatedAngle(captureTime);
     lastVisionError = curVisionError;
     lastRotateGoal = angleAtTime - curVisionError;

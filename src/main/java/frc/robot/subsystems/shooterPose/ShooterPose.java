@@ -121,7 +121,7 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(125.0 - adjustmentFor3D, -30.0 - sweepingAngleAdjustment);
     angleLookupTable.put(135.0 - adjustmentFor3D, -29.0 - sweepingAngleAdjustment);
     angleLookupTable.put(157.0 - adjustmentFor3D, -28.0 - sweepingAngleAdjustment);
-    angleLookupTable.put(250.0 - adjustmentFor3D, -25.0 - sweepingAngleAdjustment/2);
+    angleLookupTable.put(250.0 - adjustmentFor3D, -25.0 - sweepingAngleAdjustment / 2);
 
     shooterHeightLeftMotor =
         new CANSparkMax(
@@ -337,10 +337,11 @@ public class ShooterPose extends SubsystemBase {
         shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_SETPOINT);
         shooterTiltPID.setGoal(angleModulusDeg(ShooterPoseConstants.SHOOTER_TILT_TRAP_SETPOINT));
         break;
-      
+
       case TRAP_PREP:
         shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_PREP_SETPOINT);
-        shooterTiltPID.setGoal(angleModulusDeg(ShooterPoseConstants.SHOOTER_TILT_TRAP_PREP_SETPOINT));
+        shooterTiltPID.setGoal(
+            angleModulusDeg(ShooterPoseConstants.SHOOTER_TILT_TRAP_PREP_SETPOINT));
         break;
 
       case SOURCE:
