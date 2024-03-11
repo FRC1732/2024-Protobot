@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -101,9 +100,10 @@ public class Intake extends SubsystemBase {
     intakeMainMotor.set(0);
     intakeCentererMotor.set(0);
   }
+
   public boolean hasNote() {
     double currentValue = intakeAnalogSensor.getValue();
-    averageValue = (currentValue + previousValue) /2.0;
+    averageValue = (currentValue + previousValue) / 2.0;
     previousValue = currentValue;
     return averageValue > 900;
   }

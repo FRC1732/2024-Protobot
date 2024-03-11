@@ -7,21 +7,21 @@ package frc.robot.commands.feederCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.RobotContainer.ScoringMode;
-import frc.robot.limelightVision.VisionSubsystem;
+import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 
 public class FeedShooterSmart extends Command {
   private final Feeder feeder;
   private final ShooterWheels shooter;
-  private final VisionSubsystem vision;
+  private final VisionApriltagSubsystem vision;
 
   /**
    * Creates a new FeedShooterSmart.
    *
    * @param feeder feeder this command uses
    */
-  public FeedShooterSmart(Feeder feeder, ShooterWheels shooter,VisionSubsystem vision) {
+  public FeedShooterSmart(Feeder feeder, ShooterWheels shooter, VisionApriltagSubsystem vision) {
     addRequirements(feeder);
     this.feeder = feeder;
     this.shooter = shooter;
@@ -32,16 +32,16 @@ public class FeedShooterSmart extends Command {
   @Override
   public void initialize() {
     RobotContainer ourRobot = RobotContainer.getInstance();
-    if (shooter.getShooterSpeed() > 0 && (ourRobot.scoringMode == ScoringMode.AMP || 
-    ourRobot.scoringMode == ScoringMode.SPEAKER && vision.hasTarget())) {
+    if (shooter.getShooterSpeed() > 0
+        && (ourRobot.scoringMode == ScoringMode.AMP
+            || ourRobot.scoringMode == ScoringMode.SPEAKER && vision.hasTarget())) {
       feeder.runFeeder();
     }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override

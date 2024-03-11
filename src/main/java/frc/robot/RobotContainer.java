@@ -40,7 +40,8 @@ import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
-import frc.robot.limelightVision.VisionSubsystem;
+import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
+import frc.robot.limelightVision.ObjectDetectionVision.VisionObjectDetectionSubsytem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.climber.Climber;
@@ -65,7 +66,8 @@ public class RobotContainer {
   private RobotConfig config;
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Blue;
-  private VisionSubsystem visionSubsystem;
+  private VisionApriltagSubsystem visionApriltagSubsystem;
+  private VisionObjectDetectionSubsytem visionObjectDetectionSubsystem;
   public Intake intake;
   public Feeder feeder;
   public ShooterWheels shooterWheels;
@@ -80,6 +82,9 @@ public class RobotContainer {
 
   private double lastVisionError;
   private double lastRotateGoal;
+
+  private double lastObjectDetectionVisionError;
+  private double lastObjectDetectionRotateGoal;
 
   public ScoringMode scoringMode = ScoringMode.AMP;
 
@@ -161,7 +166,8 @@ public class RobotContainer {
     shooterPose = new ShooterPose();
     climber = new Climber();
 
-    visionSubsystem = new VisionSubsystem();
+    visionApriltagSubsystem = new VisionApriltagSubsystem();
+    visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
     statusRgb = new StatusRgb(() -> shooterPose.hasClearence(), () -> climber.isClimbing(), this);
 
@@ -241,8 +247,8 @@ public class RobotContainer {
                             new SetShooterDistanceContinuous(
                                     shooterPose,
                                     () ->
-                                        visionSubsystem.hasTarget()
-                                            ? visionSubsystem.getDistanceToTarget()
+                                        visionApriltagSubsystem.hasTarget()
+                                            ? visionApriltagSubsystem.getDistanceToTarget()
                                             : 105)
                                 .asProxy()
                                 .alongWith(
@@ -252,8 +258,8 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            this::targetAngleHelper,
-                                            () -> !visionSubsystem.hasTarget(),
+                                            () -> targetAngleHelper(visionApriltagSubsystem.getTX()),
+                                            (() -> !visionApriltagSubsystem.hasTarget()),
                                             statusRgb)
                                         .asProxy())),
                     // Check ScoringMode
@@ -270,9 +276,19 @@ public class RobotContainer {
 
     oi.IntakeOrScoreButton()
         .whileTrue(
-            new ConditionalCommand(
+            new ConditionalCommand( // scores if feeder has note
                 (new FeedShooterManual(feeder).asProxy()),
-                new IntakeNote(intake, feeder, shooterPose, statusRgb).asProxy(),
+                    new IntakeNote(intake, feeder, shooterPose, statusRgb)
+                        .asProxy() // intakes with object detection
+                        .alongWith(
+                            new RotateToAngle(
+                                drivetrain,
+                                oi::getTranslateX,
+                                oi::getTranslateY,
+                                oi::getRotate,
+                                () -> targetAngleHelper(visionObjectDetectionSubsystem.getTX() + 180),
+                                visionObjectDetectionSubsystem::isAssistEnabled,
+                                statusRgb)),
                 feeder::hasNote));
 
     oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
@@ -283,6 +299,7 @@ public class RobotContainer {
     oi.armClimberSwitch().onTrue(new ArmClimber(climber, shooterPose));
     oi.armClimberSwitch().onFalse(new DisarmClimber(climber, shooterPose));
     oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
+
     // new SetShooterPose(shooterPose, Pose.TRAP)
     //     .andThen(new InstantCommand(() -> climber.ClimberDown())));
     // oi.autoClimbButton()
@@ -340,6 +357,9 @@ public class RobotContainer {
     // oi.feedThroughButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
     oi.operatorFeedButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
 
+    oi.operatorObjectDetectionAssistButton().whileTrue(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(true)));
+    oi.operatorObjectDetectionAssistButton().whileFalse(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(false)));
+
     configureDrivetrainCommands();
 
     configureSubsystemCommands();
@@ -370,8 +390,8 @@ public class RobotContainer {
 
   }
 
-  public double targetAngleHelper() {
-    double curVisionError = visionSubsystem.getTX();
+  public double targetAngleHelper(double tx) {
+    double curVisionError = tx;
     if (lastVisionError == curVisionError) {
       return lastRotateGoal;
     }
@@ -379,6 +399,7 @@ public class RobotContainer {
     lastRotateGoal = drivetrain.getPose().getRotation().getDegrees() - curVisionError;
     return lastRotateGoal;
   }
+
 
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {

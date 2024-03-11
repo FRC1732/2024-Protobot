@@ -92,7 +92,7 @@ public class Feeder extends SubsystemBase {
 
   public boolean hasNote() {
     double currentValue = analog.getValue();
-    averageValue = (currentValue + previousValue) /2.0;
+    averageValue = (currentValue + previousValue) / 2.0;
     previousValue = currentValue;
     return averageValue > 900;
   }

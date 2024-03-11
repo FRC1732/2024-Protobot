@@ -78,14 +78,13 @@ public class AutoClimb extends Command {
 
     if (climber.getHeight() < CHAIN_GRAB_HEIGHT) {
       if (feeder.hasNote()) {
-        if (climber.getHeight() < CHAIN_GRAB_HEIGHT-4) {
+        if (climber.getHeight() < CHAIN_GRAB_HEIGHT - 4) {
           shooterPose.setShooterPose(Pose.TRAP);
-      } else {
-        shooterPose.setShooterPose(Pose.TRAP_PREP);}
+        } else {
+          shooterPose.setShooterPose(Pose.TRAP_PREP);
+        }
       }
     }
-
-    
 
     // if (climber.getHeight() < SCORING_HEIGHT) {
     //   shooterWheels.setShooterSpeedSlow();

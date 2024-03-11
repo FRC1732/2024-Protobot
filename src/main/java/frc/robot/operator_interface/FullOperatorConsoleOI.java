@@ -63,4 +63,8 @@ public class FullOperatorConsoleOI extends DualJoysticksOI {
   public Trigger autoClimbButton() {
     return operatorPanelButtonsOne[4];
   }
+
+  public Trigger objectDetectionAssistButton() {
+    return operatorPanelButtonsOne[5]; // TODO assign correct button
+  }
 }
