@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -51,6 +52,7 @@ import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.statusrgb.StatusRgb;
+import java.util.LinkedList;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -99,6 +101,18 @@ public class RobotContainer {
 
   // RobotContainer singleton
   private static RobotContainer robotContainer = new RobotContainer();
+
+  private final LinkedList<AngleTimePair> previousAngles = new LinkedList<>();
+
+  private static class AngleTimePair {
+    final double angle;
+    final double time;
+
+    AngleTimePair(double angle, double time) {
+      this.angle = angle;
+      this.time = time;
+    }
+  }
 
   /**
    * Create the container for the robot. Contains subsystems, operator interface (OI) devices, and
@@ -395,11 +409,53 @@ public class RobotContainer {
     if (lastVisionError == curVisionError) {
       return lastRotateGoal;
     }
+    double captureTime =
+        Timer.getFPGATimestamp()
+            - (visionSubsystem.getLatencyPipeline())
+            - (visionSubsystem.getLatencyCapture());
+    double angleAtTime = getInterpolatedAngle(captureTime);
     lastVisionError = curVisionError;
-    lastRotateGoal = drivetrain.getPose().getRotation().getDegrees() - curVisionError;
+    lastRotateGoal = angleAtTime - curVisionError;
     return lastRotateGoal;
   }
 
+  public void updateAngleTable() {
+    double currentTime = Timer.getFPGATimestamp() * 1000;
+    // Remove oldest value if list size exceeds MAX_SIZE
+    if (previousAngles.size() == 10) {
+      previousAngles.poll();
+    }
+    previousAngles.add(
+        new AngleTimePair(drivetrain.getPose().getRotation().getDegrees(), currentTime));
+  }
+
+  public synchronized double getInterpolatedAngle(double targetTime) {
+    AngleTimePair before = null, after = null;
+
+    // Find the two recorded angles immediately before and after the target time
+    for (AngleTimePair pair : previousAngles) {
+      if (pair.time <= targetTime) {
+        before = pair;
+      } else {
+        after = pair;
+        break;
+      }
+    }
+
+    // Handle edge cases: no data, target time before first record, or after last record
+    if (before == null && after == null) {
+      return 0;
+    } else if (before == null) {
+      return after.angle;
+    } else if (after == null) {
+      return before.angle;
+    }
+
+    // Perform linear interpolation
+    double timeDiff = after.time - before.time;
+    double weight = (targetTime - before.time) / timeDiff;
+    return before.angle + weight * (after.angle - before.angle);
+  }
 
   /** Use this method to define your commands for autonomous mode. */
   private void configureAutoCommands() {
