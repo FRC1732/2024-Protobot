@@ -273,7 +273,11 @@ public class RobotContainer {
                                             oi::getTranslateY,
                                             oi::getRotate,
                                             () ->
-                                                targetAngleHelper(visionApriltagSubsystem.getTX()),
+                                                targetAngleHelper(
+                                                    visionApriltagSubsystem.getTX(),
+                                                    visionApriltagSubsystem.getLatencyPipeline()
+                                                        + visionApriltagSubsystem
+                                                            .getLatencyCapture()),
                                             (() -> !visionApriltagSubsystem.hasTarget()),
                                             statusRgb)
                                         .asProxy())),
@@ -301,7 +305,11 @@ public class RobotContainer {
                             oi::getTranslateX,
                             oi::getTranslateY,
                             oi::getRotate,
-                            () -> targetAngleHelper(visionObjectDetectionSubsystem.getTX() + 180),
+                            () ->
+                                targetAngleHelper(
+                                    visionObjectDetectionSubsystem.getTX() + 180,
+                                    visionObjectDetectionSubsystem.getLatencyPipeline()
+                                        + visionObjectDetectionSubsystem.getLatencyCapture()),
                             visionObjectDetectionSubsystem::isAssistEnabled,
                             statusRgb)),
                 feeder::hasNote));
@@ -407,15 +415,13 @@ public class RobotContainer {
 
   }
 
-  public double targetAngleHelper(double tx) {
+  public double targetAngleHelper(double tx, double latency) {
     double curVisionError = tx;
+    // treat identical values as stale
     if (lastVisionError == curVisionError) {
       return lastRotateGoal;
     }
-    double captureTime =
-        Timer.getFPGATimestamp()
-            - (visionApriltagSubsystem.getLatencyPipeline())
-            - (visionApriltagSubsystem.getLatencyCapture());
+    double captureTime = Timer.getFPGATimestamp() - latency;
     double angleAtTime = getInterpolatedAngle(captureTime);
     lastVisionError = curVisionError;
     lastRotateGoal = angleAtTime - curVisionError;
@@ -423,7 +429,7 @@ public class RobotContainer {
   }
 
   public void updateAngleTable() {
-    double currentTime = Timer.getFPGATimestamp() * 1000;
+    double currentTime = Timer.getFPGATimestamp();
     // Remove oldest value if list size exceeds MAX_SIZE
     if (previousAngles.size() == 10) {
       previousAngles.poll();
