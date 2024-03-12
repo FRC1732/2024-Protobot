@@ -58,6 +58,13 @@ public class Climber extends SubsystemBase {
     climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
     climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
 
+    //     Timer.delay(0.050);
+
+    //     climberLeftMotor.restoreFactoryDefaults();
+    //     Timer.delay(0.050);
+    //     climberRightMotor.restoreFactoryDefaults();
+    //     Timer.delay(0.050);
+    // climberLeftMotor.setInverted(true);
     climberLeftMotor
         .getEncoder()
         .setPositionConversionFactor(ClimberConstants.CLIMBER_CONVERSION_FACTOR);
@@ -65,9 +72,13 @@ public class Climber extends SubsystemBase {
 
     climberLeftEncoder.setPosition(0);
 
-    climberLeftMotor.setInverted(false);
-
     climberRightMotor.follow(climberLeftMotor, true);
+
+    // Timer.delay(0.25);
+    // climberRightMotor.burnFlash();
+    // Timer.delay(0.25);
+    // climberLeftMotor.burnFlash();
+    // Timer.delay(0.25);
 
     // climberLeftPID =
     //     new PIDController(

@@ -82,7 +82,7 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   }
 
   private void setUpShuffleboard() {
-    tab = Shuffleboard.getTab("Vision");
+    tab = Shuffleboard.getTab("VisionApriltag");
     tab.addDouble("Tx", () -> this.getTX());
     tab.addDouble("Ty", () -> this.getTY());
     tab.addDouble("Distance", () -> this.getDistanceToTarget());

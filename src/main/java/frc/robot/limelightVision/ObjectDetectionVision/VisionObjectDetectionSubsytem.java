@@ -59,7 +59,7 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
   }
 
   public boolean isAssistEnabled() {
-    return assistEnabled && !hasTarget();
+    return assistEnabled && hasTarget();
   }
 
   public double getDistanceToTarget() {
@@ -83,7 +83,7 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
   }
 
   private void setUpShuffleboard() {
-    tab = Shuffleboard.getTab("Vision");
+    tab = Shuffleboard.getTab("VisionObjectDetection");
     tab.addDouble("Tx", () -> this.getTX());
     tab.addDouble("Ty", () -> this.getTY());
     tab.addDouble("Distance", () -> this.getDistanceToTarget());

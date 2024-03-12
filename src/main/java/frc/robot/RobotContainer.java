@@ -307,7 +307,7 @@ public class RobotContainer {
                             oi::getRotate,
                             () ->
                                 targetAngleHelper(
-                                    visionObjectDetectionSubsystem.getTX() + 180,
+                                    visionObjectDetectionSubsystem.getTX() * -1,
                                     visionObjectDetectionSubsystem.getLatencyPipeline()
                                         + visionObjectDetectionSubsystem.getLatencyCapture()),
                             visionObjectDetectionSubsystem::isAssistEnabled,
@@ -381,9 +381,9 @@ public class RobotContainer {
     oi.operatorFeedButton().whileTrue(new FeedThrough(feeder, intake, shooterWheels));
 
     oi.operatorObjectDetectionAssistButton()
-        .whileTrue(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(true)));
+        .onTrue(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(true)));
     oi.operatorObjectDetectionAssistButton()
-        .whileFalse(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(false)));
+        .onFalse(new InstantCommand(() -> visionObjectDetectionSubsystem.setEnabled(false)));
 
     configureDrivetrainCommands();
 
@@ -423,6 +423,7 @@ public class RobotContainer {
     }
     double captureTime = Timer.getFPGATimestamp() - latency;
     double angleAtTime = getInterpolatedAngle(captureTime);
+
     lastVisionError = curVisionError;
     lastRotateGoal = angleAtTime - curVisionError;
     return lastRotateGoal;
@@ -436,6 +437,7 @@ public class RobotContainer {
     }
     previousAngles.add(
         new AngleTimePair(drivetrain.getPose().getRotation().getDegrees(), currentTime));
+    // System.out.println("Angle Table" + previousAngles);
   }
 
   public synchronized double getInterpolatedAngle(double targetTime) {
