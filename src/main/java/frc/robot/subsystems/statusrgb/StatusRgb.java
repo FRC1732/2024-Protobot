@@ -33,7 +33,8 @@ public class StatusRgb extends SubsystemBase {
 
   /** Creates a new StatusRGB. */
   public StatusRgb(
-      BooleanSupplier hasClearence, BooleanSupplier whenClimbing, RobotContainer robotContainer, BooleanSupplier noteTarget) {
+      BooleanSupplier hasClearence, BooleanSupplier whenClimbing, RobotContainer robotContainer,
+      BooleanSupplier noteTarget) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
@@ -74,31 +75,38 @@ public class StatusRgb extends SubsystemBase {
       out4.set(!false);
     }
 
-    if (DriverStation.isDisabled()) { // blue and gold
+    if (DriverStation.isDisabled()) {
+      // mode 0 - blue and gold
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
-    } else if (targetReady) { // Blue and gold
+    } else if (targetReady) {
+      // mode 3 - solid green
       out0.set(!true);
       out1.set(!true);
       out2.set(!false);
-    } else if (noteTarget.getAsBoolean()) { // orange FIXME unsure if this is the right priority, move if want to change this
+    } else if (noteTarget.getAsBoolean()) {
+      // mode 5 - solid orange
       out0.set(!true);
       out1.set(!false);
       out2.set(!true);
-    } else if (whenClimbing.getAsBoolean()) { // Blue and gold
+    } else if (whenClimbing.getAsBoolean()) {
+      // mode 4 - sparkley
       out0.set(!false);
       out1.set(!false);
       out2.set(!true);
-    } else if (!hasClearence.getAsBoolean()) { // sparkley
+    } else if (!hasClearence.getAsBoolean()) {
+      // mode 2 - solid red
       out0.set(!false);
       out1.set(!true);
       out2.set(!false);
-    } else if (robotContainer.scoringMode == ScoringMode.SPEAKER) { // red
+    } else if (robotContainer.scoringMode == ScoringMode.SPEAKER) {
+      // mode 1 - solid white
       out0.set(!true);
       out1.set(!false);
       out2.set(!false);
-    } else { // Blue and Gold
+    } else {
+      // mode 0 - Blue and Gold
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
