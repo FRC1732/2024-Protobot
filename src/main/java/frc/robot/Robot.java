@@ -8,6 +8,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Threads;
@@ -17,6 +18,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 // import frc.lib.team3061.leds.LEDs;
 import frc.lib.team6328.util.Alert;
 import frc.lib.team6328.util.Alert.AlertType;
+import frc.robot.limelightVision.ApriltagVision.VisionApriltagConstants;
+import frc.robot.limelightVision.ObjectDetectionVision.VisionObjectDetectionConstants;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -27,7 +31,8 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
- * This class models the entire Robot. It extends from LoggedRobot instead of TimedRobot as required
+ * This class models the entire Robot. It extends from LoggedRobot instead of
+ * TimedRobot as required
  * to leverage AdvantageKit's logging features.
  */
 public class Robot extends LoggedRobot {
@@ -41,12 +46,11 @@ public class Robot extends LoggedRobot {
 
   private final Timer disabledTimer = new Timer();
 
-  private final Alert logReceiverQueueAlert =
-      new Alert("Logging queue exceeded capacity, data will NOT be logged.", AlertType.ERROR);
-  private final Alert lowBatteryAlert =
-      new Alert(
-          "Battery voltage is very low, consider turning off the robot or replacing the battery.",
-          AlertType.WARNING);
+  private final Alert logReceiverQueueAlert = new Alert("Logging queue exceeded capacity, data will NOT be logged.",
+      AlertType.ERROR);
+  private final Alert lowBatteryAlert = new Alert(
+      "Battery voltage is very low, consider turning off the robot or replacing the battery.",
+      AlertType.WARNING);
 
   /** Create a new Robot. */
   public Robot() {
@@ -54,7 +58,8 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * This method is executed when the code first starts running on the robot and should be used for
+   * This method is executed when the code first starts running on the robot and
+   * should be used for
    * any initialization code.
    */
   @Override
@@ -98,22 +103,24 @@ public class Robot extends LoggedRobot {
 
     setUseTiming(true);
 
-    // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    // Start logging! No more data receivers, replay sources, or metadata values may
+    // be added.
     Logger.start();
+
+    setupPortForwardingForLimelights();
 
     System.out.println("RobotInit");
 
     // Log active commands
     Map<String, Integer> commandCounts = new HashMap<>();
-    BiConsumer<Command, Boolean> logCommandFunction =
-        (Command command, Boolean active) -> {
-          String name = command.getName();
-          int count = commandCounts.getOrDefault(name, 0) + (Boolean.TRUE.equals(active) ? 1 : -1);
-          commandCounts.put(name, count);
-          Logger.recordOutput(
-              "CommandsUnique/" + name + "_" + Integer.toHexString(command.hashCode()), active);
-          Logger.recordOutput("CommandsAll/" + name, count > 0);
-        };
+    BiConsumer<Command, Boolean> logCommandFunction = (Command command, Boolean active) -> {
+      String name = command.getName();
+      int count = commandCounts.getOrDefault(name, 0) + (Boolean.TRUE.equals(active) ? 1 : -1);
+      commandCounts.put(name, count);
+      Logger.recordOutput(
+          "CommandsUnique/" + name + "_" + Integer.toHexString(command.hashCode()), active);
+      Logger.recordOutput("CommandsAll/" + name, count > 0);
+    };
     CommandScheduler.getInstance()
         .onCommandInitialize((Command command) -> logCommandFunction.accept(command, true));
     CommandScheduler.getInstance()
@@ -142,11 +149,28 @@ public class Robot extends LoggedRobot {
     robotContainer = RobotContainer.getInstance();
   }
 
+  private void setupPortForwardingForLimelights() {
+    String shooterLL = VisionApriltagConstants.LIMELIGHT_NAME + ".local";
+    String intakeLL = VisionObjectDetectionConstants.LIMELIGHT_NAME + ".local";
+
+    for (int port = 5800; port <= 5807; port++) {
+      PortForwarder.add(port, shooterLL, port);
+    }
+
+    // offset ports for second LL by 10
+    for (int port = 5800; port <= 5807; port++) {
+      PortForwarder.add(port + 10, intakeLL, port);
+    }
+  }
+
   /**
-   * This method is called every robot packet, no matter the mode. Use this for items like
+   * This method is called every robot packet, no matter the mode. Use this for
+   * items like
    * diagnostics that you want ran during disabled, autonomous, teleop and test.
    *
-   * <p>This runs after the mode specific periodic methods, but before LiveWindow and SmartDashboard
+   * <p>
+   * This runs after the mode specific periodic methods, but before LiveWindow and
+   * SmartDashboard
    * integrated updating.
    */
   @Override
@@ -154,9 +178,12 @@ public class Robot extends LoggedRobot {
     Threads.setCurrentThreadPriority(true, 99);
 
     /*
-     * Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled commands,
-     * running already-scheduled commands, removing finished or interrupted commands, and running
-     * subsystem periodic() methods. This must be called from the robot's periodic block in order
+     * Runs the Scheduler. This is responsible for polling buttons, adding
+     * newly-scheduled commands,
+     * running already-scheduled commands, removing finished or interrupted
+     * commands, and running
+     * subsystem periodic() methods. This must be called from the robot's periodic
+     * block in order
      * for anything in the Command-based framework to work.
      */
     CommandScheduler.getInstance().run();
@@ -191,7 +218,9 @@ public class Robot extends LoggedRobot {
     Threads.setCurrentThreadPriority(true, 10);
   }
 
-  /** This method is invoked periodically when the robot is in the disabled state. */
+  /**
+   * This method is invoked periodically when the robot is in the disabled state.
+   */
   @Override
   public void disabledPeriodic() {
     // check if the operator interface (e.g., joysticks) has changed
@@ -203,12 +232,14 @@ public class Robot extends LoggedRobot {
   }
 
   /**
-   * This method is invoked at the start of the autonomous period. It schedules the autonomous
+   * This method is invoked at the start of the autonomous period. It schedules
+   * the autonomous
    * command selected by your {@link RobotContainer} class.
    */
   @Override
   public void autonomousInit() {
-    // check if the alliance color has changed based on the FMS data; the current alliance color is
+    // check if the alliance color has changed based on the FMS data; the current
+    // alliance color is
     // not guaranteed to be correct until the start of autonomous
     robotContainer.checkAllianceColor();
 
@@ -226,16 +257,20 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     /*
-     * This makes sure that the autonomous stops running when teleop starts running. If you want the
-     * autonomous to continue until interrupted by another command, remove this line or comment it
+     * This makes sure that the autonomous stops running when teleop starts running.
+     * If you want the
+     * autonomous to continue until interrupted by another command, remove this line
+     * or comment it
      * out.
      */
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
 
-    // check if the alliance color has changed based on the FMS data; if the robot power cycled
-    // during a match, this would be the first opportunity to check the alliance color based on FMS
+    // check if the alliance color has changed based on the FMS data; if the robot
+    // power cycled
+    // during a match, this would be the first opportunity to check the alliance
+    // color based on FMS
     // data.
     robotContainer.checkAllianceColor();
   }
