@@ -60,7 +60,7 @@ public class ShooterWheels extends SubsystemBase {
 
     shooterHighMotor.enableVoltageCompensation(12);
     shooterHighMotor.setIdleMode(IdleMode.kCoast);
-    shooterHighMotor.setOpenLoopRampRate(0.75);
+    shooterHighMotor.setOpenLoopRampRate(0.5);
     shooterHighMotor.stopMotor();
 
     shooterSpeedBackwards =
@@ -105,6 +105,10 @@ public class ShooterWheels extends SubsystemBase {
 
   public double getShooterSpeed() {
     return shooterHighMotor.get();
+  }
+
+  public boolean isShooterAtFastVelocity() {
+    return shooterHighMotor.getEncoder().getVelocity() >= 5400;
   }
 
   public void setUpShuffleBoard() {

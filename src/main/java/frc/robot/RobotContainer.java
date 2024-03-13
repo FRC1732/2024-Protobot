@@ -188,7 +188,8 @@ public class RobotContainer {
             () -> shooterPose.hasClearence(),
             () -> climber.isClimbing(),
             this,
-            () -> visionObjectDetectionSubsystem.hasTarget());
+            () -> visionObjectDetectionSubsystem.hasTargetRgb(),
+            () -> intake.isIntaking());
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -261,7 +262,7 @@ public class RobotContainer {
                                             statusRgb)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
-                    new RunShooterFast(shooterWheels)
+                    new RunShooterFast(shooterWheels, statusRgb)
                         .andThen(
                             new SetShooterDistanceContinuous(
                                     shooterPose,
@@ -312,10 +313,10 @@ public class RobotContainer {
                             oi::getRotate,
                             () ->
                                 targetAngleHelper(
-                                    visionObjectDetectionSubsystem.getTX() * -1,
+                                    visionObjectDetectionSubsystem.getTX(),
                                     visionObjectDetectionSubsystem.getLatencyPipeline()
                                         + visionObjectDetectionSubsystem.getLatencyCapture()),
-                            visionObjectDetectionSubsystem::isAssistEnabled,
+                            ()->!visionObjectDetectionSubsystem.isAssistEnabled(),
                             statusRgb)),
                 feeder::hasNote));
 
@@ -484,7 +485,7 @@ public class RobotContainer {
         "disableXStance", Commands.runOnce(drivetrain::disableXstance, drivetrain));
     NamedCommands.registerCommand(
         "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
-    NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
+    NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels, statusRgb));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
     NamedCommands.registerCommand(
         "IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));

@@ -48,7 +48,7 @@ public class RotateToAngle extends Command {
   protected static final TunableNumber thetaMaxAcceleration =
       new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 5);
   protected static final TunableNumber thetaTolerance =
-      new TunableNumber("RotateToAngle/ThetaTolerance", 0.008);
+      new TunableNumber("RotateToAngle/ThetaTolerance", 1);
 
   protected final ProfiledPIDController thetaController =
       new ProfiledPIDController(
@@ -182,7 +182,7 @@ public class RotateToAngle extends Command {
     }
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
-    double rotationPercentage = TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0) * 0.85;
+    double rotationPercentage = TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0) * 1.0;
 
     double xVelocity = xPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
     double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();

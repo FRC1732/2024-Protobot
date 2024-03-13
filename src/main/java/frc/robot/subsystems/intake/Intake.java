@@ -112,6 +112,10 @@ public class Intake extends SubsystemBase {
     return averageValue > 900;
   }
 
+  public boolean isIntaking() {
+    return intakeMainMotor.get() == intakeMainMotorSpeed;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

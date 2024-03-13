@@ -28,6 +28,8 @@ public class StatusRgb extends SubsystemBase {
 
   private BooleanSupplier hasClearence;
   private boolean targetReady;
+  private boolean targetVelocity;
+  private BooleanSupplier intaking;
   private BooleanSupplier whenClimbing;
   private BooleanSupplier noteTarget;
 
@@ -36,11 +38,13 @@ public class StatusRgb extends SubsystemBase {
       BooleanSupplier hasClearence,
       BooleanSupplier whenClimbing,
       RobotContainer robotContainer,
-      BooleanSupplier noteTarget) {
+      BooleanSupplier noteTarget,
+      BooleanSupplier intaking) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
     this.noteTarget = noteTarget;
+    this.intaking = intaking;
     timer = new Timer();
     out3.set(!false); // always off, not used
   }
@@ -54,6 +58,10 @@ public class StatusRgb extends SubsystemBase {
 
   public void targetReady(boolean targetReady) {
     this.targetReady = targetReady;
+  }
+
+  public void targetVelocity(boolean targetVelocity) {
+     this.targetVelocity = targetVelocity;
   }
 
   @Override
@@ -82,12 +90,12 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
-    } else if (targetReady) {
+    } else if (targetReady && targetVelocity) {
       // mode 3 - solid green
       out0.set(!true);
       out1.set(!true);
       out2.set(!false);
-    } else if (noteTarget.getAsBoolean()) {
+    } else if (noteTarget.getAsBoolean() && intaking.getAsBoolean()) {
       // mode 5 - solid orange
       out0.set(!true);
       out1.set(!false);
