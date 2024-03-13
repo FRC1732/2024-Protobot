@@ -316,7 +316,7 @@ public class RobotContainer {
                                     visionObjectDetectionSubsystem.getTX(),
                                     visionObjectDetectionSubsystem.getLatencyPipeline()
                                         + visionObjectDetectionSubsystem.getLatencyCapture()),
-                            ()->!visionObjectDetectionSubsystem.isAssistEnabled(),
+                            () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
                             statusRgb)),
                 feeder::hasNote));
 
@@ -422,7 +422,7 @@ public class RobotContainer {
   }
 
   public double targetAngleHelper(double tx, double latency) {
-    latency *= 1.5;
+    latency *= 1.25;
     double curVisionError = tx;
     // treat identical values as stale
     if (lastVisionError == curVisionError) {

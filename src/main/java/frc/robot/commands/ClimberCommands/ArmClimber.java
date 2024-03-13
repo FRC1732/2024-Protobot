@@ -13,7 +13,7 @@ public class ArmClimber extends Command {
   private ShooterPose shooterPose;
   private Climber climber;
 
-  private static final double MAX_HEIGHT = 22.6;
+  private static final double MAX_HEIGHT = 23.0;
 
   public ArmClimber(Climber climber, ShooterPose shooterPose) {
     // Use addRequirements() here to declare subsystem dependencies.

@@ -61,7 +61,7 @@ public class StatusRgb extends SubsystemBase {
   }
 
   public void targetVelocity(boolean targetVelocity) {
-     this.targetVelocity = targetVelocity;
+    this.targetVelocity = targetVelocity;
   }
 
   @Override

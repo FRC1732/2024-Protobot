@@ -48,7 +48,7 @@ public class RotateToAngle extends Command {
   protected static final TunableNumber thetaMaxAcceleration =
       new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 5);
   protected static final TunableNumber thetaTolerance =
-      new TunableNumber("RotateToAngle/ThetaTolerance", 1);
+      new TunableNumber("RotateToAngle/ThetaTolerance", 2);
 
   protected final ProfiledPIDController thetaController =
       new ProfiledPIDController(
@@ -139,8 +139,6 @@ public class RotateToAngle extends Command {
         Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()) + Math.PI);
 
     lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();
-
-    
   }
 
   /**
@@ -168,15 +166,18 @@ public class RotateToAngle extends Command {
 
     Pose2d currentPose = drivetrain.getPose();
     if (lastManualRotationOverrideValue != manualRotationOverrideSupplier.getAsBoolean()) {
-      thetaController.reset(currentPose.getRotation().getRadians(), lastAngularVelocity);
+      thetaController.reset(
+          currentPose.getRotation().getRadians(),
+          drivetrain.getRobotRelativeSpeeds()
+              .omegaRadiansPerSecond); // @TODO test setting velocity to 0
     }
     double thetaVelocity =
         thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
-    thetaVelocity += 0.03 * Math.signum(thetaVelocity);
+    thetaVelocity += 0.026 * Math.signum(thetaVelocity);
 
-    if (thetaController.atGoal()) {
+    if (thetaController.atGoal()) { // @TODO test instead of atGoal, manually check within threshold
       thetaVelocity = 0.0;
       statusRgb.targetReady(true);
     } else {
