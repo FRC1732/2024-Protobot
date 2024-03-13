@@ -140,7 +140,7 @@ public class RotateToAngle extends Command {
 
     lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();
 
-    Logger.recordOutput("RotateToAngle/AngleDeg", targetAngleSupplier.getAsDouble());
+    
   }
 
   /**
@@ -150,6 +150,7 @@ public class RotateToAngle extends Command {
    */
   @Override
   public void execute() {
+    Logger.recordOutput("RotateToAngle/AngleDeg", targetAngleSupplier.getAsDouble());
     // update from tunable numbers
     if (thetaKp.hasChanged()
         || thetaKd.hasChanged()
@@ -173,6 +174,7 @@ public class RotateToAngle extends Command {
         thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
+    thetaVelocity += 0.03 * Math.signum(thetaVelocity);
 
     if (thetaController.atGoal()) {
       thetaVelocity = 0.0;

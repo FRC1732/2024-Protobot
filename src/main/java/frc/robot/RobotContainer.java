@@ -422,6 +422,7 @@ public class RobotContainer {
   }
 
   public double targetAngleHelper(double tx, double latency) {
+    latency *= 1.5;
     double curVisionError = tx;
     // treat identical values as stale
     if (lastVisionError == curVisionError) {
