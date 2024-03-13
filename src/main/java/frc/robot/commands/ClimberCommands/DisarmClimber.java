@@ -7,28 +7,22 @@ package frc.robot.commands.ClimberCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.climber.ClimberConstants;
-import frc.robot.subsystems.shooterPose.Pose;
-import frc.robot.subsystems.shooterPose.ShooterPose;
 
 public class DisarmClimber extends Command {
-  private ShooterPose shooterPose;
   private Climber climber;
 
   private static final double MIN_HEIGHT = ClimberConstants.MIN_SETPOINT_INCHES;
 
-  public DisarmClimber(Climber climber, ShooterPose shooterPose) {
+  public DisarmClimber(Climber climber) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(climber);
-    addRequirements(shooterPose);
     this.climber = climber;
-    this.shooterPose = shooterPose;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     if (climber.getHeight() > MIN_HEIGHT) {
-      shooterPose.setShooterPose(Pose.CLIMBER);
       climber.ClimberDown();
       ;
     }
@@ -48,7 +42,6 @@ public class DisarmClimber extends Command {
   @Override
   public void end(boolean interrupted) {
     climber.ClimberStop();
-    shooterPose.setShooterPose(Pose.HANDOFF);
   }
 
   // Returns true when the command should end.

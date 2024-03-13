@@ -325,8 +325,8 @@ public class RobotContainer {
     oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
     oi.operatorAmpButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
 
-    oi.armClimberSwitch().onTrue(new ArmClimber(climber, shooterPose));
-    oi.armClimberSwitch().onFalse(new DisarmClimber(climber, shooterPose));
+    oi.armClimberSwitch().onTrue(new ArmClimber(climber));
+    oi.armClimberSwitch().onFalse(new DisarmClimber(climber));
     oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
 
     // new SetShooterPose(shooterPose, Pose.TRAP)
