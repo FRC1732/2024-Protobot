@@ -495,14 +495,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopShooter", new StopShooter(shooterWheels));
     NamedCommands.registerCommand(
         "FinishIntakingNote", new FinishIntakingCommand(intake, feeder, shooterPose));
+    NamedCommands.registerCommand("SetShooterDistance115", new SetShooterDistance(shooterPose, 70));
+    NamedCommands.registerCommand("SetShooterDistance125", new SetShooterDistance(shooterPose, 94));
     NamedCommands.registerCommand(
-        "SetShooterDistance115", new SetShooterDistance(shooterPose, 79.0 - 9));
+        "SetShooterDistance150", new SetShooterDistance(shooterPose, 126));
     NamedCommands.registerCommand(
-        "SetShooterDistance125",
-        new SetShooterDistance(shooterPose, 103.0 - 9)); // new StopShooter(shooterWheels));
-    NamedCommands.registerCommand(
-        "SetShooterDistance150",
-        new SetShooterDistance(shooterPose, 135.0 - 9)); // new StopShooter(shooterWheels));
+        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 94));
+    NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
+    NamedCommands.registerCommand("SetShooterDistanceF4", new SetShooterDistance(shooterPose, 125));
 
     // build auto path commands
 
@@ -516,6 +516,9 @@ public class RobotContainer {
      */
     Command testAmpSide = new PathPlannerAuto("Amp Side Test");
     autoChooser.addDefaultOption("Amp Side 4 Piece", testAmpSide);
+
+    Command Fadeaway = new PathPlannerAuto("Fadeaway");
+    autoChooser.addOption("Source Side Fadeaway", Fadeaway);
 
     // Command autoTest = new PathPlannerAuto("TestAuto");
     // Command testLine = new PathPlannerAuto("DistanceTest");
