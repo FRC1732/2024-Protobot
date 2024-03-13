@@ -145,8 +145,8 @@ void loop() {
         climberColorsRainbow(&pixelsSides, NUMPIXELS_SIDES);
         break;
       case 5:  // note seen by intake limelight
-        setColorInt(255, 80, 0, &pixelsFront, NUMPIXELS_FRONT);
-        setColorInt(255, 80, 0, &pixelsSides, NUMPIXELS_SIDES);
+        setColorInt(255, 50, 0, &pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 50, 0, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       default:
