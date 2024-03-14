@@ -149,6 +149,12 @@ public class RotateToAngle extends Command {
   @Override
   public void execute() {
     Logger.recordOutput("RotateToAngle/AngleDeg", targetAngleSupplier.getAsDouble());
+    Logger.recordOutput(
+        "RotateToAngle/ThetaControllerMeasurement",
+        drivetrain.getPose().getRotation().getRadians());
+    Logger.recordOutput(
+        "RotateToAngle/ThetaControllerSetpoint",
+        Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
     // update from tunable numbers
     if (thetaKp.hasChanged()
         || thetaKd.hasChanged()
