@@ -113,15 +113,15 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(31.0, -47.0); // subwoofer, min angle
     angleLookupTable.put(50.0, -43.0 + sweepingAngleAdjustment);
     angleLookupTable.put(60.0, -39.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(70.0, -33.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(80.0, -29.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(90.0, -27.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(100.0, -25.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(110.0, -24.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(120.0, -22.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(130.0, -21.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(140.0, -21.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(150.0, -20.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(70.0, -32.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(80.0, -30.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(90.0, -29.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(100.0, -27.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(110.0, -26.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(120.0, -24.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(130.0, -23.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(140.0, -23.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(150.0, -22.5 + sweepingAngleAdjustment);
     angleLookupTable.put(250.0, -18.5 + sweepingAngleAdjustment);
 
     shooterHeightLeftMotor =

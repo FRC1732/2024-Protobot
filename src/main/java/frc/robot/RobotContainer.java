@@ -422,7 +422,7 @@ public class RobotContainer {
   }
 
   public double targetAngleHelper(double tx, double latency) {
-    latency *= 1.25;
+    latency *= 1.0;
     double curVisionError = tx;
     // treat identical values as stale
     if (lastVisionError == curVisionError) {
@@ -500,7 +500,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SetShooterDistance150", new SetShooterDistance(shooterPose, 126));
     NamedCommands.registerCommand(
-        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 94));
+        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110));
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand("SetShooterDistanceF4", new SetShooterDistance(shooterPose, 125));
 
