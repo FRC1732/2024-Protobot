@@ -189,7 +189,8 @@ public class RobotContainer {
             () -> climber.isClimbing(),
             this,
             () -> visionObjectDetectionSubsystem.hasTargetRgb(),
-            () -> intake.isIntaking());
+            () -> intake.isIntaking(),
+            () -> shooterWheels.isAtSpeed());
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -262,7 +263,7 @@ public class RobotContainer {
                                             statusRgb)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
-                    new RunShooterFast(shooterWheels, statusRgb)
+                    new RunShooterFast(shooterWheels)
                         .andThen(
                             new SetShooterDistanceContinuous(
                                     shooterPose,
@@ -486,7 +487,7 @@ public class RobotContainer {
         "disableXStance", Commands.runOnce(drivetrain::disableXstance, drivetrain));
     NamedCommands.registerCommand(
         "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
-    NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels, statusRgb));
+    NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
     NamedCommands.registerCommand(
         "IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));

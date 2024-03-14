@@ -10,16 +10,21 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.team6328.util.TunableNumber;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 public class ShooterWheels extends SubsystemBase {
+  private WheelMode wheelMode = WheelMode.STOP;
 
   @AutoLog
   public static class ShooterWheelsIOInput {
     double shooterHighMotorVelocity = 0.0;
     double shooterLowMotorVelocity = 0.0;
+    double shooterHighMotorPower = 0.0;
+    double shooterLowMotorPower = 0.0;
+    double shooterHighMotorAppliedOutput = 0.0;
+    double shooterLowMotorAppliedOutput = 0.0;
+    boolean shooterIsAtFastVelocity = false;
   }
 
   private ShooterWheelsIOInputAutoLogged input = new ShooterWheelsIOInputAutoLogged();
@@ -29,10 +34,10 @@ public class ShooterWheels extends SubsystemBase {
 
   private ShuffleboardTab shooterWheelsTab;
 
-  private TunableNumber shooterSpeedBackwards;
-  private TunableNumber shooterSpeedSlow;
-  private TunableNumber shooterSpeedFast;
-  private TunableNumber shooterSpeedStopped;
+  // private TunableNumber shooterSpeedBackwards;
+  // private TunableNumber shooterSpeedSlow;
+  // private TunableNumber shooterSpeedFast;
+  // private TunableNumber shooterSpeedStopped;
 
   public ShooterWheels() {
     shooterHighMotor =
@@ -63,40 +68,51 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.setOpenLoopRampRate(0.5);
     shooterHighMotor.stopMotor();
 
-    shooterSpeedBackwards =
-        new TunableNumber(
-            "Shooter Speed Backwards", ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
-    shooterSpeedFast =
-        new TunableNumber("Shooter Speed High", ShooterWheelsConstants.SHOOTER_SPEED_FAST);
-    shooterSpeedSlow =
-        new TunableNumber("Shooter Speed Low", ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
-    shooterSpeedStopped =
-        new TunableNumber("Shooter Speed Stopped", ShooterWheelsConstants.SHOOTER_SPEED_STOPPED);
+    /*
+     * shooterSpeedBackwards =
+     * new TunableNumber(
+     * "Shooter Speed Backwards", ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
+     * shooterSpeedFast =
+     * new TunableNumber("Shooter Speed High",
+     * ShooterWheelsConstants.SHOOTER_SPEED_FAST);
+     * shooterSpeedSlow =
+     * new TunableNumber("Shooter Speed Low",
+     * ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
+     * shooterSpeedStopped =
+     * new TunableNumber("Shooter Speed Stopped",
+     * ShooterWheelsConstants.SHOOTER_SPEED_STOPPED);
+     */
 
     if (SHOOTER_WHEELS_TESTING) {
       setUpShuffleBoard();
     }
-    /*Timer.delay(0.25);
-    shooterHighMotor.burnFlash();
-    Timer.delay(0.25);
-    shooterLowMotor.burnFlash();
-    Timer.delay(0.25);*/
+    /*
+     * Timer.delay(0.25);
+     * shooterHighMotor.burnFlash();
+     * Timer.delay(0.25);
+     * shooterLowMotor.burnFlash();
+     * Timer.delay(0.25);
+     */
   }
 
   public void setShooterSpeedFast() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
+    wheelMode = WheelMode.FAST;
   }
 
   public void setShooterSpeedSlow() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
+    wheelMode = WheelMode.SLOW;
   }
 
   public void setShooterSpeedBackwards() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
+    wheelMode = WheelMode.REVERSE;
   }
 
   public void stopShooter() {
     shooterHighMotor.stopMotor();
+    wheelMode = WheelMode.STOP;
   }
 
   public void setShooterSpeed(double speed) {
@@ -111,14 +127,36 @@ public class ShooterWheels extends SubsystemBase {
     return shooterHighMotor.getEncoder().getVelocity() >= 5400;
   }
 
+  public boolean isAtSpeed() {
+    switch (wheelMode) {
+      case FAST:
+        return isShooterAtFastVelocity();
+
+      case REVERSE:
+      case SLOW:
+        return true;
+
+      case STOP:
+      default:
+        return false;
+    }
+  }
+
   public void setUpShuffleBoard() {
     shooterWheelsTab = Shuffleboard.getTab("Shooter Wheels");
 
-    shooterWheelsTab.add("Current Shooter Speed", shooterHighMotor.get());
-    shooterWheelsTab.add("Shooter Speed Backwards", shooterSpeedBackwards);
-    shooterWheelsTab.add("Shooter Speed Slow", shooterSpeedSlow);
-    shooterWheelsTab.add("Shooter Speed Fast", shooterSpeedFast);
-    shooterWheelsTab.add("Shooter Speed Stopped", shooterSpeedStopped);
+    // TODO: Tunable numbers add themselves. Need to change these to generic entries
+    // to be able to add them to shuffleboard here.
+    // shooterWheelsTab.add("Current Shooter Speed", shooterHighMotor.get());
+    // shooterWheelsTab.add("Shooter Speed Backwards", shooterSpeedBackwards);
+    // shooterWheelsTab.add("Shooter Speed Slow", shooterSpeedSlow);
+    // shooterWheelsTab.add("Shooter Speed Fast", shooterSpeedFast);
+    // shooterWheelsTab.add("Shooter Speed Stopped", shooterSpeedStopped);
+
+    shooterWheelsTab.addDouble(
+        "Current Shooter Velocity", () -> shooterHighMotor.getEncoder().getVelocity());
+    shooterWheelsTab.addDouble("Current Shooter Power", () -> shooterHighMotor.get());
+    shooterWheelsTab.addBoolean("Is At Fast Velocity", () -> isShooterAtFastVelocity());
   }
 
   public void periodic() {
@@ -130,7 +168,19 @@ public class ShooterWheels extends SubsystemBase {
   private void updateInputs() {
     input.shooterHighMotorVelocity = shooterHighMotor.getEncoder().getVelocity();
     input.shooterLowMotorVelocity = shooterLowMotor.getEncoder().getVelocity();
+    input.shooterHighMotorPower = shooterHighMotor.get();
+    input.shooterLowMotorPower = shooterLowMotor.get();
+    input.shooterHighMotorAppliedOutput = shooterHighMotor.getAppliedOutput();
+    input.shooterLowMotorAppliedOutput = shooterLowMotor.getAppliedOutput();
+    input.shooterIsAtFastVelocity = isShooterAtFastVelocity();
 
     Logger.processInputs("Shooter Wheels", input);
+  }
+
+  private enum WheelMode {
+    SLOW,
+    FAST,
+    REVERSE,
+    STOP;
   }
 }

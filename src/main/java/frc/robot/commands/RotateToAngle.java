@@ -155,6 +155,7 @@ public class RotateToAngle extends Command {
     Logger.recordOutput(
         "RotateToAngle/ThetaControllerSetpoint",
         Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
+
     // update from tunable numbers
     if (thetaKp.hasChanged()
         || thetaKd.hasChanged()
@@ -189,6 +190,7 @@ public class RotateToAngle extends Command {
     } else {
       statusRgb.targetReady(false);
     }
+
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
     double rotationPercentage = TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0) * 1.0;

@@ -28,10 +28,10 @@ public class StatusRgb extends SubsystemBase {
 
   private BooleanSupplier hasClearence;
   private boolean targetReady;
-  private boolean targetVelocity;
   private BooleanSupplier intaking;
   private BooleanSupplier whenClimbing;
   private BooleanSupplier noteTarget;
+  private BooleanSupplier isAtSpeed;
 
   /** Creates a new StatusRGB. */
   public StatusRgb(
@@ -39,12 +39,14 @@ public class StatusRgb extends SubsystemBase {
       BooleanSupplier whenClimbing,
       RobotContainer robotContainer,
       BooleanSupplier noteTarget,
-      BooleanSupplier intaking) {
+      BooleanSupplier intaking,
+      BooleanSupplier isAtSpeed) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
     this.noteTarget = noteTarget;
     this.intaking = intaking;
+    this.isAtSpeed = isAtSpeed;
     timer = new Timer();
     out3.set(!false); // always off, not used
   }
@@ -58,10 +60,6 @@ public class StatusRgb extends SubsystemBase {
 
   public void targetReady(boolean targetReady) {
     this.targetReady = targetReady;
-  }
-
-  public void targetVelocity(boolean targetVelocity) {
-    this.targetVelocity = targetVelocity;
   }
 
   @Override
@@ -90,7 +88,7 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
-    } else if (targetReady && targetVelocity) {
+    } else if (targetReady && isAtSpeed.getAsBoolean()) {
       // mode 3 - solid green
       out0.set(!true);
       out1.set(!true);

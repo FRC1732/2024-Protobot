@@ -8,7 +8,7 @@ public class ShooterWheelsConstants {
     throw new IllegalStateException(CONSTRUCTOR_EXCEPTION);
   }
 
-  public static final boolean SHOOTER_WHEELS_TESTING = false;
+  public static final boolean SHOOTER_WHEELS_TESTING = true;
   public static final boolean SHOOTER_WHEELS_LOGGING = true;
   public static final String SUBSYSTEM_NAME = "Shooter";
 
