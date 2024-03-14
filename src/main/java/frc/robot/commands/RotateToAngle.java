@@ -131,7 +131,7 @@ public class RotateToAngle extends Command {
 
     Pose2d currentPose = drivetrain.getPose();
     thetaController.reset(currentPose.getRotation().getRadians());
-    thetaController.setTolerance(thetaTolerance.get());
+    thetaController.setTolerance(Math.toRadians(thetaTolerance.get()));
 
     // configure the controller such that the range of values is centered on the target angle
     thetaController.enableContinuousInput(
@@ -173,10 +173,7 @@ public class RotateToAngle extends Command {
 
     Pose2d currentPose = drivetrain.getPose();
     if (lastManualRotationOverrideValue != manualRotationOverrideSupplier.getAsBoolean()) {
-      thetaController.reset(
-          currentPose.getRotation().getRadians(),
-          drivetrain.getRobotRelativeSpeeds()
-              .omegaRadiansPerSecond); // @TODO test setting velocity to 0
+      thetaController.reset(currentPose.getRotation().getRadians());
     }
     double thetaVelocity =
         thetaController.calculate(
@@ -184,7 +181,8 @@ public class RotateToAngle extends Command {
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
     thetaVelocity += 0.026 * Math.signum(thetaVelocity);
 
-    if (thetaController.atGoal()) { // @TODO test instead of atGoal, manually check within threshold
+    if (Math.abs(currentPose.getRotation().getDegrees() - this.targetAngleSupplier.getAsDouble())
+        < thetaTolerance.get()) {
       thetaVelocity = 0.0;
       statusRgb.targetReady(true);
     } else {

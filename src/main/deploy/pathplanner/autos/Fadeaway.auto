@@ -85,6 +85,170 @@
           "data": {
             "name": "FinishIntakingNote"
           }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "N5-F4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SpinShooter"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FinishIntakingNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SetShooterDistanceF4"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.25
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "F4-N3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StartIntakingNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "N3-F4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "SpinShooter"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "FinishIntakingNote"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "SetShooterDistanceF4"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.25
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShooter"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "F4-N4r"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FinishIntakingNote"
+                }
+              }
+            ]
+          }
         }
       ]
     }

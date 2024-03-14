@@ -24,11 +24,11 @@ public abstract class LEDs extends SubsystemBase {
 
   public static LEDs getInstance() {
     if (instance == null) {
-      //if (RobotConfig.getInstance().getLEDHardware() == RobotConfig.LED_HARDWARE.CANDLE) {
-        //instance = new LEDsCANdle();
-      //} else {
-        instance = new LEDsRIO();
-      //}
+      // if (RobotConfig.getInstance().getLEDHardware() == RobotConfig.LED_HARDWARE.CANDLE) {
+      // instance = new LEDsCANdle();
+      // } else {
+      instance = new LEDsRIO();
+      // }
     }
     return instance;
   }
