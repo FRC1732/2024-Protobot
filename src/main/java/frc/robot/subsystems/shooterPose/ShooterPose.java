@@ -114,15 +114,15 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(50.0, -43.0 + sweepingAngleAdjustment);
     angleLookupTable.put(60.0, -39.0 + sweepingAngleAdjustment);
     angleLookupTable.put(70.0, -32.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(80.0, -30.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(90.0, -29.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(100.0, -27.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(110.0, -26.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(120.0, -24.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(130.0, -23.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(140.0, -23.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(150.0, -22.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(250.0, -18.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(80.0, -30.0 + -0.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(90.0, -29.0 + -0.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(100.0, -27.5 + -1.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(110.0, -26.5 + -1.5 + sweepingAngleAdjustment);
+    angleLookupTable.put(120.0, -24.5 + -2.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(130.0, -23.5 + -2.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(140.0, -23.0 + -2.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(150.0, -22.5 + -2.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(250.0, -18.5 + -2.0 + sweepingAngleAdjustment);
 
     shooterHeightLeftMotor =
         new CANSparkMax(

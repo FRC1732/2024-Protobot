@@ -7,6 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,16 +64,23 @@ public class Climber extends SubsystemBase {
     //     climberLeftMotor.restoreFactoryDefaults();
     //     Timer.delay(0.050);
     //     climberRightMotor.restoreFactoryDefaults();
-    //     Timer.delay(0.050);
-    // climberLeftMotor.setInverted(true);
+    Timer.delay(0.050);
+    climberLeftMotor.setInverted(true);
+    Timer.delay(0.050);
+    if (!climberLeftMotor.getInverted()){
+        System.out.println("Failed Climber Inversion Once, Try Again....");
+        climberLeftMotor.setInverted(true);
+    }
     climberLeftMotor
         .getEncoder()
         .setPositionConversionFactor(ClimberConstants.CLIMBER_CONVERSION_FACTOR);
     climberLeftEncoder = climberLeftMotor.getEncoder();
 
     climberLeftEncoder.setPosition(0);
+    Timer.delay(0.050);
 
     climberRightMotor.follow(climberLeftMotor, true);
+    Timer.delay(0.050);
 
     // Timer.delay(0.25);
     // climberRightMotor.burnFlash();
