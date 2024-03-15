@@ -184,6 +184,7 @@ public class RotateToAngle extends Command {
     if (Math.abs(currentPose.getRotation().getDegrees() - this.targetAngleSupplier.getAsDouble())
         < thetaTolerance.get()) {
       thetaVelocity = 0.0;
+      thetaController.reset(currentPose.getRotation().getRadians());
       statusRgb.targetReady(true);
     } else {
       statusRgb.targetReady(false);
