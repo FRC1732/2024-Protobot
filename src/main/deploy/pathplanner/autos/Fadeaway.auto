@@ -103,25 +103,24 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishIntakingNote"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "SetShooterDistanceF4"
-                      }
-                    }
-                  ]
+                  "name": "FinishIntakingNote"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetShooterDistanceF4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
           }
         },
         {
@@ -185,25 +184,24 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishIntakingNote"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "SetShooterDistanceF4"
-                      }
-                    }
-                  ]
+                  "name": "FinishIntakingNote"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "SetShooterDistanceF4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.2
           }
         },
         {

@@ -46,7 +46,7 @@ public class RotateToAngle extends Command {
           "RotateToAngle/ThetaMaxVelocity",
           RobotConfig.getInstance().getRobotMaxAngularVelocity() / 2);
   protected static final TunableNumber thetaMaxAcceleration =
-      new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 5);
+      new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 10);
   protected static final TunableNumber thetaTolerance =
       new TunableNumber("RotateToAngle/ThetaTolerance", 2);
 
