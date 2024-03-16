@@ -65,11 +65,11 @@ public class Climber extends SubsystemBase {
     //     Timer.delay(0.050);
     //     climberRightMotor.restoreFactoryDefaults();
     Timer.delay(0.050);
-    climberLeftMotor.setInverted(true);
+    climberLeftMotor.setInverted(false);
     Timer.delay(0.050);
-    if (!climberLeftMotor.getInverted()){
+    if (climberLeftMotor.getInverted()){
         System.out.println("Failed Climber Inversion Once, Try Again....");
-        climberLeftMotor.setInverted(true);
+        climberLeftMotor.setInverted(false);
     }
     climberLeftMotor
         .getEncoder()
