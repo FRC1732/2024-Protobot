@@ -42,6 +42,7 @@ public class DisarmClimber extends Command {
   @Override
   public void end(boolean interrupted) {
     climber.ClimberStop();
+    climber.ClimberDisarm();
   }
 
   // Returns true when the command should end.
