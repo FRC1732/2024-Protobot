@@ -59,7 +59,7 @@ public class AutoClimb extends Command {
       }
       climber.ClimberStop();
       if (timer.get() > 1.25) {
-        shooterPose.setShooterPose(Pose.HANDOFF);
+        shooterPose.setShooterPose(Pose.TRAP_PREP);
       } else {
         shooterWheels.setShooterSpeedSlow();
         feeder.runFeeder();
