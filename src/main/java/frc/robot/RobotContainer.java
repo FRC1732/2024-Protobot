@@ -501,7 +501,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SetShooterDistance150", new SetShooterDistance(shooterPose, 126));
     NamedCommands.registerCommand(
-        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 10));
+        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 15));
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand("SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115));
 

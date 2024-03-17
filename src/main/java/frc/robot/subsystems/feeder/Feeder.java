@@ -20,6 +20,7 @@ public class Feeder extends SubsystemBase {
   public static class FeederIOInput {
     double feederMotorSpeed = 0.0;
     double analogBeamBreakSensor = 0.0;
+    double analogBeamBreakSensorNonAverage = 0.0;
   }
 
   private FeederIOInputAutoLogged inputs = new FeederIOInputAutoLogged();
@@ -121,6 +122,7 @@ public class Feeder extends SubsystemBase {
   private void updateInputs() {
     inputs.feederMotorSpeed = feederMotor.get();
     inputs.analogBeamBreakSensor = averageValue;
+    inputs.analogBeamBreakSensorNonAverage = analog.getValue();
 
     Logger.processInputs("Feeder", inputs);
   }

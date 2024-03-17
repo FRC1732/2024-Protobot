@@ -18,6 +18,7 @@ public class Intake extends SubsystemBase {
     double intakeMainMotorSpeed = 0.0;
     double intakeCentererMotorSpeed = 0.0;
     double intakeBeamBreak = 0.0;
+    double intakeBeamBreakNonAverage = 0.0;
   }
 
   private IntakeIOInputAutoLogged inputs = new IntakeIOInputAutoLogged();
@@ -128,6 +129,7 @@ public class Intake extends SubsystemBase {
     inputs.intakeMainMotorSpeed = intakeMainMotor.get();
     inputs.intakeCentererMotorSpeed = intakeCentererMotor.get();
     inputs.intakeBeamBreak = averageValue;
+    inputs.intakeBeamBreakNonAverage = intakeAnalogSensor.getValue();
 
     Logger.processInputs("Intake", inputs);
   }
