@@ -104,6 +104,6 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     inputs.TY = getTY();
     inputs.hasTarget = hasTarget();
 
-    Logger.processInputs("Visions", inputs);
+    Logger.processInputs("VisionApriltag", inputs);
   }
 }

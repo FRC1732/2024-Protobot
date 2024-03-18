@@ -104,6 +104,6 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
     inputs.TY = getTY();
     inputs.hasTarget = hasTarget();
 
-    Logger.processInputs("Visions", inputs);
+    Logger.processInputs("VisionObjectDetection", inputs);
   }
 }
