@@ -51,6 +51,7 @@ public class StatusRgb extends SubsystemBase {
     this.isAtSpeed = isAtSpeed;
     this.teamColor = teamColor;
     timer = new Timer();
+    out3.set(!false); // FIXME remove this when we can flash the arduino again
   }
 
   public void acquiredNote() {
@@ -66,7 +67,7 @@ public class StatusRgb extends SubsystemBase {
 
   @Override
   public void periodic() {
-    out3.set(!teamColor.getAsBoolean()); // set eye color
+    //out3.set(!teamColor.getAsBoolean()); // set eye color
     if (specialMode != SpecialMode.NONE) {
       if (timer.hasElapsed(targetElapsedTimeSeconds)) {
         specialMode = SpecialMode.NONE;
