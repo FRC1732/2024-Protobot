@@ -190,7 +190,8 @@ public class RobotContainer {
             this,
             () -> visionObjectDetectionSubsystem.hasTargetRgb(),
             () -> intake.isIntaking(),
-            () -> shooterWheels.isAtSpeed());
+            () -> shooterWheels.isAtSpeed(),
+            () -> getAllianceColorBoolean());
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -765,5 +766,9 @@ public class RobotContainer {
       this.lastAlliance = alliance.get();
       this.drivetrain.updateAlliance(this.lastAlliance);
     }
+  }
+
+  public boolean getAllianceColorBoolean() {
+    return lastAlliance == DriverStation.Alliance.Blue; // return a boolean so status rgb can work
   }
 }

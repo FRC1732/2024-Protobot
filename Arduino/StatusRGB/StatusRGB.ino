@@ -18,9 +18,10 @@
 #define NUMPIXELS_FRONT 38  // number of neopixels in strip
 #define NUMPIXELS_SIDES 48  // number of neopixels in strip
 
-#define EYES_START 6 // start of where we turn the eyes red
+#define EYES_START 5 // start of where we turn the eyes red
 #define EYES_START_SECOND 24 // second start of where we turn the eyes red
-#define EYES_LENGTH 9 // number of pixels we want to turn red for the ram
+#define EYES_LENGTH 8 // number of pixels we want to turn red for the ram
+#define EYES_LENGTH_SECOND 9 // second number of pixels we want to turn red for the ram
 
 #define DELAY_TIME 200
 #define INTENSITY 255
@@ -36,6 +37,9 @@ uint32_t highBlue = pixelsFront.Color(0, 0, INTENSITY);
 uint32_t lowGold = pixelsFront.Color(INTENSITY / 3, INTENSITY / 6, 0);
 uint32_t highGold = pixelsFront.Color(INTENSITY, INTENSITY / 2, 0);
 uint32_t fullRed = pixelsFront.Color(255, 0, 0);
+uint32_t fullBlue = pixelsFront.Color(0, 0, 255);
+
+bool doBlueEyes = false;
 
 int mode = 0;
 int timer = 0;
@@ -62,8 +66,12 @@ void setup() {
 }
 
 void redEyes(Adafruit_NeoPixel *pixels) { // method that turns the ram eyes red
-  pixels->fill(fullRed, EYES_START, EYES_LENGTH);
-  pixels->fill(fullRed, EYES_START_SECOND, EYES_LENGTH);
+  uint32_t pickColor = fullRed;
+  if (doBlueEyes) {
+    uint32_t pickColor = fullBlue;
+  }
+  pixels->fill(pickColor, EYES_START, EYES_LENGTH);
+  pixels->fill(pickColor, EYES_START_SECOND, EYES_LENGTH_SECOND);
 }
 
 void setColor(bool red, bool green, bool blue, Adafruit_NeoPixel *pixels, int size) {
@@ -106,7 +114,14 @@ void loop() {
   digitalWrite(OUTPUT_D3, b3);
   digitalWrite(OUTPUT_D4, b4);
 
-  mode = ((int)b0 << 0) + ((int)b1 << 1) + ((int)b2 << 2) + ((int)b3 << 3) + ((int)b4 << 4);
+  int doBlue = (int)b3 << 3;
+  if (doBlue > 0) {
+    doBlueEyes = true;
+  } else {
+    doBlueEyes = false;
+  }
+
+  mode = ((int)b0 << 0) + ((int)b1 << 1) + ((int)b2 << 2) + ((int)b4 << 4);
   Serial.print("Mode: ");
   Serial.println(mode);
 
@@ -123,8 +138,8 @@ void loop() {
 
       case 1:  // mode == speaker
         Serial.println("Speaker Mode");
-        setColorInt(255, 255, 255, &pixelsFront, NUMPIXELS_FRONT);
-        setColorInt(255, 255, 255, &pixelsSides, NUMPIXELS_SIDES);
+        setColorInt(255, 90, 200, &pixelsFront, NUMPIXELS_FRONT);
+        setColorInt(255, 90, 200, &pixelsSides, NUMPIXELS_SIDES);
         break;
 
       case 2:  // !hasClearance
@@ -234,8 +249,8 @@ void climberColors(bool red, bool green, bool blue, Adafruit_NeoPixel *pixels, i
       } else if (pickTable[i] > 0) {
         pickTable[i] = max(0, pickTable[i] - 20);
       }
-
-      pixels->setPixelColor(i, pixels->Color(red * pickTable[i], green * pickTable[i], blue * pickTable[i]));
+      uint32_t setColor = pixels->Color(red * pickTable[i], green * pickTable[i], blue * pickTable[i]);
+      pixels->setPixelColor(i, setColor);
     }
 
     if (size == NUMPIXELS_FRONT) {
@@ -291,8 +306,9 @@ void climberColorsRainbow(Adafruit_NeoPixel *pixels, int size) {
       } else if (pickTable[i] > 0) {
         pickTable[i] = max(0, pickTable[i] - 20);
       }
-
-      pixels->setPixelColor(i, pixels->Color(pickTableColor[i][0] * (pickTable[i] / 250.0), pickTableColor[i][1] * (pickTable[i] / 250.0), pickTableColor[i][2] * (pickTable[i] / 250.0)));
+      
+      uint32_t setColor = pixels->Color(pickTableColor[i][0] * (pickTable[i] / 250.0), pickTableColor[i][1] * (pickTable[i] / 250.0), pickTableColor[i][2] * (pickTable[i] / 250.0));
+      pixels->setPixelColor(i, setColor);
     }
     if (size == NUMPIXELS_FRONT) {
       redEyes(pixels);
