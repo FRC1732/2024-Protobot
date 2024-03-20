@@ -65,6 +65,6 @@ public class FullOperatorConsoleOI extends DualJoysticksOI {
   }
 
   public Trigger operatorObjectDetectionAssistButton() {
-    return operatorPanelButtonsTwo[12];
+    return operatorPanelButtonsTwo[11];
   }
 }
