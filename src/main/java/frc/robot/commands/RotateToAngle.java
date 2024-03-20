@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.*;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -38,7 +39,7 @@ public class RotateToAngle extends Command {
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
 
-  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 7);
+  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 1);
   protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 0);
   protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0);
   protected static final TunableNumber thetaMaxVelocity =
@@ -50,13 +51,11 @@ public class RotateToAngle extends Command {
   protected static final TunableNumber thetaTolerance =
       new TunableNumber("RotateToAngle/ThetaTolerance", 2);
 
-  protected final ProfiledPIDController thetaController =
-      new ProfiledPIDController(
+  protected final PIDController thetaController =
+      new PIDController(
           thetaKp.get(),
           thetaKi.get(),
-          thetaKd.get(),
-          new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()),
-          LOOP_PERIOD_SECS);
+          thetaKd.get());
 
   /**
    * Constructs a new RotateToAngle command that, when executed, instructs the drivetrain subsystem
@@ -130,7 +129,7 @@ public class RotateToAngle extends Command {
     Logger.recordOutput("ActiveCommands/RotateToAngle", true);
 
     Pose2d currentPose = drivetrain.getPose();
-    thetaController.reset(currentPose.getRotation().getRadians());
+    reset(currentPose.getRotation().getRadians(), thetaController);
     thetaController.setTolerance(Math.toRadians(thetaTolerance.get()));
 
     // configure the controller such that the range of values is centered on the target angle
@@ -166,14 +165,12 @@ public class RotateToAngle extends Command {
       thetaController.setP(thetaKp.get());
       thetaController.setI(thetaKi.get());
       thetaController.setD(thetaKd.get());
-      thetaController.setConstraints(
-          new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
       thetaController.setTolerance(thetaTolerance.get());
     }
 
     Pose2d currentPose = drivetrain.getPose();
     if (lastManualRotationOverrideValue != manualRotationOverrideSupplier.getAsBoolean()) {
-      thetaController.reset(currentPose.getRotation().getRadians());
+      reset(currentPose.getRotation().getRadians(), thetaController);
     }
     double thetaVelocity =
         thetaController.calculate(
@@ -184,7 +181,7 @@ public class RotateToAngle extends Command {
     if (Math.abs(currentPose.getRotation().getDegrees() - this.targetAngleSupplier.getAsDouble())
         < thetaTolerance.get()) {
       thetaVelocity = 0.0;
-      thetaController.reset(currentPose.getRotation().getRadians());
+      reset(currentPose.getRotation().getRadians(), thetaController);
       statusRgb.targetReady(true);
     } else {
       statusRgb.targetReady(false);
@@ -218,6 +215,11 @@ public class RotateToAngle extends Command {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+    private void reset(double setpoint, PIDController controller) {
+    controller.reset();
+    controller.setSetpoint(setpoint);
   }
 
   /**
