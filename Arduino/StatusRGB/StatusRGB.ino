@@ -114,14 +114,15 @@ void loop() {
   digitalWrite(OUTPUT_D3, b3);
   digitalWrite(OUTPUT_D4, b4);
 
-  int doBlue = (int)b3 << 3;
+  /*int doBlue = (int)b3 << 3;
   if (doBlue > 0) {
     doBlueEyes = true;
   } else {
     doBlueEyes = false;
-  }
+  }*/
 
-  mode = ((int)b0 << 0) + ((int)b1 << 1) + ((int)b2 << 2) + ((int)b4 << 4);
+  // bits 3 and 4 reversed
+  mode = ((int)b0 << 0) + ((int)b1 << 1) + ((int)b2 << 2) + (int)b3 << 4 + ((int)b4 << 3);
   Serial.print("Mode: ");
   Serial.println(mode);
 

@@ -48,7 +48,7 @@ public class StatusRgb extends SubsystemBase {
     this.intaking = intaking;
     this.isAtSpeed = isAtSpeed;
     timer = new Timer();
-    out3.set(!false); // FIXME remove this when we can flash the arduino again
+    out4.set(!false); // FIXME remove this when we can flash the arduino again
   }
 
   public void acquiredNote() {
@@ -73,7 +73,7 @@ public class StatusRgb extends SubsystemBase {
       } else {
         switch (specialMode) {
           case NOTE_CAPTURED: // blue and gold
-            out4.set(!true);
+            out3.set(!true);
             System.out.println("Special mode active");
             break;
           default: // do nothing
@@ -81,7 +81,7 @@ public class StatusRgb extends SubsystemBase {
         }
       }
     } else {
-      out4.set(!false);
+      out3.set(!false);
     }
 
     if (DriverStation.isDisabled()) {
