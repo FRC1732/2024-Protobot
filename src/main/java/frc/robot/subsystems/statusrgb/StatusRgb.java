@@ -67,7 +67,7 @@ public class StatusRgb extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //out3.set(!teamColor.getAsBoolean()); // set eye color
+    // out3.set(!teamColor.getAsBoolean()); // set eye color
     if (specialMode != SpecialMode.NONE) {
       if (timer.hasElapsed(targetElapsedTimeSeconds)) {
         specialMode = SpecialMode.NONE;
