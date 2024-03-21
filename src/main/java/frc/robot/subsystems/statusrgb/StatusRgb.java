@@ -32,7 +32,6 @@ public class StatusRgb extends SubsystemBase {
   private BooleanSupplier whenClimbing;
   private BooleanSupplier noteTarget;
   private BooleanSupplier isAtSpeed;
-  private BooleanSupplier teamColor;
 
   /** Creates a new StatusRGB. */
   public StatusRgb(
@@ -41,15 +40,13 @@ public class StatusRgb extends SubsystemBase {
       RobotContainer robotContainer,
       BooleanSupplier noteTarget,
       BooleanSupplier intaking,
-      BooleanSupplier isAtSpeed,
-      BooleanSupplier teamColor) {
+      BooleanSupplier isAtSpeed) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
     this.noteTarget = noteTarget;
     this.intaking = intaking;
     this.isAtSpeed = isAtSpeed;
-    this.teamColor = teamColor;
     timer = new Timer();
     out3.set(!false); // FIXME remove this when we can flash the arduino again
   }
@@ -67,7 +64,7 @@ public class StatusRgb extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // out3.set(!teamColor.getAsBoolean()); // set eye color
+    // out3.set(robotContainer.getAllianceColor() == DriverStation.Alliance.Blue); // set eye color
     if (specialMode != SpecialMode.NONE) {
       if (timer.hasElapsed(targetElapsedTimeSeconds)) {
         specialMode = SpecialMode.NONE;
