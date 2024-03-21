@@ -23,6 +23,7 @@ public class ArmClimber extends Command {
   public void initialize() {
     if (climber.getHeight() < MAX_HEIGHT) {
       climber.ClimberUp();
+      climber.setClimberArmed(true);
     }
   }
 

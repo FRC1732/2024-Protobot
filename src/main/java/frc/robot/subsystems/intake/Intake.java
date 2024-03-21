@@ -119,7 +119,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //hasNote();
+    // hasNote();
 
     // This method will be called once per scheduler run
     if (IntakeConstants.INTAKE_LOGGING) {

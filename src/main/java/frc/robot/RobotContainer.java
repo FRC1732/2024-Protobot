@@ -190,7 +190,8 @@ public class RobotContainer {
             this,
             () -> visionObjectDetectionSubsystem.hasTargetRgb(),
             () -> intake.isIntaking(),
-            () -> shooterWheels.isAtSpeed());
+            () -> shooterWheels.isAtSpeed(),
+            () -> climber.isClimberArmed());
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();

@@ -122,7 +122,7 @@ void loop() {
   }*/
 
   // bits 3 and 4 reversed
-  mode = ((int)b0 << 0) + ((int)b1 << 1) + ((int)b2 << 2) + (int)b3 << 4 + ((int)b4 << 3);
+  mode = ((int)b0 << 0) + ((int)b1 << 1) + ((int)b2 << 2) + ((int)b3 << 4) + ((int)b4 << 3);
   Serial.print("Mode: ");
   Serial.println(mode);
 

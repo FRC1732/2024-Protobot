@@ -32,6 +32,7 @@ public class StatusRgb extends SubsystemBase {
   private BooleanSupplier whenClimbing;
   private BooleanSupplier noteTarget;
   private BooleanSupplier isAtSpeed;
+  private BooleanSupplier climberArmed;
 
   /** Creates a new StatusRGB. */
   public StatusRgb(
@@ -40,13 +41,15 @@ public class StatusRgb extends SubsystemBase {
       RobotContainer robotContainer,
       BooleanSupplier noteTarget,
       BooleanSupplier intaking,
-      BooleanSupplier isAtSpeed) {
+      BooleanSupplier isAtSpeed,
+      BooleanSupplier climberArmed) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
     this.noteTarget = noteTarget;
     this.intaking = intaking;
     this.isAtSpeed = isAtSpeed;
+    this.climberArmed = climberArmed;
     timer = new Timer();
     out4.set(!false); // FIXME remove this when we can flash the arduino again
   }
@@ -104,7 +107,7 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!false);
       out1.set(!false);
       out2.set(!true);
-    } else if (!hasClearence.getAsBoolean()) {
+    } else if (climberArmed.getAsBoolean() || !hasClearence.getAsBoolean()) {
       // mode 2 - solid red
       out0.set(!false);
       out1.set(!true);
