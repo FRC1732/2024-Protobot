@@ -10,7 +10,7 @@ import frc.robot.subsystems.climber.Climber;
 public class ArmClimber extends Command {
   private Climber climber;
 
-  private static final double MAX_HEIGHT = 23.0;
+  private static final double MAX_HEIGHT = 23.5;
 
   public ArmClimber(Climber climber) {
     // Use addRequirements() here to declare subsystem dependencies.
