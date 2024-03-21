@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.limelightVision.LimelightHelpers;
+import frc.robot.limelightVision.LimelightHelpers.PoseEstimate;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -45,6 +46,10 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     return LimelightHelpers.getBotPose2d(getLimelightName());
   }
 
+  public PoseEstimate getPoseEstimate() {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue(getLimelightName());
+  }
+
   public double getLatencyCapture() {
     return LimelightHelpers.getLatency_Capture(getLimelightName());
   }
@@ -58,7 +63,7 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   }
 
   public boolean hasNoteTarget() {
-    return LimelightHelpers.getNeuralClassID(getLimelightName()) > 0;
+    return LimelightHelpers.getNeuralClassID(getLimelightName()).toLowerCase().equals("note");
   }
 
   public double getAprilTagId() {
