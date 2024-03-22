@@ -312,15 +312,18 @@ public class RobotContainer {
         .onFalse(
             new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
-    oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose).alongWith(
-                                    new RotateToAngle(
-                                            drivetrain,
-                                            oi::getTranslateX,
-                                            oi::getTranslateY,
-                                            oi::getRotate,
-                                            () -> 120,
-                                            () -> false,
-                                            statusRgb)));
+    oi.sourceLoadButton()
+        .whileTrue(
+            new IntakeSourceNote(feeder, shooterPose)
+                .alongWith(
+                    new RotateToAngle(
+                        drivetrain,
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                        () -> 120,
+                        () -> false,
+                        statusRgb)));
 
     oi.IntakeOrScoreButton()
         .whileTrue(
@@ -536,7 +539,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SetShooterDistance150", new SetShooterDistance(shooterPose, 126));
     NamedCommands.registerCommand(
-        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 25));
+        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 30));
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand(
         "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 - 10));
