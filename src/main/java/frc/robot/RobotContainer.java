@@ -321,7 +321,7 @@ public class RobotContainer {
                         oi::getTranslateX,
                         oi::getTranslateY,
                         oi::getRotate,
-                        () -> 120,
+                        () -> lastAlliance == Alliance.Blue ? 120 : 60,
                         () -> false,
                         statusRgb)));
 
@@ -533,7 +533,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "FinishIntakingNote", new FinishIntakingCommand(intake, feeder, shooterPose));
     NamedCommands.registerCommand(
-        "SetShooterDistance115", new SetShooterDistance(shooterPose, 65 - 5));
+        "SetShooterDistance115", new SetShooterDistance(shooterPose, 65 + 5));
     NamedCommands.registerCommand(
         "SetShooterDistance125", new SetShooterDistance(shooterPose, 94 - 10));
     NamedCommands.registerCommand(
@@ -542,7 +542,7 @@ public class RobotContainer {
         "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 30));
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand(
-        "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 - 10));
+        "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 + 10));
 
     // build auto path commands
 
