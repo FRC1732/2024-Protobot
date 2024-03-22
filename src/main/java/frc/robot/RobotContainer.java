@@ -318,7 +318,7 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> -120,
+                                            () -> 120,
                                             () -> false,
                                             statusRgb)));
 
