@@ -49,9 +49,9 @@ public interface OperatorInterface {
   //   return new Trigger(() -> false);
   // }
 
-  // public default Trigger sourceLoadButton() {
-  //   return new Trigger(() -> false);
-  // }
+  public default Trigger sourceLoadButton() {
+    return new Trigger(() -> false);
+  }
 
   public default Trigger feedThroughButton() {
     return new Trigger(() -> false);

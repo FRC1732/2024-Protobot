@@ -24,7 +24,6 @@ public class DisarmClimber extends Command {
   public void initialize() {
     if (climber.getHeight() > MIN_HEIGHT) {
       climber.ClimberDown();
-      ;
     }
   }
 
@@ -43,6 +42,7 @@ public class DisarmClimber extends Command {
   public void end(boolean interrupted) {
     climber.ClimberStop();
     climber.ClimberDisarm();
+    climber.setClimberArmed(false);
   }
 
   // Returns true when the command should end.

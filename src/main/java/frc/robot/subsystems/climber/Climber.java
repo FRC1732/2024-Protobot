@@ -15,6 +15,7 @@ import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 public class Climber extends SubsystemBase {
+  private boolean climberArmed = false;
 
   @AutoLog
   public static class ClimberIOInput {
@@ -59,11 +60,11 @@ public class Climber extends SubsystemBase {
     climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
     climberRightMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 50);
 
-    //     Timer.delay(0.050);
+    // Timer.delay(0.050);
 
-    //     climberLeftMotor.restoreFactoryDefaults();
-    //     Timer.delay(0.050);
-    //     climberRightMotor.restoreFactoryDefaults();
+    // climberLeftMotor.restoreFactoryDefaults();
+    // Timer.delay(0.050);
+    // climberRightMotor.restoreFactoryDefaults();
     Timer.delay(0.050);
     climberLeftMotor.setInverted(false);
     Timer.delay(0.050);
@@ -89,15 +90,15 @@ public class Climber extends SubsystemBase {
     // Timer.delay(0.25);
 
     // climberLeftPID =
-    //     new PIDController(
-    //         ClimberConstants.CLIMBER_LEFT_P,
-    //         ClimberConstants.CLIMBER_LEFT_I,
-    //         ClimberConstants.CLIMBER_LEFT_D);
+    // new PIDController(
+    // ClimberConstants.CLIMBER_LEFT_P,
+    // ClimberConstants.CLIMBER_LEFT_I,
+    // ClimberConstants.CLIMBER_LEFT_D);
     // climberRightPID =
-    //     new PIDController(
-    //         ClimberConstants.CLIMBER_RIGHT_P,
-    //         ClimberConstants.CLIMBER_RIGHT_I,
-    //         ClimberConstants.CLIMBER_RIGHT_D);
+    // new PIDController(
+    // ClimberConstants.CLIMBER_RIGHT_P,
+    // ClimberConstants.CLIMBER_RIGHT_I,
+    // ClimberConstants.CLIMBER_RIGHT_D);
 
     if (ClimberConstants.CLIMBER_TESTING) {
       setUpShuffleBoard();
@@ -108,14 +109,14 @@ public class Climber extends SubsystemBase {
     climberLeftMotor.set(.75);
     // climberRightMotor.set(.1);
 
-    isClimbing = true;
+    // isClimbing = true;
   }
 
   public void ClimberUpSlow() {
     climberLeftMotor.set(.25);
     // climberRightMotor.set(.1);
 
-    isClimbing = true;
+    // isClimbing = true;
   }
 
   public void ClimberDown() {
@@ -140,21 +141,21 @@ public class Climber extends SubsystemBase {
     climberLeftMotor.set(0);
     // climberRightMotor.set(-.1);
 
-    isClimbing = true;
+    // isClimbing = true;
   }
 
   // public void ExtendClimber() {
-  //   climberLeftPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
-  //   climberRightPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
+  // climberLeftPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
+  // climberRightPID.setSetpoint(ClimberConstants.HIGH_SETPOINT_INCHES);
 
-  //   isClimbing = true;
+  // isClimbing = true;
   // }
 
   // public void RetractClimber() {
-  //   climberLeftPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
-  //   climberRightPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
+  // climberLeftPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
+  // climberRightPID.setSetpoint(ClimberConstants.LOW_SETPOINT_INCHES);
 
-  //   isClimbing = true;
+  // isClimbing = true;
   // }
 
   public void setUpShuffleBoard() {
@@ -190,10 +191,10 @@ public class Climber extends SubsystemBase {
 
     leftClimberHeight = climberLeftMotor.getEncoder().getPosition();
     // if (leftClimberHeight >= ClimberConstants.MAX_SETPOINT_INCHES) {
-    //   ClimberStop();
+    // ClimberStop();
     // }
     // if (leftClimberHeight <= ClimberConstants.MIN_SETPOINT_INCHES) {
-    //   ClimberStop();
+    // ClimberStop();
     // }
 
     /*
@@ -226,6 +227,14 @@ public class Climber extends SubsystemBase {
 
   public double getHeight() {
     return leftClimberHeight;
+  }
+
+  public void setClimberArmed(boolean climberArmed) {
+    this.climberArmed = climberArmed;
+  }
+
+  public boolean isClimberArmed() {
+    return climberArmed;
   }
 
   private void updateInputs() {

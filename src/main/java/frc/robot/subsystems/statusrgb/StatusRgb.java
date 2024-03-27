@@ -32,7 +32,7 @@ public class StatusRgb extends SubsystemBase {
   private BooleanSupplier whenClimbing;
   private BooleanSupplier noteTarget;
   private BooleanSupplier isAtSpeed;
-  private BooleanSupplier teamColor;
+  private BooleanSupplier climberArmed;
 
   /** Creates a new StatusRGB. */
   public StatusRgb(
@@ -42,16 +42,16 @@ public class StatusRgb extends SubsystemBase {
       BooleanSupplier noteTarget,
       BooleanSupplier intaking,
       BooleanSupplier isAtSpeed,
-      BooleanSupplier teamColor) {
+      BooleanSupplier climberArmed) {
     this.hasClearence = hasClearence;
     this.whenClimbing = whenClimbing;
     this.robotContainer = robotContainer;
     this.noteTarget = noteTarget;
     this.intaking = intaking;
     this.isAtSpeed = isAtSpeed;
-    this.teamColor = teamColor;
+    this.climberArmed = climberArmed;
     timer = new Timer();
-    out3.set(!false); // FIXME remove this when we can flash the arduino again
+    out4.set(!false); // FIXME remove this when we can flash the arduino again
   }
 
   public void acquiredNote() {
@@ -67,7 +67,7 @@ public class StatusRgb extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // out3.set(!teamColor.getAsBoolean()); // set eye color
+    // out3.set(robotContainer.getAllianceColor() == DriverStation.Alliance.Blue); // set eye color
     if (specialMode != SpecialMode.NONE) {
       if (timer.hasElapsed(targetElapsedTimeSeconds)) {
         specialMode = SpecialMode.NONE;
@@ -76,7 +76,7 @@ public class StatusRgb extends SubsystemBase {
       } else {
         switch (specialMode) {
           case NOTE_CAPTURED: // blue and gold
-            out4.set(!true);
+            out3.set(!true);
             System.out.println("Special mode active");
             break;
           default: // do nothing
@@ -84,7 +84,7 @@ public class StatusRgb extends SubsystemBase {
         }
       }
     } else {
-      out4.set(!false);
+      out3.set(!false);
     }
 
     if (DriverStation.isDisabled()) {
@@ -107,7 +107,7 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!false);
       out1.set(!false);
       out2.set(!true);
-    } else if (!hasClearence.getAsBoolean()) {
+    } else if (climberArmed.getAsBoolean() || !hasClearence.getAsBoolean()) {
       // mode 2 - solid red
       out0.set(!false);
       out1.set(!true);
