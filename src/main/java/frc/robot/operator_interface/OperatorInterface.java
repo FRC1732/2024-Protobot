@@ -116,4 +116,9 @@ public interface OperatorInterface {
   public default Trigger operatorObjectDetectionAssistButton() {
     return new Trigger(() -> false);
   }
+
+  public default Trigger alignToClimbButton() {
+    return new Trigger(() -> false);
+  }
+
 }
