@@ -8,21 +8,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
+import frc.robot.subsystems.statusrgb.StatusRgb;
 
 public class IntakeSourceNote extends Command {
   private final Feeder feeder;
   private final ShooterPose shooterPose;
+  private final StatusRgb statusRgb;
 
   /**
    * Creates a new IntakeSourceNote.
    *
    * @param feeder feeder subsystem for this command
    * @param shooterPose shooterPose subsystem for this command
+   * @param statusRgb statusRgb subsystem for this command
    */
-  public IntakeSourceNote(Feeder feeder, ShooterPose shooterPose) {
+  public IntakeSourceNote(Feeder feeder, ShooterPose shooterPose, StatusRgb statusRgb) {
     addRequirements(feeder, shooterPose);
     this.feeder = feeder;
     this.shooterPose = shooterPose;
+    this.statusRgb = statusRgb;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -42,6 +46,9 @@ public class IntakeSourceNote extends Command {
   public void end(boolean interrupted) {
     feeder.stopFeeder();
     shooterPose.setShooterPose(Pose.HANDOFF);
+    if (feeder.hasNote()) {
+      statusRgb.acquiredNote();
+    }
   }
 
   // Returns true when the command should end.

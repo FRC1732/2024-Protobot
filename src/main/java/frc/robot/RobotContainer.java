@@ -314,7 +314,7 @@ public class RobotContainer {
 
     oi.sourceLoadButton()
         .whileTrue(
-            new IntakeSourceNote(feeder, shooterPose)
+            new IntakeSourceNote(feeder, shooterPose, statusRgb)
                 .alongWith(
                     new RotateToAngle(
                         drivetrain,
