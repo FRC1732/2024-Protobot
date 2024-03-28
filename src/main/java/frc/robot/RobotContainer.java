@@ -53,6 +53,8 @@ import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.statusrgb.StatusRgb;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -90,6 +92,8 @@ public class RobotContainer {
   private double lastObjectDetectionRotateGoal;
 
   public ScoringMode scoringMode = ScoringMode.AMP;
+
+  private HashMap<Double,Double> alignToClimbLookup;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to
   // ensure accurate logging
@@ -190,6 +194,8 @@ public class RobotContainer {
     shooterPose = new ShooterPose();
     climber = new Climber();
 
+    alignToClimbLookup.put(15.0, 120.0);
+
     visionApriltagSubsystem = new VisionApriltagSubsystem();
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
@@ -255,6 +261,15 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
+    oi.alignToClimbButton()
+      .whileTrue( new ConditionalCommand(new RotateToAngle(
+                                      drivetrain,
+                                      oi::getTranslateX,
+                                      oi::getTranslateY,
+                                      oi::getRotate,
+                                      () -> alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()),
+                                      () -> false,
+                                      statusRgb).andThen(),new InstantCommand(),()->visionApriltagSubsystem.hasTarget()));
     oi.aimOrSourceButton()
         .whileTrue(
             new ConditionalCommand(
