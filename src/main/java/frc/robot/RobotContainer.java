@@ -186,17 +186,29 @@ public class RobotContainer {
     // GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
     // DrivetrainIO drivetrainIO =
     // new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
+    //     new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
+    visionApriltagSubsystem = new VisionApriltagSubsystem();
+    visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
     DrivetrainIOCTRE drivetrainIO = new DrivetrainIOCTRE();
-    drivetrain = new Drivetrain(drivetrainIO);
+    drivetrain =
+        new Drivetrain(
+            drivetrainIO,
+            () ->
+                targetAngleHelper(
+                    visionApriltagSubsystem.getTX(),
+                    visionApriltagSubsystem.getLatencyPipeline()
+                        + visionApriltagSubsystem.getLatencyCapture()),
+            () ->
+                targetAngleHelper(
+                    visionObjectDetectionSubsystem.getTX(),
+                    visionObjectDetectionSubsystem.getLatencyPipeline()
+                        + visionObjectDetectionSubsystem.getLatencyCapture()));
 
     intake = new Intake();
     feeder = new Feeder();
     shooterWheels = new ShooterWheels();
     shooterPose = new ShooterPose();
     climber = new Climber();
-
-    visionApriltagSubsystem = new VisionApriltagSubsystem();
-    visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
     statusRgb =
         new StatusRgb(
@@ -562,6 +574,19 @@ public class RobotContainer {
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand(
         "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 + 10));
+    NamedCommands.registerCommand("SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115));
+    NamedCommands.registerCommand(
+        "SetShooterDistanceVision",
+        new SetShooterDistanceContinuous(
+            shooterPose,
+            () ->
+                visionApriltagSubsystem.hasTarget()
+                    ? visionApriltagSubsystem.getDistanceToTarget()
+                    : 105));
+    NamedCommands.registerCommand(
+        "DriveWithVision", new InstantCommand(drivetrain::driveWithAprilTagVision));
+    NamedCommands.registerCommand(
+        "DriveWithOutVision", new InstantCommand(drivetrain::disableVisionDriving));
 
     // build auto path commands
 
@@ -728,13 +753,27 @@ public class RobotContainer {
     Shuffleboard.getTab("MAIN").add(autoChooser.getSendableChooser());
   }
 
+  public double getRotationSetpoint() {
+    double setpoint = 0;
+    if (visionApriltagSubsystem.hasTarget()) {
+      setpoint =
+          targetAngleHelper(
+              visionApriltagSubsystem.getTX(),
+              visionApriltagSubsystem.getLatencyPipeline()
+                  + visionApriltagSubsystem.getLatencyCapture());
+    } else {
+      setpoint = 0;
+    }
+    return setpoint;
+  }
+
   private void configureDrivetrainCommands() {
     /*-
      * Set up the default command for the drivetrain.
      * The joysticks' values map to percentage of the maximum velocities.
      * The velocities may be specified from either the robot's or field's frame of
      * reference.
-     * Robot-centric: +x is forward, +y is left, +theta is CCW
+     * Robot-centrifc: +x is forward, +y is left, +theta is CCW
      * Field-centric: origin is down-right, 0deg is up, +x is forward, +y is left,
      * +theta is CCW
      * direction.

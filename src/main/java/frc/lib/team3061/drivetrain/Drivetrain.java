@@ -32,6 +32,7 @@ import frc.lib.team6328.util.Alert;
 import frc.lib.team6328.util.Alert.AlertType;
 import frc.lib.team6328.util.TunableNumber;
 import frc.robot.Constants;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -93,13 +94,21 @@ public class Drivetrain extends SubsystemBase {
 
   private DriverStation.Alliance alliance = DriverStation.Alliance.Blue;
 
+  private DoubleSupplier aprilTagRotationSupplier;
+  private DoubleSupplier objectDetectionRotationSupplier;
+
   /**
    * Creates a new Drivetrain subsystem.
    *
    * @param io the abstracted interface for the drivetrain
    */
-  public Drivetrain(DrivetrainIO io) {
+  public Drivetrain(DrivetrainIO io, DoubleSupplier... rotationSuppliers) {
     this.io = io;
+
+    if (rotationSuppliers.length == 2) {
+      aprilTagRotationSupplier = rotationSuppliers[0];
+      objectDetectionRotationSupplier = rotationSuppliers[1];
+    }
 
     this.autoThetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -365,6 +374,41 @@ public class Drivetrain extends SubsystemBase {
       } else {
         this.io.driveRobotRelative(xVelocity, yVelocity, rotationalVelocity, isOpenLoop);
       }
+    } else if (driveMode == DriveMode.W_SPEAKER_VISION) {
+      // get the slow-mode multiplier from the config
+      double slowModeMultiplier = RobotConfig.getInstance().getRobotSlowModeMultiplier();
+
+      // if translation or rotation is in slow mode, multiply the x and y velocities by the
+      // slow-mode multiplier
+      if (isTranslationSlowMode) {
+        xVelocity *= slowModeMultiplier;
+        yVelocity *= slowModeMultiplier;
+      }
+
+      // if rotation is in slow mode, multiply the rotational velocity by the slow-mode multiplier
+      if (isRotationSlowMode) {
+        rotationalVelocity *= slowModeMultiplier;
+      }
+      double thetaVelocity =
+          autoThetaController.calculate(objectDetectionRotationSupplier.getAsDouble());
+      thetaVelocity += 0.026 * Math.signum(thetaVelocity);
+
+      if (isFieldRelative) {
+        // the origin of the field is always the corner to the right of the blue alliance driver
+        // station. As a result, "forward" from a field-relative perspective when on the red
+        // alliance, is in the negative x direction. Similarly, "left" from a field-relative
+        // perspective when on the red alliance is in the negative y direction.
+        int allianceMultiplier = this.alliance == Alliance.Blue ? 1 : -1;
+        this.io.driveFieldRelative(
+            allianceMultiplier * xVelocity,
+            allianceMultiplier * yVelocity,
+            rotationalVelocity,
+            isOpenLoop);
+      } else if (driveMode == DriveMode.W_OBJECT_DETECT_VISION) {
+
+      } else {
+        this.io.driveRobotRelative(xVelocity, yVelocity, rotationalVelocity, isOpenLoop);
+      }
     } else {
       this.io.holdXStance();
     }
@@ -491,6 +535,29 @@ public class Drivetrain extends SubsystemBase {
    */
   public void disableRotationSlowMode() {
     this.isRotationSlowMode = false;
+  }
+
+  /** Allow the robot to naturally rotate to a april tag vision target, used in Auto */
+  public void driveWithAprilTagVision() {
+    if (objectDetectionRotationSupplier != null && aprilTagRotationSupplier != null) {
+      this.driveMode = DriveMode.W_SPEAKER_VISION;
+    } else {
+      this.driveMode = DriveMode.NORMAL;
+    }
+  }
+
+  /** Allow the robot to rotate to a object vision target during driving, used in Auto */
+  public void driveWithObjectVision() {
+    if (objectDetectionRotationSupplier != null && aprilTagRotationSupplier != null) {
+      this.driveMode = DriveMode.W_OBJECT_DETECT_VISION;
+    } else {
+      this.driveMode = DriveMode.NORMAL;
+    }
+  }
+
+  /** Disables Vision Driving, allowing the robot to be driven. */
+  public void disableVisionDriving() {
+    this.driveMode = DriveMode.NORMAL;
   }
 
   /**
@@ -746,6 +813,8 @@ public class Drivetrain extends SubsystemBase {
 
   private enum DriveMode {
     NORMAL,
+    W_SPEAKER_VISION,
+    W_OBJECT_DETECT_VISION,
     X
   }
 }
