@@ -65,6 +65,10 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     return LimelightHelpers.getFiducialID(getLimelightName());
   }
 
+  public void setPipeline(VisionApriltagConstants.Pipelines pipeline) {
+    LimelightHelpers.setPipelineIndex(getLimelightName(), pipeline.ordinal());
+  }
+
   public double getDistanceToTarget() {
     if (!hasTarget()) {
       return lastDistance;

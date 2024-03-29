@@ -26,6 +26,7 @@ import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
 import frc.robot.commands.ClimberCommands.DisarmClimber;
 import frc.robot.commands.RotateToAngle;
+import frc.robot.commands.StrafeToPosition;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
@@ -42,6 +43,7 @@ import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
+import frc.robot.limelightVision.ApriltagVision.VisionApriltagConstants;
 import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
 import frc.robot.limelightVision.ObjectDetectionVision.VisionObjectDetectionSubsytem;
 import frc.robot.operator_interface.OISelector;
@@ -57,6 +59,9 @@ import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
+
+import javax.management.InstanceNotFoundException;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -195,6 +200,11 @@ public class RobotContainer {
     climber = new Climber();
 
     alignToClimbLookup.put(15.0, 120.0);
+    alignToClimbLookup.put(16.0, -120.0);
+    alignToClimbLookup.put(14.0, 0.0);
+    alignToClimbLookup.put(13.0, 0.0);
+    alignToClimbLookup.put(12.0, 60.0);
+    alignToClimbLookup.put(11.0, -60.0);
 
     visionApriltagSubsystem = new VisionApriltagSubsystem();
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
@@ -262,14 +272,36 @@ public class RobotContainer {
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
     oi.alignToClimbButton()
-      .whileTrue( new ConditionalCommand(new RotateToAngle(
-                                      drivetrain,
-                                      oi::getTranslateX,
-                                      oi::getTranslateY,
-                                      oi::getRotate,
-                                      () -> alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()),
-                                      () -> false,
-                                      statusRgb).andThen(),new InstantCommand(),()->visionApriltagSubsystem.hasTarget()));
+        .whileTrue(new InstantCommand(() -> {
+          visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
+          drivetrain.disableFieldRelative();
+        })
+            .andThen(new RotateToAngle(
+                drivetrain,
+                oi::getTranslateX,
+                oi::getTranslateY,
+                oi::getRotate,
+                () -> alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()),
+                () -> !visionApriltagSubsystem.hasTarget(),
+                statusRgb))
+            .andThen(new StrafeToPosition(drivetrain,
+                oi::getTranslateX,
+                oi::getTranslateY,
+                oi::getRotate,
+                () -> visionApriltagSubsystem.getTX(),
+                () -> 0,
+                () -> !visionApriltagSubsystem.hasTarget(),
+                statusRgb)) );
+    oi.alignToClimbButton().onFalse(
+        new ConditionalCommand(new InstantCommand(() -> {
+              drivetrain.enableFieldRelative();
+          visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.SPEAKER);
+            }),
+            new InstantCommand(() -> {
+              drivetrain.enableFieldRelative();
+          visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.SPEAKER);
+            }),
+            oi.fieldCentricButton()::getAsBoolean));          
     oi.aimOrSourceButton()
         .whileTrue(
             new ConditionalCommand(
