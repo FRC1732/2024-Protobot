@@ -115,6 +115,9 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(115.0, -31.0);
     angleLookupTable.put(125.0, -30.0);
     angleLookupTable.put(135.0, -29.0); // add 157
+    angleLookupTable.put(145.0, -28.0); // add 157
+    angleLookupTable.put(155.0, -25.5); // add 157
+    angleLookupTable.put(165.0, -25.0); // add 157
 
     // From Comp bot
     /*
@@ -307,7 +310,7 @@ public class ShooterPose extends SubsystemBase {
 
     // @TODO check targetAngle, raise elevator if it is too low
     if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 9) {
-      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 1);
+      // shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 1);
     } else {
       shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
     }

@@ -255,7 +255,7 @@ public class RobotContainer {
                                     () ->
                                         visionSubsystem.hasTarget()
                                             ? visionSubsystem.getDistanceToTarget()
-                                            : 105)
+                                            : 155)
                                 .asProxy()
                                 .alongWith(
                                     new BrakeFeeder(feeder, shooterWheels).asProxy(),
