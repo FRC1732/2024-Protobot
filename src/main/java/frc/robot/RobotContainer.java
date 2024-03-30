@@ -55,13 +55,9 @@ import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.statusrgb.StatusRgb;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
-
-import javax.management.InstanceNotFoundException;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -98,7 +94,7 @@ public class RobotContainer {
 
   public ScoringMode scoringMode = ScoringMode.AMP;
 
-  private HashMap<Double,Double> alignToClimbLookup;
+  private HashMap<Double, Double> alignToClimbLookup;
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to
   // ensure accurate logging
@@ -272,36 +268,47 @@ public class RobotContainer {
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
     oi.alignToClimbButton()
-        .whileTrue(new InstantCommand(() -> {
-          visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
-          drivetrain.disableFieldRelative();
-        })
-            .andThen(new RotateToAngle(
-                drivetrain,
-                oi::getTranslateX,
-                oi::getTranslateY,
-                oi::getRotate,
-                () -> alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()),
-                () -> !visionApriltagSubsystem.hasTarget(),
-                statusRgb))
-            .andThen(new StrafeToPosition(drivetrain,
-                oi::getTranslateX,
-                oi::getTranslateY,
-                oi::getRotate,
-                () -> visionApriltagSubsystem.getTX(),
-                () -> 0,
-                () -> !visionApriltagSubsystem.hasTarget(),
-                statusRgb)) );
-    oi.alignToClimbButton().onFalse(
-        new ConditionalCommand(new InstantCommand(() -> {
-              drivetrain.enableFieldRelative();
-          visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.SPEAKER);
-            }),
-            new InstantCommand(() -> {
-              drivetrain.enableFieldRelative();
-          visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.SPEAKER);
-            }),
-            oi.fieldCentricButton()::getAsBoolean));          
+        .whileTrue(
+            new InstantCommand(
+                    () -> {
+                      visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
+                      drivetrain.disableFieldRelative();
+                    })
+                .andThen(
+                    new RotateToAngle(
+                        drivetrain,
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                        () -> alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()),
+                        () -> !visionApriltagSubsystem.hasTarget(),
+                        statusRgb))
+                .andThen(
+                    new StrafeToPosition(
+                        drivetrain,
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                        () -> visionApriltagSubsystem.getTX(),
+                        () -> 0,
+                        () -> !visionApriltagSubsystem.hasTarget(),
+                        statusRgb)));
+    oi.alignToClimbButton()
+        .onFalse(
+            new ConditionalCommand(
+                new InstantCommand(
+                    () -> {
+                      drivetrain.enableFieldRelative();
+                      visionApriltagSubsystem.setPipeline(
+                          VisionApriltagConstants.Pipelines.SPEAKER);
+                    }),
+                new InstantCommand(
+                    () -> {
+                      drivetrain.enableFieldRelative();
+                      visionApriltagSubsystem.setPipeline(
+                          VisionApriltagConstants.Pipelines.SPEAKER);
+                    }),
+                oi.fieldCentricButton()::getAsBoolean));
     oi.aimOrSourceButton()
         .whileTrue(
             new ConditionalCommand(

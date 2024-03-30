@@ -120,5 +120,4 @@ public interface OperatorInterface {
   public default Trigger alignToClimbButton() {
     return new Trigger(() -> false);
   }
-
 }

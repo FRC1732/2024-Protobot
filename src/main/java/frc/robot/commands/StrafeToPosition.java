@@ -6,9 +6,6 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.LOOP_PERIOD_SECS;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,6 +13,8 @@ import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
 import frc.robot.subsystems.statusrgb.StatusRgb;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class StrafeToPosition extends Command {
   private final Drivetrain drivetrain;
@@ -34,13 +33,11 @@ public class StrafeToPosition extends Command {
   protected static final TunableNumber strafeKd = new TunableNumber("Strafe/xKd", 0);
   protected static final TunableNumber strafeMaxVelocity =
       new TunableNumber(
-          "Strafe/XMaxVelocity",
-          RobotConfig.getInstance().getRobotMaxAngularVelocity() / 2);
+          "Strafe/XMaxVelocity", RobotConfig.getInstance().getRobotMaxAngularVelocity() / 2);
   protected static final TunableNumber strafeMaxAcceleration =
       new TunableNumber("Strafe/XMaxAcceleration", 10);
-  protected static final TunableNumber strafeTolerance =
-      new TunableNumber("Strafe/XTolerance", 2);
-      
+  protected static final TunableNumber strafeTolerance = new TunableNumber("Strafe/XTolerance", 2);
+
   private boolean lastManualOverrideValue;
 
   protected final ProfiledPIDController strafeController =
@@ -51,8 +48,8 @@ public class StrafeToPosition extends Command {
           new TrapezoidProfile.Constraints(strafeMaxVelocity.get(), strafeMaxAcceleration.get()),
           LOOP_PERIOD_SECS);
 
-  
-  public StrafeToPosition(Drivetrain drivetrain,
+  public StrafeToPosition(
+      Drivetrain drivetrain,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier,
@@ -60,15 +57,15 @@ public class StrafeToPosition extends Command {
       DoubleSupplier targetPositionSupplier,
       BooleanSupplier manualOverrideSupplier,
       StatusRgb statusRgb) {
-        this.drivetrain = drivetrain;
-        this.statusRgb = statusRgb;
-        addRequirements(drivetrain);
-        this.translationXSupplier = translationXSupplier;
-        this.translationYSupplier = translationYSupplier;
-        this.targetPositionSupplier = targetPositionSupplier;
-        this.rotationSupplier = rotationSupplier;
-        this.manualOverrideSupplier = manualOverrideSupplier;
-        this.txSupplier = txSupplier;
+    this.drivetrain = drivetrain;
+    this.statusRgb = statusRgb;
+    addRequirements(drivetrain);
+    this.translationXSupplier = translationXSupplier;
+    this.translationYSupplier = translationYSupplier;
+    this.targetPositionSupplier = targetPositionSupplier;
+    this.rotationSupplier = rotationSupplier;
+    this.manualOverrideSupplier = manualOverrideSupplier;
+    this.txSupplier = txSupplier;
   }
 
   // Called when the command is initially scheduled.
@@ -80,25 +77,26 @@ public class StrafeToPosition extends Command {
   public void execute() {
     // update from tunable numbers
     if (strafeKp.hasChanged()
-    || strafeKd.hasChanged()
-    || strafeKi.hasChanged()
-    || strafeMaxVelocity.hasChanged()
-    || strafeMaxAcceleration.hasChanged()
-    || strafeTolerance.hasChanged()) {
-    strafeController.setP(strafeKp.get());
-    strafeController.setI(strafeKi.get());
-    strafeController.setD(strafeKd.get());
-    strafeController.setConstraints(
-      new TrapezoidProfile.Constraints(strafeMaxVelocity.get(), strafeMaxAcceleration.get()));
-    strafeController.setTolerance(strafeTolerance.get());
+        || strafeKd.hasChanged()
+        || strafeKi.hasChanged()
+        || strafeMaxVelocity.hasChanged()
+        || strafeMaxAcceleration.hasChanged()
+        || strafeTolerance.hasChanged()) {
+      strafeController.setP(strafeKp.get());
+      strafeController.setI(strafeKi.get());
+      strafeController.setD(strafeKd.get());
+      strafeController.setConstraints(
+          new TrapezoidProfile.Constraints(strafeMaxVelocity.get(), strafeMaxAcceleration.get()));
+      strafeController.setTolerance(strafeTolerance.get());
     }
 
     if (lastManualOverrideValue != manualOverrideSupplier.getAsBoolean()) {
       strafeController.reset(0);
     }
 
-    double strafePercentage = 
-      strafeController.calculate(txSupplier.getAsDouble(), targetPositionSupplier.getAsDouble()) * .25;
+    double strafePercentage =
+        strafeController.calculate(txSupplier.getAsDouble(), targetPositionSupplier.getAsDouble())
+            * .25;
     double strafeCmd = strafePercentage * RobotConfig.getInstance().getRobotMaxVelocity();
 
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
