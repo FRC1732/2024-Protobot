@@ -70,7 +70,7 @@ public class SingleHandheldOI implements OperatorInterface {
     return new Trigger(controller::getBButton);
   }
 
-  // @Override
+  // @Overridef
   // public Trigger groundIntakeButton() {
   //   return new Trigger(() -> controller.getRightTriggerAxis() >= 0.5);
   // }

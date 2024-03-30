@@ -4,8 +4,6 @@ public class VisionApriltagConstants {
 
   public enum Pipelines {
     SPEAKER,
-    AMP,
-    SOURCE,
     STAGE
   };
 

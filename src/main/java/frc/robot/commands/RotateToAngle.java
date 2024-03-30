@@ -34,6 +34,7 @@ public class RotateToAngle extends Command {
   private final DoubleSupplier rotationSupplier;
   private final BooleanSupplier manualRotationOverrideSupplier;
   private final StatusRgb statusRgb;
+  private final boolean endWhenAngleAchieved;
 
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
@@ -98,6 +99,7 @@ public class RotateToAngle extends Command {
     this.rotationSupplier = () -> 0;
     this.manualRotationOverrideSupplier = () -> false;
     this.statusRgb = statusRgb;
+    this.endWhenAngleAchieved = false;
   }
 
   public RotateToAngle(
@@ -116,6 +118,27 @@ public class RotateToAngle extends Command {
     this.targetAngleSupplier = targetAngleSupplier;
     this.rotationSupplier = rotationSupplier;
     this.manualRotationOverrideSupplier = manualRotationOverrideSupplier;
+    this.endWhenAngleAchieved = false;
+  }
+
+  public RotateToAngle(
+      Drivetrain drivetrain,
+      DoubleSupplier translationXSupplier,
+      DoubleSupplier translationYSupplier,
+      DoubleSupplier rotationSupplier,
+      DoubleSupplier targetAngleSupplier,
+      BooleanSupplier manualRotationOverrideSupplier,
+      StatusRgb statusRgb,
+      boolean endWhenAngleAchieved) {
+    this.drivetrain = drivetrain;
+    this.statusRgb = statusRgb;
+    addRequirements(drivetrain);
+    this.translationXSupplier = translationXSupplier;
+    this.translationYSupplier = translationYSupplier;
+    this.targetAngleSupplier = targetAngleSupplier;
+    this.rotationSupplier = rotationSupplier;
+    this.manualRotationOverrideSupplier = manualRotationOverrideSupplier;
+    this.endWhenAngleAchieved = endWhenAngleAchieved;
   }
 
   /**
@@ -217,7 +240,11 @@ public class RotateToAngle extends Command {
    */
   @Override
   public boolean isFinished() {
-    return false;
+    return this.endWhenAngleAchieved
+        && (Math.abs(
+                drivetrain.getPose().getRotation().getDegrees()
+                    - this.targetAngleSupplier.getAsDouble())
+            < thetaTolerance.get());
   }
 
   /**

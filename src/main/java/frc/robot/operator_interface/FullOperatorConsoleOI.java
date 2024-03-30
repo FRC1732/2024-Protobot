@@ -71,4 +71,8 @@ public class FullOperatorConsoleOI extends DualJoysticksOI {
   public Trigger sourceLoadButton() {
     return operatorPanelButtonsOne[1];
   }
+  public Trigger alignToClimbButton() {
+    return operatorPanelButtonsTwo[4];
+  }
+
 }

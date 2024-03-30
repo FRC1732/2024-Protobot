@@ -22,13 +22,11 @@ public class StrafeToPosition extends Command {
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
-  private final DoubleSupplier targetPositionSupplier;
-  private final BooleanSupplier manualOverrideSupplier;
   private final StatusRgb statusRgb;
 
   private final double STRAFE_MAX_TX = 10;
 
-  protected static final TunableNumber strafeKp = new TunableNumber("Strafe/xKp", 7);
+  protected static final TunableNumber strafeKp = new TunableNumber("Strafe/xKp", .05);
   protected static final TunableNumber strafeKi = new TunableNumber("Strafe/xKi", 0);
   protected static final TunableNumber strafeKd = new TunableNumber("Strafe/xKd", 0);
   protected static final TunableNumber strafeMaxVelocity =
@@ -54,18 +52,16 @@ public class StrafeToPosition extends Command {
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier,
       DoubleSupplier txSupplier,
-      DoubleSupplier targetPositionSupplier,
-      BooleanSupplier manualOverrideSupplier,
       StatusRgb statusRgb) {
     this.drivetrain = drivetrain;
     this.statusRgb = statusRgb;
     addRequirements(drivetrain);
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
-    this.targetPositionSupplier = targetPositionSupplier;
     this.rotationSupplier = rotationSupplier;
-    this.manualOverrideSupplier = manualOverrideSupplier;
+   // this.manualOverrideSupplier = manualOverrideSupplier;
     this.txSupplier = txSupplier;
+    strafeController.setGoal(0);
   }
 
   // Called when the command is initially scheduled.
@@ -90,12 +86,12 @@ public class StrafeToPosition extends Command {
       strafeController.setTolerance(strafeTolerance.get());
     }
 
-    if (lastManualOverrideValue != manualOverrideSupplier.getAsBoolean()) {
+    /*if (lastManualOverrideValue != manualOverrideSupplier.getAsBoolean()) {
       strafeController.reset(0);
-    }
-
+      //strafeController.setGoal(targetPositionSupplier.getAsDouble());
+    }*/
     double strafePercentage =
-        strafeController.calculate(txSupplier.getAsDouble(), targetPositionSupplier.getAsDouble())
+        strafeController.calculate(txSupplier.getAsDouble(), 0)
             * .25;
     double strafeCmd = strafePercentage * RobotConfig.getInstance().getRobotMaxVelocity();
 
@@ -108,14 +104,14 @@ public class StrafeToPosition extends Command {
     double rotationalVelocity =
         rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
 
-    boolean usingOverride = manualOverrideSupplier.getAsBoolean();
-    double xVelocityCmd = usingOverride ? xVelocity : strafeCmd;
-    double yVelocityCmd = usingOverride ? yVelocity : 0;
+    boolean usingOverride = false;//manualOverrideSupplier.getAsBoolean();
+    double xVelocityCmd = usingOverride ? xVelocity : -xVelocity;
+    double yVelocityCmd = usingOverride ? yVelocity : -strafeCmd;
     double rotVelCmd = usingOverride ? rotationalVelocity : 0;
 
     drivetrain.drive(xVelocityCmd, yVelocityCmd, rotVelCmd, true, drivetrain.getFieldRelative());
 
-    lastManualOverrideValue = manualOverrideSupplier.getAsBoolean();
+    //lastManualOverrideValue = manualOverrideSupplier.getAsBoolean();
   }
 
   // Called once the command ends or is interrupted.

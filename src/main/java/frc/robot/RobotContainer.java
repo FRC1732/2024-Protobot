@@ -94,7 +94,7 @@ public class RobotContainer {
 
   public ScoringMode scoringMode = ScoringMode.AMP;
 
-  private HashMap<Double, Double> alignToClimbLookup;
+  private HashMap<Double, Double> alignToClimbLookup = new HashMap<>();
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to
   // ensure accurate logging
@@ -272,27 +272,32 @@ public class RobotContainer {
             new InstantCommand(
                     () -> {
                       visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
-                      drivetrain.disableFieldRelative();
                     })
                 .andThen(
                     new RotateToAngle(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        () -> alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()),
-                        () -> !visionApriltagSubsystem.hasTarget(),
-                        statusRgb))
+                            drivetrain,
+                            oi::getTranslateX,
+                            oi::getTranslateY,
+                            oi::getRotate,
+                            () -> visionApriltagSubsystem.hasTarget() ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()) : 0,
+                            () -> !visionApriltagSubsystem.hasTarget(),
+                            statusRgb,
+                            true)
+                        )
+                .andThen(
+                    new InstantCommand(
+                        () -> {
+                          drivetrain.disableFieldRelative();
+                        }))
                 .andThen(
                     new StrafeToPosition(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        () -> visionApriltagSubsystem.getTX(),
-                        () -> 0,
-                        () -> !visionApriltagSubsystem.hasTarget(),
-                        statusRgb)));
+                            drivetrain,
+                            oi::getTranslateX,
+                            oi::getTranslateY,
+                            oi::getRotate,
+                            () -> visionApriltagSubsystem.getTX(),
+                            statusRgb)
+                        ));
     oi.alignToClimbButton()
         .onFalse(
             new ConditionalCommand(
