@@ -13,7 +13,6 @@ import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
 import frc.robot.subsystems.statusrgb.StatusRgb;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class StrafeToPosition extends Command {
@@ -62,7 +61,7 @@ public class StrafeToPosition extends Command {
     this.translationYSupplier = translationYSupplier;
     this.rotationSupplier = rotationSupplier;
     this.rotateAngle = rotateAngle;
-   // this.manualOverrideSupplier = manualOverrideSupplier;
+    // this.manualOverrideSupplier = manualOverrideSupplier;
     this.txSupplier = txSupplier;
     strafeController.setGoal(0);
   }
@@ -93,9 +92,7 @@ public class StrafeToPosition extends Command {
       strafeController.reset(0);
       //strafeController.setGoal(targetPositionSupplier.getAsDouble());
     }*/
-    double strafePercentage =
-        strafeController.calculate(txSupplier.getAsDouble(), 0)
-            * .25;
+    double strafePercentage = strafeController.calculate(txSupplier.getAsDouble(), 0) * .25;
     double strafeCmd = strafePercentage * RobotConfig.getInstance().getRobotMaxVelocity();
 
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
@@ -106,17 +103,19 @@ public class StrafeToPosition extends Command {
     double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
     double rotationalVelocity =
         rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
-      
-    //rotationalVelocity = rotationalVelocity * Math.min(1,Math.abs((rotateAngle - drivetrain.getPose().getRotation().getDegrees()) / 3));
 
-    boolean usingOverride = false;//manualOverrideSupplier.getAsBoolean();
+    // rotationalVelocity = rotationalVelocity * Math.min(1,Math.abs((rotateAngle -
+    // drivetrain.getPose().getRotation().getDegrees()) / 3));
+
+    boolean usingOverride = false; // manualOverrideSupplier.getAsBoolean();
     double xVelocityCmd = usingOverride ? xVelocity : -xVelocity;
-    double yVelocityCmd = usingOverride ? yVelocity : Math.abs(rotationalVelocity) < 10e-3 ? -strafeCmd : 0;
+    double yVelocityCmd =
+        usingOverride ? yVelocity : Math.abs(rotationalVelocity) < 10e-3 ? -strafeCmd : 0;
     double rotVelCmd = usingOverride ? rotationalVelocity : 0;
 
     drivetrain.drive(xVelocityCmd, yVelocityCmd, rotVelCmd, true, drivetrain.getFieldRelative());
 
-    //lastManualOverrideValue = manualOverrideSupplier.getAsBoolean();
+    // lastManualOverrideValue = manualOverrideSupplier.getAsBoolean();
   }
 
   // Called once the command ends or is interrupted.

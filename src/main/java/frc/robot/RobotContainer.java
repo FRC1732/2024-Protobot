@@ -275,15 +275,17 @@ public class RobotContainer {
                     })
                 .andThen(
                     new RotateToAngle(
-                            drivetrain,
-                            oi::getTranslateX,
-                            oi::getTranslateY,
-                            oi::getRotate,
-                            () -> visionApriltagSubsystem.hasStageTarget() ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()) : 0,
-                            () -> !visionApriltagSubsystem.hasStageTarget(),
-                            statusRgb,
-                            () -> visionApriltagSubsystem.hasStageTarget())
-                        )
+                        drivetrain,
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                        () ->
+                            visionApriltagSubsystem.hasStageTarget()
+                                ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId())
+                                : 0,
+                        () -> !visionApriltagSubsystem.hasStageTarget(),
+                        statusRgb,
+                        () -> visionApriltagSubsystem.hasStageTarget()))
                 .andThen(
                     new InstantCommand(
                         () -> {
@@ -291,14 +293,13 @@ public class RobotContainer {
                         }))
                 .andThen(
                     new StrafeToPosition(
-                            drivetrain,
-                            oi::getTranslateX,
-                            oi::getTranslateY,
-                            oi::getRotate,
-                            () -> visionApriltagSubsystem.getTX(),
-                            drivetrain.getPose().getRotation().getDegrees(),
-                            statusRgb)
-                        ));
+                        drivetrain,
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                        () -> visionApriltagSubsystem.getTX(),
+                        drivetrain.getPose().getRotation().getDegrees(),
+                        statusRgb)));
     oi.alignToClimbButton()
         .onFalse(
             new ConditionalCommand(

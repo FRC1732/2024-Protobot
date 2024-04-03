@@ -58,7 +58,9 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   }
 
   public boolean hasStageTarget() {
-    return LimelightHelpers.getTV(getLimelightName()) && getAprilTagId() >= 11 && getAprilTagId() <= 16;
+    return LimelightHelpers.getTV(getLimelightName())
+        && getAprilTagId() >= 11
+        && getAprilTagId() <= 16;
   }
 
   public boolean hasNoteTarget() {
