@@ -25,6 +25,7 @@ import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
 import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
 import frc.robot.commands.ClimberCommands.DisarmClimber;
+import frc.robot.commands.GoAfterNote;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.StrafeToPosition;
 import frc.robot.commands.TeleopSwerve;
@@ -415,6 +416,8 @@ public class RobotContainer {
     oi.armClimberSwitch().onTrue(new ArmClimber(climber));
     oi.armClimberSwitch().onFalse(new DisarmClimber(climber));
     oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
+
+    oi.goAfterNote().onTrue(new GoAfterNote(drivetrain, visionObjectDetectionSubsystem, intake, statusRgb));
 
     // new SetShooterPose(shooterPose, Pose.TRAP)
     // .andThen(new InstantCommand(() -> climber.ClimberDown())));

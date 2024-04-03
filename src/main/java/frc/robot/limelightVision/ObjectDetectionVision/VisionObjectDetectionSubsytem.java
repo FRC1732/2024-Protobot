@@ -62,6 +62,10 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
     assistEnabled = enabled;
   }
 
+  public boolean getEnabled() {
+    return assistEnabled;
+  }
+
   public boolean isAssistEnabled() {
     return assistEnabled && hasTarget();
   }

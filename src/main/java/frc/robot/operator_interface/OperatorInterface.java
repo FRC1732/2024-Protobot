@@ -8,7 +8,7 @@
 
 package frc.robot.operator_interface;
 
-import edu.wpi.first.wpilibj2.command.button.*;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /** Interface for all driver and operator controls. */
 public interface OperatorInterface {
@@ -118,6 +118,10 @@ public interface OperatorInterface {
   }
 
   public default Trigger alignToClimbButton() {
+    return new Trigger(() -> false);
+  }
+
+  public default Trigger goAfterNote() {
     return new Trigger(() -> false);
   }
 }
