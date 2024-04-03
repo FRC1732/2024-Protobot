@@ -112,7 +112,7 @@ public class StrafeToPosition extends Command {
     boolean usingOverride = false;//manualOverrideSupplier.getAsBoolean();
     double xVelocityCmd = usingOverride ? xVelocity : -xVelocity;
     double yVelocityCmd = usingOverride ? yVelocity : Math.abs(rotationalVelocity) < 10e-3 ? -strafeCmd : 0;
-    double rotVelCmd = usingOverride ? rotationalVelocity : rotationalVelocity * .2;
+    double rotVelCmd = usingOverride ? rotationalVelocity : 0;
 
     drivetrain.drive(xVelocityCmd, yVelocityCmd, rotVelCmd, true, drivetrain.getFieldRelative());
 
