@@ -62,13 +62,17 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private OperatorInterface oi = new OperatorInterface() {};
+  private OperatorInterface oi = new OperatorInterface() {
+  };
   private RobotConfig config;
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Blue;
@@ -98,13 +102,10 @@ public class RobotContainer {
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to
   // ensure accurate logging
-  private final LoggedDashboardChooser<Command> autoChooser =
-      new LoggedDashboardChooser<>("Auto Routine");
+  private final LoggedDashboardChooser<Command> autoChooser = new LoggedDashboardChooser<>("Auto Routine");
 
-  private final LoggedDashboardNumber endgameAlert1 =
-      new LoggedDashboardNumber("Endgame Alert #1", 20.0);
-  private final LoggedDashboardNumber endgameAlert2 =
-      new LoggedDashboardNumber("Endgame Alert #2", 10.0);
+  private final LoggedDashboardNumber endgameAlert1 = new LoggedDashboardNumber("Endgame Alert #1", 20.0);
+  private final LoggedDashboardNumber endgameAlert2 = new LoggedDashboardNumber("Endgame Alert #2", 10.0);
 
   // RobotContainer singleton
   private static RobotContainer robotContainer = new RobotContainer();
@@ -122,7 +123,8 @@ public class RobotContainer {
   }
 
   /**
-   * Create the container for the robot. Contains subsystems, operator interface (OI) devices, and
+   * Create the container for the robot. Contains subsystems, operator interface
+   * (OI) devices, and
    * commands.
    */
   public RobotContainer() {
@@ -150,7 +152,8 @@ public class RobotContainer {
   }
 
   /**
-   * The RobotConfig subclass object *must* be created before any other objects that use it directly
+   * The RobotConfig subclass object *must* be created before any other objects
+   * that use it directly
    * or indirectly. If this isn't done, a null pointer exception will result.
    */
   private void createRobotConfig() {
@@ -205,15 +208,14 @@ public class RobotContainer {
     visionApriltagSubsystem = new VisionApriltagSubsystem();
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
-    statusRgb =
-        new StatusRgb(
-            () -> shooterPose.hasClearence(),
-            () -> climber.isClimbing(),
-            this,
-            () -> visionObjectDetectionSubsystem.hasTargetRgb(),
-            () -> intake.isIntaking(),
-            () -> shooterWheels.isAtSpeed(),
-            () -> climber.isClimberArmed());
+    statusRgb = new StatusRgb(
+        () -> shooterPose.hasClearence(),
+        () -> climber.isClimbing(),
+        this,
+        () -> visionObjectDetectionSubsystem.hasTargetRgb(),
+        () -> intake.isIntaking(),
+        () -> shooterWheels.isAtSpeed(),
+        () -> climber.isClimberArmed());
 
     // String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera
     // stuff
@@ -233,18 +235,22 @@ public class RobotContainer {
   }
 
   /**
-   * Creates the field from the defined regions and transition points from one region to its
+   * Creates the field from the defined regions and transition points from one
+   * region to its
    * neighbor. The field is used to generate paths.
    *
-   * <p>FIXME: update for 2024 regions
+   * <p>
+   * FIXME: update for 2024 regions
    */
   private void constructField() {
     Field2d.getInstance().setRegions(new Region2d[] {});
   }
 
   /**
-   * This method scans for any changes to the connected operator interface (e.g., joysticks). If
-   * anything changed, it creates a new OI object and binds all of the buttons to commands.
+   * This method scans for any changes to the connected operator interface (e.g.,
+   * joysticks). If
+   * anything changed, it creates a new OI object and binds all of the buttons to
+   * commands.
    */
   public void updateOI() {
     OperatorInterface prevOI = oi;
@@ -270,19 +276,18 @@ public class RobotContainer {
     oi.alignToClimbButton()
         .whileTrue(
             new InstantCommand(
-                    () -> {
-                      visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
-                    })
+                () -> {
+                  visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
+                })
                 .andThen(
                     new RotateToAngle(
                         drivetrain,
                         oi::getTranslateX,
                         oi::getTranslateY,
                         oi::getRotate,
-                        () ->
-                            visionApriltagSubsystem.hasStageTarget()
-                                ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId())
-                                : 0,
+                        () -> visionApriltagSubsystem.hasStageTarget()
+                            ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId())
+                            : 0,
                         () -> !visionApriltagSubsystem.hasStageTarget(),
                         statusRgb,
                         () -> visionApriltagSubsystem.hasStageTarget()))
@@ -327,39 +332,37 @@ public class RobotContainer {
                                 .asProxy()
                                 .alongWith(
                                     new RotateToAngle(
-                                            drivetrain,
-                                            oi::getTranslateX,
-                                            oi::getTranslateY,
-                                            oi::getRotate,
-                                            () -> -90,
-                                            () -> false,
-                                            statusRgb)
+                                        drivetrain,
+                                        oi::getTranslateX,
+                                        oi::getTranslateY,
+                                        oi::getRotate,
+                                        () -> -90,
+                                        () -> false,
+                                        statusRgb)
                                         .asProxy())),
                     // Has note AND is in SPEAKER scoring mode
                     new RunShooterFast(shooterWheels)
                         .andThen(
                             new SetShooterDistanceContinuous(
-                                    shooterPose,
-                                    () ->
-                                        visionApriltagSubsystem.hasTarget()
-                                            ? visionApriltagSubsystem.getDistanceToTarget()
-                                            : 105)
+                                shooterPose,
+                                () -> visionApriltagSubsystem.hasTarget()
+                                    ? visionApriltagSubsystem.getDistanceToTarget()
+                                    : 105)
                                 .asProxy()
                                 .alongWith(
                                     new BrakeFeeder(feeder, shooterWheels).asProxy(),
                                     new RotateToAngle(
-                                            drivetrain,
-                                            oi::getTranslateX,
-                                            oi::getTranslateY,
-                                            oi::getRotate,
-                                            () ->
-                                                targetAngleHelper(
-                                                    visionApriltagSubsystem.getTX(),
-                                                    visionApriltagSubsystem.getLatencyPipeline()
-                                                        + visionApriltagSubsystem
-                                                            .getLatencyCapture()),
-                                            (() -> !visionApriltagSubsystem.hasTarget()),
-                                            statusRgb)
+                                        drivetrain,
+                                        oi::getTranslateX,
+                                        oi::getTranslateY,
+                                        oi::getRotate,
+                                        () -> targetAngleHelper(
+                                            visionApriltagSubsystem.getTX(),
+                                            visionApriltagSubsystem.getLatencyPipeline()
+                                                + visionApriltagSubsystem
+                                                    .getLatencyCapture()),
+                                        (() -> !visionApriltagSubsystem.hasTarget()),
+                                        statusRgb)
                                         .asProxy())),
                     // Check ScoringMode
                     () -> scoringMode == ScoringMode.AMP),
@@ -398,11 +401,10 @@ public class RobotContainer {
                             oi::getTranslateX,
                             oi::getTranslateY,
                             oi::getRotate,
-                            () ->
-                                targetAngleHelper(
-                                    visionObjectDetectionSubsystem.getTX(),
-                                    visionObjectDetectionSubsystem.getLatencyPipeline()
-                                        + visionObjectDetectionSubsystem.getLatencyCapture()),
+                            () -> noteAngleHelper(
+                                visionObjectDetectionSubsystem.getTX(),
+                                visionObjectDetectionSubsystem.getTY(),
+                                visionObjectDetectionSubsystem.getDistanceToTarget()),
                             () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
                             statusRgb)),
                 feeder::hasNote));
@@ -486,10 +488,9 @@ public class RobotContainer {
 
     // Endgame alerts
     new Trigger(
-            () ->
-                DriverStation.isTeleopEnabled()
-                    && DriverStation.getMatchTime() > 0.0
-                    && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
+        () -> DriverStation.isTeleopEnabled()
+            && DriverStation.getMatchTime() > 0.0
+            && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
         .onTrue(new PrintCommand("End Game Alert 1."));
     /*
      * Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
@@ -499,10 +500,9 @@ public class RobotContainer {
      * .withTimeout(1.0)));
      */
     new Trigger(
-            () ->
-                DriverStation.isTeleopEnabled()
-                    && DriverStation.getMatchTime() > 0.0
-                    && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
+        () -> DriverStation.isTeleopEnabled()
+            && DriverStation.getMatchTime() > 0.0
+            && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
         .onTrue(new PrintCommand("End Game Alert 2."));
     /*
      * Commands.sequence(
@@ -516,6 +516,21 @@ public class RobotContainer {
      * LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
      */
 
+  }
+
+  public double noteAngleHelper(double tx, double ty, double distanceInInches) {
+    double curVisionError = tx;
+    // treat identical values as stale
+    if (lastVisionError == curVisionError) {
+      return lastRotateGoal;
+    }
+
+    double distanceInMeters = distanceInInches / 39.37;
+    double scaling = distanceInMeters < 1.0 ? distanceInMeters : 1.0;
+
+    lastRotateGoal *= scaling;
+
+    return lastRotateGoal;
   }
 
   public double targetAngleHelper(double tx, double latency) {
@@ -831,12 +846,11 @@ public class RobotContainer {
     oi.resetGyroButton()
         .onTrue(
             Commands.runOnce(
-                    () ->
-                        drivetrain.resetPose(
-                            new Pose2d(
-                                drivetrain.getPose().getTranslation(),
-                                Rotation2d.fromDegrees(lastAlliance == Alliance.Blue ? 0 : 180))),
-                    drivetrain)
+                () -> drivetrain.resetPose(
+                    new Pose2d(
+                        drivetrain.getPose().getTranslation(),
+                        Rotation2d.fromDegrees(lastAlliance == Alliance.Blue ? 0 : 180))),
+                drivetrain)
                 // .andThen(Commands.runOnce(drivetrain::zeroGyroscope, drivetrain)));
                 .andThen(
                     Commands.runOnce(
@@ -880,7 +894,8 @@ public class RobotContainer {
   }
 
   /**
-   * Check if the alliance color has changed; if so, update the vision subsystem and Field2d
+   * Check if the alliance color has changed; if so, update the vision subsystem
+   * and Field2d
    * singleton.
    */
   public void checkAllianceColor() {

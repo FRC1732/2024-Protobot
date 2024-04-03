@@ -70,10 +70,10 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
     if (!hasTarget()) {
       return lastDistance;
     }
-    double cameraHeight = 22;
-    double targetHeight = 56.375;
+    double cameraHeight = 12;
+    double targetHeight = 0;
     double heightDiff = targetHeight - cameraHeight;
-    double cameraAngle = 23;
+    double cameraAngle = -23;
     double theta = Math.toRadians(cameraAngle + getTY());
     lastDistance = heightDiff / Math.tan(theta);
     return lastDistance;
