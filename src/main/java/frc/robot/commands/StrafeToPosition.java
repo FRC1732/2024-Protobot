@@ -22,6 +22,7 @@ public class StrafeToPosition extends Command {
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
+  private final double rotateAngle;
   private final StatusRgb statusRgb;
 
   private final double STRAFE_MAX_TX = 10;
@@ -52,6 +53,7 @@ public class StrafeToPosition extends Command {
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier,
       DoubleSupplier txSupplier,
+      double rotateAngle,
       StatusRgb statusRgb) {
     this.drivetrain = drivetrain;
     this.statusRgb = statusRgb;
@@ -59,6 +61,7 @@ public class StrafeToPosition extends Command {
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
     this.rotationSupplier = rotationSupplier;
+    this.rotateAngle = rotateAngle;
    // this.manualOverrideSupplier = manualOverrideSupplier;
     this.txSupplier = txSupplier;
     strafeController.setGoal(0);
@@ -103,11 +106,13 @@ public class StrafeToPosition extends Command {
     double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
     double rotationalVelocity =
         rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
+      
+    //rotationalVelocity = rotationalVelocity * Math.min(1,Math.abs((rotateAngle - drivetrain.getPose().getRotation().getDegrees()) / 3));
 
     boolean usingOverride = false;//manualOverrideSupplier.getAsBoolean();
     double xVelocityCmd = usingOverride ? xVelocity : -xVelocity;
-    double yVelocityCmd = usingOverride ? yVelocity : -strafeCmd;
-    double rotVelCmd = usingOverride ? rotationalVelocity : 0;
+    double yVelocityCmd = usingOverride ? yVelocity : Math.abs(rotationalVelocity) < 10e-3 ? -strafeCmd : 0;
+    double rotVelCmd = usingOverride ? rotationalVelocity : rotationalVelocity * .2;
 
     drivetrain.drive(xVelocityCmd, yVelocityCmd, rotVelCmd, true, drivetrain.getFieldRelative());
 

@@ -2,14 +2,20 @@ package frc.robot.subsystems.shooterWheels;
 
 import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.shooterPose.ShooterPoseConstants;
+
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
@@ -34,10 +40,16 @@ public class ShooterWheels extends SubsystemBase {
 
   private ShuffleboardTab shooterWheelsTab;
 
+  private SparkPIDController shooterPidController;
+
   // private TunableNumber shooterSpeedBackwards;
   // private TunableNumber shooterSpeedSlow;
   // private TunableNumber shooterSpeedFast;
   // private TunableNumber shooterSpeedStopped;
+
+  private GenericEntry shooterP;
+  private GenericEntry shooterI;
+  private GenericEntry shooterD;
 
   public ShooterWheels() {
     shooterHighMotor =
@@ -47,6 +59,14 @@ public class ShooterWheels extends SubsystemBase {
 
     shooterHighMotor.restoreFactoryDefaults();
 
+    
+    shooterPidController = shooterHighMotor.getPIDController();
+
+    shooterPidController.setP(ShooterWheelsConstants.SHOOTER_SPEED_P);
+    shooterPidController.setI(ShooterWheelsConstants.SHOOTER_SPEED_I);
+    shooterPidController.setD(ShooterWheelsConstants.SHOOTER_SPEED_D);
+    shooterPidController.setFeedbackDevice(shooterHighMotor.getEncoder());
+    shooterPidController.setReference(0, ControlType.kVelocity);
     // leader
     shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
     shooterHighMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 50);
@@ -96,8 +116,13 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void setShooterSpeedFast() {
+   // shooterPidController.setP(shooterP.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_P));
+    //shooterPidController.setI(shooterI.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_I));
+    //shooterPidController.setD(shooterD.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_D));
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
     wheelMode = WheelMode.FAST;
+    
+    //shooterPidController.setReference(5700, ControlType.kVelocity);
   }
 
   public void setShooterSpeedSlow() {
@@ -153,13 +178,19 @@ public class ShooterWheels extends SubsystemBase {
     // shooterWheelsTab.add("Shooter Speed Fast", shooterSpeedFast);
     // shooterWheelsTab.add("Shooter Speed Stopped", shooterSpeedStopped);
 
+    shooterP = shooterWheelsTab.add("Shooter P", ShooterWheelsConstants.SHOOTER_SPEED_P).getEntry();
+    shooterI = shooterWheelsTab.add("Shooter I", ShooterWheelsConstants.SHOOTER_SPEED_I).getEntry();
+    shooterD = shooterWheelsTab.add("Shooter D", ShooterWheelsConstants.SHOOTER_SPEED_D).getEntry();
+
     shooterWheelsTab.addDouble(
         "Current Shooter Velocity", () -> shooterHighMotor.getEncoder().getVelocity());
     shooterWheelsTab.addDouble("Current Shooter Power", () -> shooterHighMotor.get());
+   // shooterWheelsTab.addDouble("Current Shooter Velocity", () -> shooterHighMotor.getEncoder().getVelocity());
     shooterWheelsTab.addBoolean("Is At Fast Velocity", () -> isShooterAtFastVelocity());
   }
 
   public void periodic() {
+
     if (SHOOTER_WHEELS_LOGGING) {
       updateInputs();
     }

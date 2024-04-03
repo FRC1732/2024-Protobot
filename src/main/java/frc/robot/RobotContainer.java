@@ -279,10 +279,10 @@ public class RobotContainer {
                             oi::getTranslateX,
                             oi::getTranslateY,
                             oi::getRotate,
-                            () -> visionApriltagSubsystem.hasTarget() ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()) : 0,
-                            () -> !visionApriltagSubsystem.hasTarget(),
+                            () -> visionApriltagSubsystem.hasStageTarget() ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId()) : 0,
+                            () -> !visionApriltagSubsystem.hasStageTarget(),
                             statusRgb,
-                            true)
+                            () -> visionApriltagSubsystem.hasStageTarget())
                         )
                 .andThen(
                     new InstantCommand(
@@ -296,6 +296,7 @@ public class RobotContainer {
                             oi::getTranslateY,
                             oi::getRotate,
                             () -> visionApriltagSubsystem.getTX(),
+                            drivetrain.getPose().getRotation().getDegrees(),
                             statusRgb)
                         ));
     oi.alignToClimbButton()

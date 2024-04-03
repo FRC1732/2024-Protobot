@@ -34,7 +34,7 @@ public class RotateToAngle extends Command {
   private final DoubleSupplier rotationSupplier;
   private final BooleanSupplier manualRotationOverrideSupplier;
   private final StatusRgb statusRgb;
-  private final boolean endWhenAngleAchieved;
+  private final BooleanSupplier endWhenAngleAchieved;
 
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
@@ -99,7 +99,7 @@ public class RotateToAngle extends Command {
     this.rotationSupplier = () -> 0;
     this.manualRotationOverrideSupplier = () -> false;
     this.statusRgb = statusRgb;
-    this.endWhenAngleAchieved = false;
+    this.endWhenAngleAchieved = () -> false;
   }
 
   public RotateToAngle(
@@ -118,7 +118,7 @@ public class RotateToAngle extends Command {
     this.targetAngleSupplier = targetAngleSupplier;
     this.rotationSupplier = rotationSupplier;
     this.manualRotationOverrideSupplier = manualRotationOverrideSupplier;
-    this.endWhenAngleAchieved = false;
+    this.endWhenAngleAchieved = () -> false;
   }
 
   public RotateToAngle(
@@ -129,7 +129,7 @@ public class RotateToAngle extends Command {
       DoubleSupplier targetAngleSupplier,
       BooleanSupplier manualRotationOverrideSupplier,
       StatusRgb statusRgb,
-      boolean endWhenAngleAchieved) {
+      BooleanSupplier endWhenAngleAchieved) {
     this.drivetrain = drivetrain;
     this.statusRgb = statusRgb;
     addRequirements(drivetrain);
@@ -240,7 +240,7 @@ public class RotateToAngle extends Command {
    */
   @Override
   public boolean isFinished() {
-    return this.endWhenAngleAchieved
+    return this.endWhenAngleAchieved.getAsBoolean()
         && (Math.abs(
                 drivetrain.getPose().getRotation().getDegrees()
                     - this.targetAngleSupplier.getAsDouble())
