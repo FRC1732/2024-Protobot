@@ -20,10 +20,11 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     double TX = 0.0;
     double TY = 0.0;
     boolean hasTarget = false;
+    boolean hasStageTarget = false;
+    String pipelineString = "Unknown";
   }
 
-  private VisionApriltagSubsystemIOInputAutoLogged inputs =
-      new VisionApriltagSubsystemIOInputAutoLogged();
+  private VisionApriltagSubsystemIOInputAutoLogged inputs = new VisionApriltagSubsystemIOInputAutoLogged();
 
   public VisionApriltagSubsystem() {
     setUpShuffleboard();
@@ -75,6 +76,15 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     LimelightHelpers.setPipelineIndex(getLimelightName(), pipeline.ordinal());
   }
 
+  public String getPipelineAsString() {
+    double index = LimelightHelpers.getCurrentPipelineIndex(getLimelightName());
+
+    if (index < VisionApriltagConstants.Pipelines.values().length) {
+      return VisionApriltagConstants.Pipelines.values()[(int) index].toString();
+    }
+    return "Unknown";
+  }
+
   public double getDistanceToTarget() {
     if (!hasTarget()) {
       return lastDistance;
@@ -103,7 +113,9 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     tab.addDouble("Latency Capture", () -> this.getLatencyCapture());
     tab.addDouble("Latency Pipeline", () -> this.getLatencyPipeline());
     tab.addBoolean("Has Target", () -> this.hasTarget());
+    tab.addBoolean("Has Stage Target", () -> this.hasStageTarget());
     tab.addDouble("April Tag", () -> this.getAprilTagId());
+    tab.addString("Pipeline", () -> this.getPipelineAsString());
   }
 
   private void updateInputs() {
@@ -113,6 +125,8 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     inputs.TX = getTX();
     inputs.TY = getTY();
     inputs.hasTarget = hasTarget();
+    inputs.hasStageTarget = hasStageTarget();
+    inputs.pipelineString = getPipelineAsString();
 
     Logger.processInputs("VisionApriltag", inputs);
   }
