@@ -46,6 +46,11 @@ public class FinishIntakingCommand extends Command {
   public void end(boolean interrupted) {
     intake.stopIntake();
     feeder.stopFeeder();
+
+    if (feeder.hasNote() && intake.hasNote() && !interrupted) {
+      // looks like we go two notes
+      new EjectIntakeOnly(intake).schedule();
+    }
   }
 
   // Returns true when the command should end.

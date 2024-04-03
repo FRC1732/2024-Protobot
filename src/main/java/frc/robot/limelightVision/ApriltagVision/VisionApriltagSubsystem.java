@@ -24,7 +24,8 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     String pipelineString = "Unknown";
   }
 
-  private VisionApriltagSubsystemIOInputAutoLogged inputs = new VisionApriltagSubsystemIOInputAutoLogged();
+  private VisionApriltagSubsystemIOInputAutoLogged inputs =
+      new VisionApriltagSubsystemIOInputAutoLogged();
 
   public VisionApriltagSubsystem() {
     setUpShuffleboard();
