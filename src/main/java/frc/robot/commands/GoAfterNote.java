@@ -6,11 +6,6 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.LOOP_PERIOD_SECS;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,6 +18,9 @@ import frc.lib.team6328.util.TunableNumber;
 import frc.robot.limelightVision.ObjectDetectionVision.VisionObjectDetectionSubsytem;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.statusrgb.StatusRgb;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.Logger;
 
 public class GoAfterNote extends Command {
   private final Drivetrain drivetrain;
@@ -33,18 +31,22 @@ public class GoAfterNote extends Command {
   protected static final TunableNumber thetaKp = new TunableNumber("GoAfterNote/ThetaKp", 7);
   protected static final TunableNumber thetaKi = new TunableNumber("GoAfterNote/ThetaKi", 0);
   protected static final TunableNumber thetaKd = new TunableNumber("GoAfterNote/ThetaKd", 0);
-  protected static final TunableNumber thetaMaxVelocity = new TunableNumber(
-      "GoAfterNote/ThetaMaxVelocity",
-      RobotConfig.getInstance().getRobotMaxAngularVelocity() / 2);
-  protected static final TunableNumber thetaMaxAcceleration = new TunableNumber("GoAfterNote/ThetaMaxAcceleration", 10);
-  protected static final TunableNumber thetaTolerance = new TunableNumber("GoAfterNote/ThetaTolerance", 2);
+  protected static final TunableNumber thetaMaxVelocity =
+      new TunableNumber(
+          "GoAfterNote/ThetaMaxVelocity",
+          RobotConfig.getInstance().getRobotMaxAngularVelocity() / 2);
+  protected static final TunableNumber thetaMaxAcceleration =
+      new TunableNumber("GoAfterNote/ThetaMaxAcceleration", 10);
+  protected static final TunableNumber thetaTolerance =
+      new TunableNumber("GoAfterNote/ThetaTolerance", 2);
 
-  protected final ProfiledPIDController thetaController = new ProfiledPIDController(
-      thetaKp.get(),
-      thetaKi.get(),
-      thetaKd.get(),
-      new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()),
-      LOOP_PERIOD_SECS);
+  protected final ProfiledPIDController thetaController =
+      new ProfiledPIDController(
+          thetaKp.get(),
+          thetaKi.get(),
+          thetaKd.get(),
+          new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()),
+          LOOP_PERIOD_SECS);
 
   private DoubleSupplier translationXSupplier;
   private DoubleSupplier translationYSupplier;
@@ -54,8 +56,10 @@ public class GoAfterNote extends Command {
   private boolean previousVisionAssist = false;
 
   /** Creates a new GoAfterNote. */
-  public GoAfterNote(Drivetrain drivetrain,
-      VisionObjectDetectionSubsytem visionObjectDetectionSubsystem, Intake intake,
+  public GoAfterNote(
+      Drivetrain drivetrain,
+      VisionObjectDetectionSubsytem visionObjectDetectionSubsystem,
+      Intake intake,
       StatusRgb statusRgb) {
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
@@ -99,7 +103,9 @@ public class GoAfterNote extends Command {
       thetaController.setTolerance(thetaTolerance.get());
     }
 
-    double thetaVelocity = thetaController.calculate(Units.degreesToRadians(visionObjectDetectionSubsystem.getTX()), 0);
+    double thetaVelocity =
+        thetaController.calculate(
+            Units.degreesToRadians(visionObjectDetectionSubsystem.getTX()), 0);
 
     // switch distance to meters and use distance as percentage of speed.
     double distanceInMeters = visionObjectDetectionSubsystem.getDistanceToTarget() / 39.3701;
@@ -110,7 +116,7 @@ public class GoAfterNote extends Command {
     double yVelocity = 0 * RobotConfig.getInstance().getRobotMaxVelocity(); // robot centric
     double rotationalVelocity = thetaVelocity;
     // rotationPercentage *RobotConfig.getInstance().getRobotMaxAngularVelocity();
-    
+
     Logger.recordOutput("GoAfterNote/VisionTx", visionObjectDetectionSubsystem.getTX());
     Logger.recordOutput("GoAfterNote/VisionTy", visionObjectDetectionSubsystem.getTY());
     Logger.recordOutput("GoAfterNote/HasTarget", visionObjectDetectionSubsystem.hasTarget());

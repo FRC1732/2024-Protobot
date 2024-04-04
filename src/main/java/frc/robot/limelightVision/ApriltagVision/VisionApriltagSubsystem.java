@@ -5,12 +5,14 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.limelightVision.LimelightHelpers;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionApriltagSubsystem extends SubsystemBase {
   private ShuffleboardTab tab;
   private double lastDistance;
+  private DoubleSupplier rotationSupplier;
 
   @AutoLog
   public static class VisionApriltagSubsystemIOInput {
@@ -27,8 +29,9 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   private VisionApriltagSubsystemIOInputAutoLogged inputs =
       new VisionApriltagSubsystemIOInputAutoLogged();
 
-  public VisionApriltagSubsystem() {
+  public VisionApriltagSubsystem(DoubleSupplier rotationSupplier) {
     setUpShuffleboard();
+    this.rotationSupplier = rotationSupplier;
   }
 
   private String getLimelightName() {
@@ -66,7 +69,7 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   }
 
   public boolean hasNoteTarget() {
-    return LimelightHelpers.getNeuralClassID(getLimelightName()) > 0;
+    return LimelightHelpers.getNeuralClassID(getLimelightName()).equals("note");
   }
 
   public double getAprilTagId() {
@@ -101,6 +104,10 @@ public class VisionApriltagSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+
+    LimelightHelpers.SetRobotOrientation(
+        getLimelightName(), rotationSupplier.getAsDouble(), 0, 0, 0, 0, 0);
+
     if (VisionApriltagConstants.LOGGING) {
       updateInputs();
     }

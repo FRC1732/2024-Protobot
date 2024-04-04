@@ -203,7 +203,8 @@ public class RobotContainer {
     alignToClimbLookup.put(12.0, 60.0);
     alignToClimbLookup.put(11.0, -60.0);
 
-    visionApriltagSubsystem = new VisionApriltagSubsystem();
+    visionApriltagSubsystem =
+        new VisionApriltagSubsystem(() -> drivetrain.getPose().getRotation().getDegrees());
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
     statusRgb =
@@ -417,7 +418,15 @@ public class RobotContainer {
     oi.armClimberSwitch().onFalse(new DisarmClimber(climber));
     oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));
 
-    oi.goAfterNote().onTrue(new GoAfterNote(drivetrain, visionObjectDetectionSubsystem, intake, statusRgb));
+    oi.goAfterNote()
+        .onTrue(
+            new InstantCommand(intake::runIntake)
+                .andThen(
+                    new GoAfterNote(
+                        drivetrain, visionObjectDetectionSubsystem, intake, statusRgb)));
+    oi.goAfterNote()
+        .onFalse(
+            new InstantCommand(intake::stopIntake).andThen(new InstantCommand(drivetrain::stop)));
 
     // new SetShooterPose(shooterPose, Pose.TRAP)
     // .andThen(new InstantCommand(() -> climber.ClimberDown())));

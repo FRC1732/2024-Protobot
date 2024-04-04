@@ -30,7 +30,7 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
     setUpShuffleboard();
   }
 
-  private String getLimelightName() {
+  public String getLimelightName() {
     return VisionObjectDetectionConstants.LIMELIGHT_NAME;
   }
 
@@ -74,10 +74,10 @@ public class VisionObjectDetectionSubsytem extends SubsystemBase {
     if (!hasTarget()) {
       return lastDistance;
     }
-    double cameraHeight = 12;
-    double targetHeight = 0;
+    double cameraHeight = 14.5;
+    double targetHeight = 1; // center of a 2" ring laying flat
     double heightDiff = targetHeight - cameraHeight;
-    double cameraAngle = -23;
+    double cameraAngle = -50;
     double theta = Math.toRadians(cameraAngle + getTY());
     lastDistance = heightDiff / Math.tan(theta);
     return lastDistance;
