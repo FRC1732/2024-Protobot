@@ -195,7 +195,8 @@ public class RobotContainer {
     shooterPose = new ShooterPose();
     climber = new Climber();
 
-    visionApriltagSubsystem = new VisionApriltagSubsystem();
+    visionApriltagSubsystem =
+        new VisionApriltagSubsystem(() -> drivetrain.getPose().getRotation().getDegrees());
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
     statusRgb =
@@ -472,7 +473,7 @@ public class RobotContainer {
           .addVisionMeasurement(
               limelightMeasurement.pose,
               limelightMeasurement.timestampSeconds,
-              VecBuilder.fill(.7, .7, 9999999));
+              VecBuilder.fill(.6, .6, 9999999));
     }
   }
 
