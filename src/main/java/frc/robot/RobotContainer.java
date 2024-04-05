@@ -296,7 +296,7 @@ public class RobotContainer {
                                             oi::getTranslateX,
                                             oi::getTranslateY,
                                             oi::getRotate,
-                                            () -> getRobotToSpeakerVector().getAngle().getDegrees(),
+                                            () -> getRobotToSpeakerVector().getAngle().getDegrees() + 180,
                                             (() -> false),
                                             statusRgb)
                                         .asProxy())),
