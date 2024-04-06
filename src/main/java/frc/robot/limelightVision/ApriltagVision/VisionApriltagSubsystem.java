@@ -5,12 +5,15 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.limelightVision.LimelightHelpers;
+import frc.robot.limelightVision.LimelightHelpers.PoseEstimate;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 public class VisionApriltagSubsystem extends SubsystemBase {
   private ShuffleboardTab tab;
   private double lastDistance;
+  private DoubleSupplier rotationSupplier;
 
   @AutoLog
   public static class VisionApriltagSubsystemIOInput {
@@ -24,10 +27,12 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     String pipelineString = "Unknown";
   }
 
-  private VisionApriltagSubsystemIOInputAutoLogged inputs = new VisionApriltagSubsystemIOInputAutoLogged();
+  private VisionApriltagSubsystemIOInputAutoLogged inputs =
+      new VisionApriltagSubsystemIOInputAutoLogged();
 
-  public VisionApriltagSubsystem() {
+  public VisionApriltagSubsystem(DoubleSupplier rotationSupplier) {
     setUpShuffleboard();
+    this.rotationSupplier = rotationSupplier;
   }
 
   private String getLimelightName() {
@@ -44,6 +49,10 @@ public class VisionApriltagSubsystem extends SubsystemBase {
 
   public Pose2d getPose2dFromLimelight() {
     return LimelightHelpers.getBotPose2d(getLimelightName());
+  }
+
+  public PoseEstimate getPoseEstimate() {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(getLimelightName());
   }
 
   public double getLatencyCapture() {
@@ -65,7 +74,7 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   }
 
   public boolean hasNoteTarget() {
-    return LimelightHelpers.getNeuralClassID(getLimelightName()) > 0;
+    return LimelightHelpers.getNeuralClassID(getLimelightName()).toLowerCase().equals("note");
   }
 
   public double getAprilTagId() {
@@ -100,6 +109,8 @@ public class VisionApriltagSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    LimelightHelpers.SetRobotOrientation(
+        getLimelightName(), rotationSupplier.getAsDouble(), 0, 0, 0, 0, 0);
     if (VisionApriltagConstants.LOGGING) {
       updateInputs();
     }

@@ -279,6 +279,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopPeriodic() {
-    robotContainer.updateAngleTable();
+    robotContainer.updateVisionPose();
   }
 }

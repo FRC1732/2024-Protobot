@@ -6,8 +6,11 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -22,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
+import frc.lib.team3061.util.RobotOdometry;
 import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
 import frc.robot.commands.ClimberCommands.DisarmClimber;
@@ -45,6 +49,7 @@ import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.limelightVision.ApriltagVision.VisionApriltagConstants;
 import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
+import frc.robot.limelightVision.LimelightHelpers;
 import frc.robot.limelightVision.ObjectDetectionVision.VisionObjectDetectionSubsytem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
@@ -202,7 +207,8 @@ public class RobotContainer {
     alignToClimbLookup.put(12.0, 60.0);
     alignToClimbLookup.put(11.0, -60.0);
 
-    visionApriltagSubsystem = new VisionApriltagSubsystem();
+    visionApriltagSubsystem =
+        new VisionApriltagSubsystem(() -> drivetrain.getPose().getRotation().getDegrees());
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
     statusRgb =
@@ -341,9 +347,8 @@ public class RobotContainer {
                             new SetShooterDistanceContinuous(
                                     shooterPose,
                                     () ->
-                                        visionApriltagSubsystem.hasTarget()
-                                            ? visionApriltagSubsystem.getDistanceToTarget()
-                                            : 105)
+                                        Units.metersToInches(getRobotToSpeakerVector().getNorm())
+                                            - 13.5)
                                 .asProxy()
                                 .alongWith(
                                     new BrakeFeeder(feeder, shooterWheels).asProxy(),
@@ -353,12 +358,9 @@ public class RobotContainer {
                                             oi::getTranslateY,
                                             oi::getRotate,
                                             () ->
-                                                targetAngleHelper(
-                                                    visionApriltagSubsystem.getTX(),
-                                                    visionApriltagSubsystem.getLatencyPipeline()
-                                                        + visionApriltagSubsystem
-                                                            .getLatencyCapture()),
-                                            (() -> !visionApriltagSubsystem.hasTarget()),
+                                                getRobotToSpeakerVector().getAngle().getDegrees()
+                                                    + 180,
+                                            (() -> false),
                                             statusRgb)
                                         .asProxy())),
                     // Check ScoringMode
@@ -516,6 +518,26 @@ public class RobotContainer {
      * LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
      */
 
+  }
+
+  public Translation2d getRobotToSpeakerVector() {
+    Translation2d speakerPose =
+        lastAlliance == Alliance.Blue
+            ? new Translation2d(0.2286, 5.53)
+            : new Translation2d(16.2914, 5.53);
+    Translation2d currentPose = drivetrain.getPose().getTranslation();
+    return speakerPose.minus(currentPose);
+  }
+
+  public void updateVisionPose() {
+    LimelightHelpers.PoseEstimate limelightMeasurement = visionApriltagSubsystem.getPoseEstimate();
+    if (limelightMeasurement.tagCount >= 2) {
+      RobotOdometry.getInstance()
+          .addVisionMeasurement(
+              limelightMeasurement.pose,
+              limelightMeasurement.timestampSeconds,
+              VecBuilder.fill(.6, .6, 9999999));
+    }
   }
 
   public double targetAngleHelper(double tx, double latency) {
