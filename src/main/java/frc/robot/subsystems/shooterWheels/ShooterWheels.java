@@ -77,7 +77,7 @@ public class ShooterWheels extends SubsystemBase {
     Timer.delay(0.050);
 
     shooterHighMotor.setInverted(true);
-    shooterLowMotor.follow(shooterHighMotor, true);
+    shooterLowMotor.follow(shooterHighMotor, false);
 
     shooterHighMotor.enableVoltageCompensation(12);
     shooterHighMotor.setIdleMode(IdleMode.kCoast);

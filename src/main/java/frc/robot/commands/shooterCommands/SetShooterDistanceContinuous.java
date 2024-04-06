@@ -22,6 +22,7 @@ public class SetShooterDistanceContinuous extends Command {
 
   public void execute() {
     shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble());
+    
   }
 
   public void end(boolean isInterupted) {
