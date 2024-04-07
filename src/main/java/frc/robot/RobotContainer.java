@@ -25,7 +25,6 @@ import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
 import frc.robot.commands.DriveToPose;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.intakeCommands.Eject;
 import frc.robot.commands.intakeCommands.FeedThrough;
@@ -258,7 +257,7 @@ public class RobotContainer {
                                             : 155)
                                 .asProxy()
                                 .alongWith(
-                                    new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                                    // new BrakeFeeder(feeder, shooterWheels).asProxy(),
                                     new RotateToAngle(
                                             drivetrain,
                                             oi::getTranslateX,
@@ -278,12 +277,14 @@ public class RobotContainer {
 
     oi.aimOrSourceButton()
         .onFalse(
-            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+            // new StopShooter(shooterWheels).andThen(
+            new SetShooterPose(shooterPose, Pose.HANDOFF));
 
     oi.IntakeOrScoreButton()
         .whileTrue(
             new ConditionalCommand(
-                (new FeedShooterManual(feeder).asProxy()),
+                new PrintCommand(
+                    "Feed Shooter Manual"), // new FeedShooterManual(feeder).asProxy()),
                 new IntakeNote(intake, feeder, shooterPose, statusRgb).asProxy(),
                 feeder::hasNote));
 

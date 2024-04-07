@@ -382,15 +382,13 @@ public class ShooterPose extends SubsystemBase {
     shooterPoseTab.addDouble("Tilt Absolute Angle", () -> getAbsolutePosition());
 
     shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
-    shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
+    // shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
 
-    // shooterPoseTab.addDouble("Elevator Height", () ->
-    // shooterHeightEncoder.getPosition());
+    shooterPoseTab.addDouble("Elevator Height", () -> shooterHeightEncoder.getPosition());
     // shooterPoseTab.addDouble("Elevator Velocity", () ->
     // shooterHeightEncoder.getVelocity());
 
-    // shooterPoseTab.addBoolean("Lower Limit Switch", () ->
-    // shooterHeightLimitSwitch.isPressed());
+    shooterPoseTab.addBoolean("Lower Limit Switch", () -> shooterHeightLimitSwitch.isPressed());
 
     shooterPoseTab.addDouble(
         "Feed Forward",

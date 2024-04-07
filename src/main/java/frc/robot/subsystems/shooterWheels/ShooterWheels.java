@@ -2,10 +2,7 @@ package frc.robot.subsystems.shooterWheels;
 
 import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
-import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,12 +31,14 @@ public class ShooterWheels extends SubsystemBase {
   private TunableNumber shooterSpeedStopped;
 
   public ShooterWheels() {
-    shooterHighMotor =
-        new CANSparkFlex(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
-    shooterLowMotor =
-        new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
+    shooterHighMotor = null;
+    // new CANSparkFlex(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
+    shooterLowMotor = null;
+    // new CANSparkFlex(ShooterWheelsConstants.SHOOTER_LOW_MOTOR_CAN_ID, MotorType.kBrushless);
 
-    shooterHighMotor.restoreFactoryDefaults();
+    return;
+
+    /*shooterHighMotor.restoreFactoryDefaults();
     Timer.delay(0.050);
 
     shooterHighMotor.setInverted(true);
@@ -67,7 +66,7 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.burnFlash();
     Timer.delay(0.25);
     shooterLowMotor.burnFlash();
-    Timer.delay(0.25);
+    Timer.delay(0.25);*/
   }
 
   public void setShooterSpeedFast() {
@@ -106,7 +105,7 @@ public class ShooterWheels extends SubsystemBase {
 
   public void periodic() {
     if (SHOOTER_WHEELS_LOGGING) {
-      updateInputs();
+      // updateInputs();
     }
   }
 

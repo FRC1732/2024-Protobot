@@ -2,13 +2,6 @@ package frc.robot.subsystems.feeder;
 
 import static frc.robot.subsystems.feeder.FeederConstants.*;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.team6328.util.TunableNumber;
 import org.littletonrobotics.junction.AutoLog;
@@ -28,16 +21,16 @@ public class Feeder extends SubsystemBase {
   // motor
   private final TunableNumber feederMotorSpeed = new TunableNumber("Feeder/leftSpeed", 0.0);
 
-  public final CANSparkMax feederMotor;
+  // public final CANSparkMax feederMotor;
 
-  private final AnalogInput analog;
+  // private final AnalogInput analog;
 
   private double previousValue;
   private double averageValue;
 
   public Feeder() {
 
-    feederMotor =
+    /*feederMotor =
         new CANSparkMax(FeederConstants.FEEDER_MOTOR_CAN_ID, CANSparkMax.MotorType.kBrushless);
 
     feederMotor.restoreFactoryDefaults();
@@ -71,30 +64,31 @@ public class Feeder extends SubsystemBase {
     feederMotor.burnFlash();
     Timer.delay(0.25);
 
-    // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());
+    // FaultReporter.getInstance().registerSystemCheck(SUBSYSTEM_NAME, getSystemCheckCommand());*/
   }
 
   public void runFeeder() {
-    feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED);
+    // feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED);
   }
 
   public void brakeFeeder() {
-    feederMotor.set(FeederConstants.FEEDER_BRAKE_SPEED);
+    // feederMotor.set(FeederConstants.FEEDER_BRAKE_SPEED);
   }
 
   public void reverseFeeder() {
-    feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED * -1);
+    // feederMotor.set(FeederConstants.FEEDER_MOTOR_SPEED * -1);
   }
 
   public void stopFeeder() {
-    feederMotor.stopMotor();
+    // feederMotor.stopMotor();
   }
 
   public boolean hasNote() {
-    double currentValue = analog.getValue();
+    return true;
+    /*double currentValue = analog.getValue();
     averageValue = (currentValue + previousValue) / 2.0;
     previousValue = currentValue;
-    return averageValue > 900;
+    return averageValue > 900;*/
   }
 
   // public boolean isAnalogTriggered() {
@@ -102,14 +96,15 @@ public class Feeder extends SubsystemBase {
   // }
 
   public boolean checkStopped() {
-    return feederMotor.get() == 0;
+    return true;
+    // return feederMotor.get() == 0;
   }
 
   @Override
   public void periodic() {
     if (TESTING) {
       if (feederMotorSpeed.get() != 0) {
-        feederMotor.set(feederMotorSpeed.get());
+        // feederMotor.set(feederMotorSpeed.get());
       }
     }
 
@@ -119,7 +114,7 @@ public class Feeder extends SubsystemBase {
   }
 
   private void updateInputs() {
-    inputs.feederMotorSpeed = feederMotor.get();
+    // inputs.feederMotorSpeed = feederMotor.get();
     inputs.analogBeamBreakSensor = averageValue;
 
     Logger.processInputs("Feeder", inputs);

@@ -32,12 +32,12 @@ public class DualJoysticksOI implements OperatorInterface {
   // Translate Joystick
   @Override
   public double getTranslateX() {
-    return -translateJoystick.getY();
+    return translateJoystick.getY();
   }
 
   @Override
   public double getTranslateY() {
-    return -translateJoystick.getX();
+    return translateJoystick.getX();
   }
 
   @Override
