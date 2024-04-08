@@ -523,15 +523,16 @@ public class RobotContainer {
   public Translation2d getRobotToSpeakerVector() {
     Translation2d speakerPose =
         lastAlliance == Alliance.Blue
-            ? new Translation2d(0.2286, 5.53)
-            : new Translation2d(16.2914, 5.53);
+            ? new Translation2d(0.2286, 5.541518)
+            : new Translation2d(16.38935, 5.541518);
     Translation2d currentPose = drivetrain.getPose().getTranslation();
     return speakerPose.minus(currentPose);
   }
 
   public void updateVisionPose() {
     LimelightHelpers.PoseEstimate limelightMeasurement = visionApriltagSubsystem.getPoseEstimate();
-    if (limelightMeasurement.tagCount >= 2) {
+    if (limelightMeasurement.tagCount >= 2
+        || limelightMeasurement.tagCount == 1 && limelightMeasurement.avgTagDist < 1.25) {
       RobotOdometry.getInstance()
           .addVisionMeasurement(
               limelightMeasurement.pose,
