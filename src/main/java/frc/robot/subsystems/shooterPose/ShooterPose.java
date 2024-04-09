@@ -111,15 +111,18 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable = new TreeMap<>();
     angleLookupTable.put(10.0, -47.0); // (distance, optimal angle)
     angleLookupTable.put(31.0, -47.0); // subwoofer, min angle
-    angleLookupTable.put(50.0, -43.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(
+        50.0, -43.0 + sweepingAngleAdjustment); // adjust elevator with any angles before
     angleLookupTable.put(60.0, -39.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(70.0, -32.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(70.0, -32.0 - 1.5 + sweepingAngleAdjustment);
     angleLookupTable.put(80.0, -30.0 + -0.5 + sweepingAngleAdjustment);
     angleLookupTable.put(90.0, -29.0 + -0.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(100.0, -27.5 + -1.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(100.0, -27.5 + -0.5 + sweepingAngleAdjustment);
     angleLookupTable.put(110.0, -26.5 + -1.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(120.0, -24.5 + -2.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(130.0, -23.5 + -2.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(120.0, -24.5 + -1.75 + sweepingAngleAdjustment);
+    angleLookupTable.put(
+        130.0,
+        -23.5 + -2.0 + sweepingAngleAdjustment); // adjust angle of robot with any angles above
     angleLookupTable.put(140.0, -23.0 + -2.0 + sweepingAngleAdjustment);
     angleLookupTable.put(150.0, -22.5 + -2.0 + sweepingAngleAdjustment);
     angleLookupTable.put(250.0, -18.5 + -2.0 + sweepingAngleAdjustment);
@@ -271,7 +274,7 @@ public class ShooterPose extends SubsystemBase {
     if (distanceInches == 0) {
       return;
     }
-
+    System.out.println(distanceInches);
     double speakerHeight = 83, shooterHeight = 27;
     double basicAngle =
         -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
