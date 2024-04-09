@@ -226,7 +226,7 @@ public class DefaultRobotConfig extends RobotConfig {
 
   @Override
   public double getRobotMaxAngularVelocity() {
-    return super.getRobotMaxAngularVelocity() * 0.5; // 1.666/2
+    return super.getRobotMaxAngularVelocity() * 0.65; // 1.666/2
   }
 
   @Override

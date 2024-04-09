@@ -20,9 +20,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.shooterCommands.SetShooterDistance;
-
-import java.time.chrono.ThaiBuddhistChronology;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -93,6 +90,7 @@ public class ShooterPose extends SubsystemBase {
   private boolean encoderReset;
 
   private NavigableMap<Double, Double> angleLookupTable;
+  private NavigableMap<Double, Double> popShotAngleLookupTable;
 
   // private final TunableNumber shooterHeightP =
   // new TunableNumber("Elevator Height P",
@@ -112,25 +110,37 @@ public class ShooterPose extends SubsystemBase {
   // new TunableNumber("Shooter Tilt D", ShooterPoseConstants.SHOOTER_TILT_KD);
 
   public ShooterPose() {
-    double sweepingAngleAdjustment = 0.0;
     angleLookupTable = new TreeMap<>();
     angleLookupTable.put(10.0, -47.0); // (distance, optimal angle)
     angleLookupTable.put(31.0, -47.0); // subwoofer, min angle
-    angleLookupTable.put(
-        50.0, -43.0 + sweepingAngleAdjustment); // adjust elevator with any angles before
-    angleLookupTable.put(60.0, -39.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(70.0, -32.0 - 1.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(80.0, -30.0 + -0.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(90.0, -29.0 + -0.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(100.0, -27.5 + -0.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(110.0, -26.5 + -1.5 + sweepingAngleAdjustment);
-    angleLookupTable.put(120.0, -24.5 + -1.75 + sweepingAngleAdjustment);
-    angleLookupTable.put(
-        130.0,
-        -23.5 + -2.0 + sweepingAngleAdjustment); // adjust angle of robot with any angles above
-    angleLookupTable.put(140.0, -23.0 + -2.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(150.0, -22.5 + -2.0 + sweepingAngleAdjustment);
-    angleLookupTable.put(250.0, -18.5 + -2.0 + sweepingAngleAdjustment);
+    angleLookupTable.put(50.0, -43.0);
+    angleLookupTable.put(60.0, -39.0);
+    angleLookupTable.put(70.0, -33.5);
+    angleLookupTable.put(80.0, -30.5);
+    angleLookupTable.put(90.0, -29.5);
+    angleLookupTable.put(100.0, -28.0);
+    angleLookupTable.put(110.0, -27.5);
+    angleLookupTable.put(120.0, -26.25);
+    angleLookupTable.put(130.0, -25.5);
+    angleLookupTable.put(140.0, -25.0);
+    angleLookupTable.put(150.0, -24.5);
+    angleLookupTable.put(250.0, -20.5);
+
+    popShotAngleLookupTable = new TreeMap<>();
+    popShotAngleLookupTable.put(10.0, -43.0); // (distance, optimal angle)
+    popShotAngleLookupTable.put(31.0, -43.0); // subwoofer, min angle
+    popShotAngleLookupTable.put(50.0, -37.0);
+    popShotAngleLookupTable.put(60.0, -29.0);
+    popShotAngleLookupTable.put(70.0, -27.5);
+    popShotAngleLookupTable.put(80.0, -26.5);
+    popShotAngleLookupTable.put(90.0, -25.5);
+    popShotAngleLookupTable.put(100.0, -24.5);
+    popShotAngleLookupTable.put(110.0, -23.5);
+    popShotAngleLookupTable.put(120.0, -23.0);
+    popShotAngleLookupTable.put(130.0, -22.5);
+    popShotAngleLookupTable.put(140.0, -22.0);
+    popShotAngleLookupTable.put(150.0, -21.5);
+    popShotAngleLookupTable.put(250.0, -20.5);
 
     shooterHeightLeftMotor =
         new CANSparkMax(
@@ -279,10 +289,47 @@ public class ShooterPose extends SubsystemBase {
     Timer.delay(0.25);*/
   }
 
-  public void setShooterDistance(double distanceInches) {
-    if (distanceInches == 0) {
+  public void setPopShotDistance(double distanceInches) {
+    if (distanceInches <= 0) {
       return;
     }
+
+    shooterDistance = distanceInches;
+    double speakerHeight = 83, shooterHeight = 27 + 14.75;
+    double basicAngle =
+        -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
+
+    // Find the closest distances in the lookup table
+    Double lowerDistance = popShotAngleLookupTable.floorKey(distanceInches);
+    Double higherDistance = popShotAngleLookupTable.ceilingKey(distanceInches);
+
+    double targetAngle;
+
+    // If exact match or only one boundary exists, use it directly
+    if (lowerDistance == null || higherDistance == null || lowerDistance.equals(higherDistance)) {
+      targetAngle = popShotAngleLookupTable.getOrDefault(distanceInches, basicAngle);
+    } else {
+
+      // Interpolate between the two angles for a more accurate angle
+      double lowerAngle = popShotAngleLookupTable.get(lowerDistance);
+      double higherAngle = popShotAngleLookupTable.get(higherDistance);
+      targetAngle =
+          interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
+    }
+    shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_SETPOINT);
+
+    shooterTiltPID.setGoal(
+        MathUtil.clamp(
+            angleModulusDeg(targetAngle),
+            ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+            ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
+  }
+
+  public void setShooterDistance(double distanceInches) {
+    if (distanceInches <= 0) {
+      return;
+    }
+
     shooterDistance = distanceInches;
     double speakerHeight = 83, shooterHeight = 27;
     double basicAngle =
@@ -382,56 +429,56 @@ public class ShooterPose extends SubsystemBase {
     shooterPoseTab = Shuffleboard.getTab("ShooterPose");
 
     shooterPoseTab.addDouble("Shooter Distance", () -> getShooterDistance());
-    if(ShooterPoseConstants.SHOOTER_POSE_TESTING) {
-    shooterPoseTab.addDouble("Tilt Absolute Angle", () -> getAbsolutePosition());
+    if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
+      shooterPoseTab.addDouble("Tilt Absolute Angle", () -> getAbsolutePosition());
 
-    shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
-    shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
+      shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
+      shooterPoseTab.addDouble("Tilt Angle Velocity", () -> shooterTiltEncoder.getVelocity());
 
-    // shooterPoseTab.addDouble("Elevator Height", () ->
-    // shooterHeightEncoder.getPosition());
-    // shooterPoseTab.addDouble("Elevator Velocity", () ->
-    // shooterHeightEncoder.getVelocity());
+      // shooterPoseTab.addDouble("Elevator Height", () ->
+      // shooterHeightEncoder.getPosition());
+      // shooterPoseTab.addDouble("Elevator Velocity", () ->
+      // shooterHeightEncoder.getVelocity());
 
-    // shooterPoseTab.addBoolean("Lower Limit Switch", () ->
-    // shooterHeightLimitSwitch.isPressed());
+      // shooterPoseTab.addBoolean("Lower Limit Switch", () ->
+      // shooterHeightLimitSwitch.isPressed());
 
-    shooterPoseTab.addDouble(
-        "Feed Forward",
-        () ->
-            shooterTiltFeedforward.calculate(
-                Math.toRadians(
-                    shooterTiltEncoder.getPosition()
-                        + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
-                shooterTiltEncoder.getVelocity()));
+      shooterPoseTab.addDouble(
+          "Feed Forward",
+          () ->
+              shooterTiltFeedforward.calculate(
+                  Math.toRadians(
+                      shooterTiltEncoder.getPosition()
+                          + ShooterPoseConstants.SHOOTER_TILT_COG_OFFSET),
+                  shooterTiltEncoder.getVelocity()));
 
-    // shooterHeightP = shooterPoseTab.add("Shooter Height P", 0).getEntry();
-    // shooterHeightI = shooterPoseTab.add("Shooter Height I", 0).getEntry();
-    // shooterHeightD = shooterPoseTab.add("Shooter Height D", 0).getEntry();
-    shooterTiltP =
-        shooterPoseTab.add("Shooter Tilt P", ShooterPoseConstants.SHOOTER_TILT_KP).getEntry();
-    shooterTiltI = shooterPoseTab.add("Shooter Tilt I", 0).getEntry();
-    shooterTiltD = shooterPoseTab.add("Shooter Tilt D", 0).getEntry();
+      // shooterHeightP = shooterPoseTab.add("Shooter Height P", 0).getEntry();
+      // shooterHeightI = shooterPoseTab.add("Shooter Height I", 0).getEntry();
+      // shooterHeightD = shooterPoseTab.add("Shooter Height D", 0).getEntry();
+      shooterTiltP =
+          shooterPoseTab.add("Shooter Tilt P", ShooterPoseConstants.SHOOTER_TILT_KP).getEntry();
+      shooterTiltI = shooterPoseTab.add("Shooter Tilt I", 0).getEntry();
+      shooterTiltD = shooterPoseTab.add("Shooter Tilt D", 0).getEntry();
 
-    goalEntry =
-        shooterPoseTab
-            .add("Goal", -32)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(
-                Map.of(
-                    "min",
-                    ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
-                    "max",
-                    ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES))
-            .getEntry();
-    maxVelocityEntry =
-        shooterPoseTab
-            .add("MaxVelocity", ShooterPoseConstants.SHOOTER_TILT_MAX_VELOCITY)
-            .getEntry();
-    maxAccelerationEntry =
-        shooterPoseTab
-            .add("MaxAcceleration", ShooterPoseConstants.SHOOTER_TILT_MAX_ACCELERATION)
-            .getEntry();
+      goalEntry =
+          shooterPoseTab
+              .add("Goal", -32)
+              .withWidget(BuiltInWidgets.kNumberSlider)
+              .withProperties(
+                  Map.of(
+                      "min",
+                      ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+                      "max",
+                      ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES))
+              .getEntry();
+      maxVelocityEntry =
+          shooterPoseTab
+              .add("MaxVelocity", ShooterPoseConstants.SHOOTER_TILT_MAX_VELOCITY)
+              .getEntry();
+      maxAccelerationEntry =
+          shooterPoseTab
+              .add("MaxAcceleration", ShooterPoseConstants.SHOOTER_TILT_MAX_ACCELERATION)
+              .getEntry();
     }
   }
 

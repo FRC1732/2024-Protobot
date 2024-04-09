@@ -49,7 +49,7 @@ public class RotateToAngle extends Command {
   protected static final TunableNumber thetaMaxAcceleration =
       new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 10);
   protected static final TunableNumber thetaTolerance =
-      new TunableNumber("RotateToAngle/ThetaTolerance", 2);
+      new TunableNumber("RotateToAngle/ThetaTolerance", 1);
 
   protected final ProfiledPIDController thetaController =
       new ProfiledPIDController(
@@ -153,7 +153,9 @@ public class RotateToAngle extends Command {
     Logger.recordOutput("ActiveCommands/RotateToAngle", true);
 
     Pose2d currentPose = drivetrain.getPose();
-    thetaController.reset(currentPose.getRotation().getRadians());
+    thetaController.reset(
+        currentPose.getRotation().getRadians(),
+        drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
     thetaController.setTolerance(Math.toRadians(thetaTolerance.get()));
 
     // configure the controller such that the range of values is centered on the target angle
@@ -196,7 +198,9 @@ public class RotateToAngle extends Command {
 
     Pose2d currentPose = drivetrain.getPose();
     if (lastManualRotationOverrideValue != manualRotationOverrideSupplier.getAsBoolean()) {
-      thetaController.reset(currentPose.getRotation().getRadians());
+      thetaController.reset(
+          currentPose.getRotation().getRadians(),
+          drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
     }
     double thetaVelocity =
         thetaController.calculate(

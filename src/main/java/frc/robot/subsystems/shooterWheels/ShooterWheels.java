@@ -121,6 +121,11 @@ public class ShooterWheels extends SubsystemBase {
     // shooterPidController.setReference(5700, ControlType.kVelocity);
   }
 
+  public void setShooterSpeedMedium() {
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_MEDIUM);
+    wheelMode = WheelMode.MEDIUM;
+  }
+
   public void setShooterSpeedSlow() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
     wheelMode = WheelMode.SLOW;
@@ -155,6 +160,7 @@ public class ShooterWheels extends SubsystemBase {
 
       case REVERSE:
       case SLOW:
+      case MEDIUM:
         return true;
 
       case STOP:
@@ -207,6 +213,7 @@ public class ShooterWheels extends SubsystemBase {
 
   private enum WheelMode {
     SLOW,
+    MEDIUM,
     FAST,
     REVERSE,
     STOP;

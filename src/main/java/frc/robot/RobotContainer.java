@@ -41,6 +41,7 @@ import frc.robot.commands.intakeCommands.IntakeNote;
 import frc.robot.commands.intakeCommands.IntakeSourceNote;
 import frc.robot.commands.intakeCommands.StartIntakingNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
+import frc.robot.commands.shooterCommands.RunShooterMedium;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
 import frc.robot.commands.shooterCommands.SetShooterDistance;
 import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
@@ -394,25 +395,51 @@ public class RobotContainer {
                 (new FeedShooterManual(feeder).asProxy()),
                 new IntakeNote(intake, feeder, shooterPose, statusRgb)
                     .asProxy() // intakes with object detection
-                    .alongWith(
+                    .deadlineWith(
                         new RotateToAngle(
-                            drivetrain,
-                            oi::getTranslateX,
-                            oi::getTranslateY,
-                            oi::getRotate,
-                            () ->
-                                targetAngleHelper(
-                                    visionObjectDetectionSubsystem.getTX(),
-                                    visionObjectDetectionSubsystem.getLatencyPipeline()
-                                        + visionObjectDetectionSubsystem.getLatencyCapture()),
-                            () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
-                            statusRgb)),
+                                drivetrain,
+                                oi::getTranslateX,
+                                oi::getTranslateY,
+                                oi::getRotate,
+                                () ->
+                                    targetAngleHelper(
+                                        visionObjectDetectionSubsystem.getTX(),
+                                        visionObjectDetectionSubsystem.getLatencyPipeline()
+                                            + visionObjectDetectionSubsystem.getLatencyCapture()),
+                                () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
+                                statusRgb)
+                            .asProxy())
+                    .andThen(
+                        new ConditionalCommand(
+                            new RunShooterMedium(shooterWheels),
+                            new InstantCommand(),
+                            () -> scoringMode == ScoringMode.SPEAKER)),
                 feeder::hasNote));
 
-    oi.speakerModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
-    oi.operatorSpeakerButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER));
-    oi.ampModeButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
-    oi.operatorAmpButton().onTrue(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
+    oi.speakerModeButton()
+        .onTrue(
+            new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER)
+                .andThen(
+                    new ConditionalCommand(
+                        new RunShooterMedium(shooterWheels),
+                        new InstantCommand(),
+                        () -> feeder.hasNote())));
+    oi.operatorSpeakerButton()
+        .onTrue(
+            new InstantCommand(() -> scoringMode = ScoringMode.SPEAKER)
+                .andThen(
+                    new ConditionalCommand(
+                        new RunShooterMedium(shooterWheels),
+                        new InstantCommand(),
+                        () -> feeder.hasNote())));
+    oi.ampModeButton()
+        .onTrue(
+            new InstantCommand(() -> scoringMode = ScoringMode.AMP)
+                .andThen(new StopShooter(shooterWheels)));
+    oi.operatorAmpButton()
+        .onTrue(
+            new InstantCommand(() -> scoringMode = ScoringMode.AMP)
+                .andThen(new StopShooter(shooterWheels)));
 
     oi.armClimberSwitch().onTrue(new ArmClimber(climber));
     oi.armClimberSwitch().onFalse(new DisarmClimber(climber));
@@ -523,10 +550,22 @@ public class RobotContainer {
   public Translation2d getRobotToSpeakerVector() {
     Translation2d speakerPose =
         lastAlliance == Alliance.Blue
-            ? new Translation2d(0.2286, 5.541518)
+            ? new Translation2d(0.2286, 5.541518 - 0.1)
             : new Translation2d(16.38935, 5.541518);
     Translation2d currentPose = drivetrain.getPose().getTranslation();
     return speakerPose.minus(currentPose);
+  }
+
+  public boolean isDrivetrainStopped() {
+    return drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond < 0.1
+        && drivetrain.getRobotRelativeSpeeds().vxMetersPerSecond < 0.1
+        && drivetrain.getRobotRelativeSpeeds().vyMetersPerSecond < 0.1;
+  }
+
+  public boolean readyToShoot() {
+    return isDrivetrainStopped()
+        && shooterPose.isAtGoal()
+        && shooterWheels.isAtSpeed(); // @todo check if vision is aligned
   }
 
   public void updateVisionPose() {
