@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.time.chrono.ThaiBuddhistChronology;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -400,7 +402,7 @@ public class ShooterPose extends SubsystemBase {
 
     goalEntry =
         shooterPoseTab
-            .add("Goal", 66)
+            .add("Goal", -32)
             .withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(
                 Map.of(
@@ -472,6 +474,7 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltPID.setP(shooterTiltP.getDouble(0));
       shooterTiltPID.setI(shooterTiltI.getDouble(0));
       shooterTiltPID.setD(shooterTiltD.getDouble(0));
+      shooterTiltPID.setGoal(goalEntry.getDouble(-32));
     }
     if (ShooterPoseConstants.SHOOTER_POSE_LOGGING) {
       updateLoggedIO();
