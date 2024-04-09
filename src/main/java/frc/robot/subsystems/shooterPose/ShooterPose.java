@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.shooterCommands.SetShooterDistance;
 
 import java.time.chrono.ThaiBuddhistChronology;
 import java.util.Map;
@@ -84,6 +85,8 @@ public class ShooterPose extends SubsystemBase {
   private GenericEntry maxVelocityEntry, maxAccelerationEntry;
   private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
   private GenericEntry shooterTiltP, shooterTiltI, shooterTiltD;
+
+  private double shooterDistance;
 
   private int limitSwitchCounter;
   private boolean elevatorPIDOverride;
@@ -256,9 +259,13 @@ public class ShooterPose extends SubsystemBase {
 
     encoderReset = false;
 
+    shooterDistance = 0;
+
     if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
       setUpShuffleboard();
     }
+
+    setUpShuffleboard();
 
     shooterHeightRightMotor.stopMotor();
     shooterTiltMotor.stopMotor();
@@ -276,7 +283,7 @@ public class ShooterPose extends SubsystemBase {
     if (distanceInches == 0) {
       return;
     }
-    System.out.println(distanceInches);
+    shooterDistance = distanceInches;
     double speakerHeight = 83, shooterHeight = 27;
     double basicAngle =
         -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
@@ -367,9 +374,15 @@ public class ShooterPose extends SubsystemBase {
     return shooterHeightPID.atGoal() && shooterTiltPID.atGoal();
   }
 
-  private void setUpShuffleboard() {
-    shooterPoseTab = Shuffleboard.getTab("Elevator");
+  private double getShooterDistance() {
+    return shooterDistance;
+  }
 
+  private void setUpShuffleboard() {
+    shooterPoseTab = Shuffleboard.getTab("ShooterPose");
+
+    shooterPoseTab.addDouble("Shooter Distance", () -> getShooterDistance());
+    if(ShooterPoseConstants.SHOOTER_POSE_TESTING) {
     shooterPoseTab.addDouble("Tilt Absolute Angle", () -> getAbsolutePosition());
 
     shooterPoseTab.addDouble("Tilt Angle", () -> shooterTiltEncoder.getPosition());
@@ -419,6 +432,7 @@ public class ShooterPose extends SubsystemBase {
         shooterPoseTab
             .add("MaxAcceleration", ShooterPoseConstants.SHOOTER_TILT_MAX_ACCELERATION)
             .getEntry();
+    }
   }
 
   public void resetToAbsoluteEncoder() {
