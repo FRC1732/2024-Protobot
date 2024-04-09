@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.team6328.util.TunableNumber;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -82,6 +83,8 @@ public class ShooterPose extends SubsystemBase {
   private GenericEntry maxVelocityEntry, maxAccelerationEntry;
   private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
   private GenericEntry shooterTiltP, shooterTiltI, shooterTiltD;
+
+  private TunableNumber shooterTiltGoal;
 
   private int limitSwitchCounter;
   private boolean elevatorPIDOverride;
@@ -409,7 +412,7 @@ public class ShooterPose extends SubsystemBase {
 
     goalEntry =
         shooterPoseTab
-            .add("Goal", 66)
+            .add("Goal", -32)
             .withWidget(BuiltInWidgets.kNumberSlider)
             .withProperties(
                 Map.of(
@@ -481,6 +484,10 @@ public class ShooterPose extends SubsystemBase {
       shooterTiltPID.setP(shooterTiltP.getDouble(0));
       shooterTiltPID.setI(shooterTiltI.getDouble(0));
       shooterTiltPID.setD(shooterTiltD.getDouble(0));
+    }
+
+    if (ShooterPoseConstants.SHOOTER_POSE_TESTING) {
+      shooterTiltPID.setGoal(goalEntry.getDouble(-32));
     }
     if (ShooterPoseConstants.SHOOTER_POSE_LOGGING) {
       updateLoggedIO();
