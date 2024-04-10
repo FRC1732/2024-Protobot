@@ -411,7 +411,7 @@ public class RobotContainer {
                             .asProxy())
                     .andThen(
                         new ConditionalCommand(
-                            new RunShooterMedium(shooterWheels),
+                            new RunShooterMedium(shooterWheels).asProxy(),
                             new InstantCommand(),
                             () -> scoringMode == ScoringMode.SPEAKER)),
                 feeder::hasNote));

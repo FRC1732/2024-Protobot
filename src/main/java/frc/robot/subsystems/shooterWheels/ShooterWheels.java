@@ -150,7 +150,7 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public boolean isShooterAtFastVelocity() {
-    return shooterHighMotor.getEncoder().getVelocity() >= 5400;
+    return shooterHighMotor.getEncoder().getVelocity() >= 5300;
   }
 
   public boolean isAtSpeed() {

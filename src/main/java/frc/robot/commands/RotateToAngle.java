@@ -39,15 +39,15 @@ public class RotateToAngle extends Command {
   private boolean lastManualRotationOverrideValue;
   private double lastAngularVelocity;
 
-  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 7);
+  protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 9);
   protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 0);
   protected static final TunableNumber thetaKd = new TunableNumber("RotateToAngle/ThetaKd", 0);
   protected static final TunableNumber thetaMaxVelocity =
       new TunableNumber(
           "RotateToAngle/ThetaMaxVelocity",
-          RobotConfig.getInstance().getRobotMaxAngularVelocity() / 2);
+          RobotConfig.getInstance().getRobotMaxAngularVelocity() / 1.5);
   protected static final TunableNumber thetaMaxAcceleration =
-      new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 10);
+      new TunableNumber("RotateToAngle/ThetaMaxAcceleration", 13);
   protected static final TunableNumber thetaTolerance =
       new TunableNumber("RotateToAngle/ThetaTolerance", 1);
 

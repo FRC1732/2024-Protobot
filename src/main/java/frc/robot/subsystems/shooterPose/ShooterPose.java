@@ -111,9 +111,9 @@ public class ShooterPose extends SubsystemBase {
 
   public ShooterPose() {
     angleLookupTable = new TreeMap<>();
-    angleLookupTable.put(10.0, -47.0); // (distance, optimal angle)
-    angleLookupTable.put(31.0, -47.0); // subwoofer, min angle
-    angleLookupTable.put(50.0, -43.0);
+    angleLookupTable.put(10.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // (distance, optimal angle)
+    angleLookupTable.put(31.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // subwoofer, min angle
+    angleLookupTable.put(50.0, -41.0);
     angleLookupTable.put(60.0, -39.0);
     angleLookupTable.put(70.0, -33.5);
     angleLookupTable.put(80.0, -30.5);
@@ -127,8 +127,8 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(250.0, -20.5);
 
     popShotAngleLookupTable = new TreeMap<>();
-    popShotAngleLookupTable.put(10.0, -43.0); // (distance, optimal angle)
-    popShotAngleLookupTable.put(31.0, -43.0); // subwoofer, min angle
+    popShotAngleLookupTable.put(10.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // (distance, optimal angle)
+    popShotAngleLookupTable.put(31.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // subwoofer, min angle
     popShotAngleLookupTable.put(50.0, -37.0);
     popShotAngleLookupTable.put(60.0, -29.0);
     popShotAngleLookupTable.put(70.0, -27.5);
@@ -354,17 +354,21 @@ public class ShooterPose extends SubsystemBase {
     }
 
     // @TODO check targetAngle, raise elevator if it is too low
-    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 9) {
-      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 1);
+    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 12) {
+      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
     } else {
       shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
     }
 
+    if( targetAngle > ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 12 || 
+        shooterHeightEncoder.getPosition() > ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + .75)
+        {
     shooterTiltPID.setGoal(
         MathUtil.clamp(
             angleModulusDeg(targetAngle),
             ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
             ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
+        }
   }
 
   private static double interpolate(double x, double x0, double x1, double y0, double y1) {
