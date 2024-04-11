@@ -359,8 +359,10 @@ public class RobotContainer {
                                             oi::getTranslateY,
                                             oi::getRotate,
                                             () ->
-                                                getRobotToSpeakerVector().getAngle().getDegrees()
-                                                    + 180,
+                                                Units.metersToInches(getRobotToSpeakerVector().getNorm())
+                                            - 13.5 < 250 ? (getRobotToSpeakerVector().getAngle().getDegrees()
+                                                    + 180) : (getRobotToSpeakerVector().getAngle().getDegrees()
+                                                    + 180) - 20,
                                             (() -> false),
                                             statusRgb)
                                         .asProxy())),
@@ -555,6 +557,7 @@ public class RobotContainer {
     Translation2d currentPose = drivetrain.getPose().getTranslation();
     return speakerPose.minus(currentPose);
   }
+  
 
   public boolean isDrivetrainStopped() {
     return drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond < 0.1
