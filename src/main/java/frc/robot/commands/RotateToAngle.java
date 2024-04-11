@@ -158,7 +158,8 @@ public class RotateToAngle extends Command {
         drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
     thetaController.setTolerance(Math.toRadians(thetaTolerance.get()));
 
-    // configure the controller such that the range of values is centered on the target angle
+    // configure the controller such that the range of values is centered on the
+    // target angle
     thetaController.enableContinuousInput(
         Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()) - Math.PI,
         Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()) + Math.PI);
@@ -173,13 +174,14 @@ public class RotateToAngle extends Command {
    */
   @Override
   public void execute() {
-    Logger.recordOutput("RotateToAngle/AngleDeg", targetAngleSupplier.getAsDouble());
+    // Logger.recordOutput("RotateToAngle/AngleDeg", targetAngleSupplier.getAsDouble());
     Logger.recordOutput(
         "RotateToAngle/ThetaControllerMeasurement",
         drivetrain.getPose().getRotation().getRadians());
     Logger.recordOutput(
         "RotateToAngle/ThetaControllerSetpoint",
-        Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
+        Units.degreesToRadians(targetAngleSupplier.getAsDouble()));
+    Logger.recordOutput("RotateToAngle/ThetaControllerTolerance", thetaTolerance.get());
 
     // update from tunable numbers
     if (thetaKp.hasChanged()
@@ -202,14 +204,16 @@ public class RotateToAngle extends Command {
           currentPose.getRotation().getRadians(),
           drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
     }
+    Logger.recordOutput("RotateToAngle/WithinTolerance", withinTolerance(currentPose));
+
     double thetaVelocity =
         thetaController.calculate(
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
     thetaVelocity += 0.026 * Math.signum(thetaVelocity);
+    Logger.recordOutput("RotateToAngle/ThetaVelocity", thetaVelocity);
 
-    if (Math.abs(currentPose.getRotation().getDegrees() - this.targetAngleSupplier.getAsDouble())
-        < thetaTolerance.get()) {
+    if (withinTolerance(currentPose)) {
       thetaVelocity = 0.0;
       thetaController.reset(currentPose.getRotation().getRadians());
       statusRgb.targetReady(true);
@@ -235,6 +239,11 @@ public class RotateToAngle extends Command {
     lastAngularVelocity = rotVelCmd;
   }
 
+  private boolean withinTolerance(Pose2d currentPose) {
+    return Math.abs(currentPose.getRotation().getDegrees() - this.targetAngleSupplier.getAsDouble())
+        < thetaTolerance.get();
+  }
+
   /**
    * This method returns true if the command has finished. It is invoked periodically while this
    * command is scheduled (after execute is invoked). This command is considered finished if the
@@ -244,11 +253,7 @@ public class RotateToAngle extends Command {
    */
   @Override
   public boolean isFinished() {
-    return this.endWhenAngleAchieved.getAsBoolean()
-        && (Math.abs(
-                drivetrain.getPose().getRotation().getDegrees()
-                    - this.targetAngleSupplier.getAsDouble())
-            < thetaTolerance.get());
+    return this.endWhenAngleAchieved.getAsBoolean() && (withinTolerance(drivetrain.getPose()));
   }
 
   /**
