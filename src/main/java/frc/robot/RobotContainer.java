@@ -34,6 +34,7 @@ import frc.robot.commands.StrafeToPosition;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
+import frc.robot.commands.feederCommands.WaitForNote;
 import frc.robot.commands.intakeCommands.Eject;
 import frc.robot.commands.intakeCommands.FeedThrough;
 import frc.robot.commands.intakeCommands.FinishIntakingCommand;
@@ -326,53 +327,47 @@ public class RobotContainer {
     oi.aimOrSourceButton()
         .whileTrue(
             new ConditionalCommand(
-                new ConditionalCommand(
-                    // Has note AND is in AMP scoring mode
-                    new RunShooterSlow(shooterWheels)
-                        .andThen(
-                            new SetShooterPose(shooterPose, Pose.AMP)
-                                .asProxy()
-                                .alongWith(
-                                    new RotateToAngle(
-                                            drivetrain,
-                                            oi::getTranslateX,
-                                            oi::getTranslateY,
-                                            oi::getRotate,
-                                            () -> -90,
-                                            () -> false,
-                                            statusRgb)
-                                        .asProxy())),
-                    // Has note AND is in SPEAKER scoring mode
-                    new RunShooterFast(shooterWheels)
-                        .andThen(
-                            new SetShooterDistanceContinuous(
-                                    shooterPose,
-                                    () ->
-                                        Units.metersToInches(getRobotToSpeakerVector().getNorm())
-                                            - 13.5)
-                                .asProxy()
-                                .alongWith(
-                                    new BrakeFeeder(feeder, shooterWheels).asProxy(),
-                                    new RotateToAngle(
-                                            drivetrain,
-                                            oi::getTranslateX,
-                                            oi::getTranslateY,
-                                            oi::getRotate,
-                                            () ->
-                                                Units.metersToInches(getRobotToSpeakerVector().getNorm())
-                                            - 13.5 < 250 ? (getRobotToSpeakerVector().getAngle().getDegrees()
-                                                    + 180) : (getRobotToSpeakerVector().getAngle().getDegrees()
-                                                    + 180) - 20,
-                                            (() -> false),
-                                            statusRgb)
-                                        .asProxy())),
-                    // Check ScoringMode
-                    () -> scoringMode == ScoringMode.AMP),
-                // Does NOT have note
-                // new IntakeSourceNote(feeder, shooterPose).asProxy(),
-                Commands.print("attempted to do source load"),
-                // Check hasNote
-                feeder::hasNote));
+                // Has note AND is in AMP scoring mode
+                new RunShooterSlow(shooterWheels)
+                    .andThen(
+                        new WaitForNote(feeder)
+                            .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy())
+                            .alongWith(
+                                new RotateToAngle(
+                                        drivetrain,
+                                        oi::getTranslateX,
+                                        oi::getTranslateY,
+                                        oi::getRotate,
+                                        () -> -90,
+                                        () -> false,
+                                        statusRgb)
+                                    .asProxy())),
+                // Has note AND is in SPEAKER scoring mode
+                new RunShooterFast(shooterWheels)
+                    .andThen(
+                        new WaitForNote(feeder)
+                            .andThen(
+                                new SetShooterDistanceContinuous(
+                                        shooterPose,
+                                        () ->
+                                            Units.metersToInches(
+                                                    getRobotToSpeakerVector().getNorm())
+                                                - 13.5)
+                                    .asProxy())
+                            .alongWith(
+                                new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                                new RotateToAngle(
+                                        drivetrain,
+                                        oi::getTranslateX,
+                                        oi::getTranslateY,
+                                        oi::getRotate,
+                                        () ->
+                                            getRobotToSpeakerVector().getAngle().getDegrees() + 180,
+                                        (() -> false),
+                                        statusRgb)
+                                    .asProxy())),
+                // Check ScoringMode
+                () -> scoringMode == ScoringMode.AMP));
 
     oi.aimOrSourceButton()
         .onFalse(
@@ -557,7 +552,6 @@ public class RobotContainer {
     Translation2d currentPose = drivetrain.getPose().getTranslation();
     return speakerPose.minus(currentPose);
   }
-  
 
   public boolean isDrivetrainStopped() {
     return drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond < 0.1

@@ -118,7 +118,7 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
     wheelMode = WheelMode.FAST;
 
-    // shooterPidController.setReference(5700, ControlType.kVelocity);
+    // shooterPidController.setReference(5800, ControlType.kVelocity);
   }
 
   public void setShooterSpeedMedium() {
@@ -150,7 +150,7 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public boolean isShooterAtFastVelocity() {
-    return shooterHighMotor.getEncoder().getVelocity() >= 5300;
+    return shooterHighMotor.getEncoder().getVelocity() >= 5500;
   }
 
   public boolean isAtSpeed() {
