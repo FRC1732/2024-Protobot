@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
@@ -29,8 +30,8 @@ import frc.lib.team3061.util.RobotOdometry;
 import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
 import frc.robot.commands.ClimberCommands.DisarmClimber;
+import frc.robot.commands.DriveToPose;
 import frc.robot.commands.RotateToAngle;
-import frc.robot.commands.StrafeToPosition;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
@@ -99,7 +100,8 @@ public class RobotContainer {
 
   public ScoringMode scoringMode = ScoringMode.AMP;
 
-  private HashMap<Double, Double> alignToClimbLookup = new HashMap<>();
+  private HashMap<Double, Double> alignToClimbLookupRot = new HashMap<>();
+  private HashMap<Double, Pose2d> alignToClimbLookupPose = new HashMap<>();
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to
   // ensure accurate logging
@@ -200,12 +202,22 @@ public class RobotContainer {
     shooterPose = new ShooterPose();
     climber = new Climber();
 
-    alignToClimbLookup.put(15.0, 120.0);
-    alignToClimbLookup.put(16.0, -120.0);
-    alignToClimbLookup.put(14.0, 0.0);
-    alignToClimbLookup.put(13.0, 0.0);
-    alignToClimbLookup.put(12.0, 60.0);
-    alignToClimbLookup.put(11.0, -60.0);
+    alignToClimbLookupRot.put(15.0, 120.0);
+    alignToClimbLookupRot.put(16.0, -120.0);
+    alignToClimbLookupRot.put(14.0, 0.0);
+    alignToClimbLookupRot.put(13.0, 0.0);
+    alignToClimbLookupRot.put(12.0, 60.0);
+    alignToClimbLookupRot.put(11.0, -60.0);
+
+    alignToClimbLookupPose.put(
+        16.0, new Pose2d(182.73 * .0254, 146.19 * .0254, new Rotation2d(Math.toRadians(-120))));
+    alignToClimbLookupPose.put(
+        15.0, new Pose2d(182.73 * .0254, 177.1 * .0254, new Rotation2d(Math.toRadians(120))));
+    alignToClimbLookupPose.put(14.0, new Pose2d(209.48 * .0254, 161.62 * .0254, new Rotation2d(Math.toRadians(0))));
+    alignToClimbLookupPose.put(13.0, new Pose2d(441.74 * .0254, 161.62 * .0254, new Rotation2d(Math.toRadians(0))));
+    alignToClimbLookupPose.put(12.0, new Pose2d(468.69 * .0254, 177.1 * .0254, new Rotation2d(Math.toRadians(60))));
+    alignToClimbLookupPose.put(
+        11.0, new Pose2d(468.693 * .0254, 146.19 * .0254, new Rotation2d(Math.toRadians(-60))));
 
     visionApriltagSubsystem =
         new VisionApriltagSubsystem(() -> drivetrain.getPose().getRotation().getDegrees());
@@ -271,41 +283,63 @@ public class RobotContainer {
     return robotContainer;
   }
 
+  private <T> T inLine(T t) {
+    System.out.println(t);
+    return t;
+  }
+
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
+    /*oi.alignToClimbButton()
+    .whileTrue(
+        new InstantCommand(
+                () -> {
+                  visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
+                })
+            .andThen(
+                new RotateToAngle(
+                    drivetrain,
+                    oi::getTranslateX,
+                    oi::getTranslateY,
+                    oi::getRotate,
+                    () ->
+                        visionApriltagSubsystem.hasStageTarget()
+                            ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId())
+                            : 0,
+                    () -> !visionApriltagSubsystem.hasStageTarget(),
+                    statusRgb,
+                    () -> visionApriltagSubsystem.hasStageTarget()))
+            .andThen(
+                new InstantCommand(
+                    () -> {
+                      drivetrain.disableFieldRelative();
+                    }))
+            .andThen(
+                new StrafeToPosition(
+                    drivetrain,
+                    oi::getTranslateX,
+                    oi::getTranslateY,
+                    oi::getRotate,
+                    () -> visionApriltagSubsystem.getTX(),
+                    () -> visionApriltagSubsystem.getPose3dTargetSpaceFromLimelight().getZ(),
+                    drivetrain.getPose().getRotation().getDegrees(),
+                    statusRgb)));*/
+
     oi.alignToClimbButton()
         .whileTrue(
             new InstantCommand(
                     () -> {
                       visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
+                   
                     })
+                .andThen(new WaitCommand(.04))
                 .andThen(
-                    new RotateToAngle(
+                    new DriveToPose(
                         drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        () ->
                             visionApriltagSubsystem.hasStageTarget()
-                                ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId())
-                                : 0,
-                        () -> !visionApriltagSubsystem.hasStageTarget(),
-                        statusRgb,
-                        () -> visionApriltagSubsystem.hasStageTarget()))
-                .andThen(
-                    new InstantCommand(
-                        () -> {
-                          drivetrain.disableFieldRelative();
-                        }))
-                .andThen(
-                    new StrafeToPosition(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        () -> visionApriltagSubsystem.getTX(),
-                        drivetrain.getPose().getRotation().getDegrees(),
-                        statusRgb)));
+                                ? alignToClimbLookupPose.get(
+                                    visionApriltagSubsystem.getAprilTagId())
+                                :alignToClimbLookupPose.get(15.0))));
     oi.alignToClimbButton()
         .onFalse(
             new ConditionalCommand(
@@ -528,11 +562,13 @@ public class RobotContainer {
     Translation2d currentPose = drivetrain.getPose().getTranslation();
     return speakerPose.minus(currentPose);
   }
+  
 
   public void updateVisionPose() {
     LimelightHelpers.PoseEstimate limelightMeasurement = visionApriltagSubsystem.getPoseEstimate();
     if (limelightMeasurement.tagCount >= 2
-        || limelightMeasurement.tagCount == 1 && limelightMeasurement.avgTagDist < 1.25) {
+        || (limelightMeasurement.tagCount == 1 && limelightMeasurement.avgTagDist < 1.25)
+        || visionApriltagSubsystem.hasStageTarget()) {
       RobotOdometry.getInstance()
           .addVisionMeasurement(
               limelightMeasurement.pose,

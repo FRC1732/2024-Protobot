@@ -18,6 +18,7 @@ import java.util.function.DoubleSupplier;
 public class StrafeToPosition extends Command {
   private final Drivetrain drivetrain;
   private final DoubleSupplier txSupplier;
+  private final DoubleSupplier tzSupplier;
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
@@ -46,12 +47,21 @@ public class StrafeToPosition extends Command {
           new TrapezoidProfile.Constraints(strafeMaxVelocity.get(), strafeMaxAcceleration.get()),
           LOOP_PERIOD_SECS);
 
+  protected final ProfiledPIDController moveForwardController =
+      new ProfiledPIDController(
+          strafeKp.get(),
+          strafeKi.get(),
+          strafeKd.get(),
+          new TrapezoidProfile.Constraints(strafeMaxVelocity.get(), strafeMaxAcceleration.get()),
+          LOOP_PERIOD_SECS);
+
   public StrafeToPosition(
       Drivetrain drivetrain,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier,
       DoubleSupplier txSupplier,
+      DoubleSupplier tzSupplier,
       double rotateAngle,
       StatusRgb statusRgb) {
     this.drivetrain = drivetrain;
@@ -63,6 +73,7 @@ public class StrafeToPosition extends Command {
     this.rotateAngle = rotateAngle;
     // this.manualOverrideSupplier = manualOverrideSupplier;
     this.txSupplier = txSupplier;
+    this.tzSupplier = tzSupplier;
     strafeController.setGoal(0);
   }
 
@@ -93,7 +104,9 @@ public class StrafeToPosition extends Command {
       //strafeController.setGoal(targetPositionSupplier.getAsDouble());
     }*/
     double strafePercentage = strafeController.calculate(txSupplier.getAsDouble(), 0) * .25;
+    double moveForwardPercentage = moveForwardController.calculate(tzSupplier.getAsDouble(), .4);
     double strafeCmd = strafePercentage * RobotConfig.getInstance().getRobotMaxVelocity();
+    double moveForwardCmd = moveForwardPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
 
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
@@ -110,7 +123,7 @@ public class StrafeToPosition extends Command {
     boolean usingOverride = false; // manualOverrideSupplier.getAsBoolean();
     double xVelocityCmd = usingOverride ? xVelocity : -xVelocity;
     double yVelocityCmd =
-        usingOverride ? yVelocity : Math.abs(rotationalVelocity) < 10e-3 ? -strafeCmd : 0;
+        usingOverride ? yVelocity : Math.abs(rotationalVelocity) < 10e-3 ? strafeCmd : 0;
     double rotVelCmd = usingOverride ? rotationalVelocity : 0;
 
     drivetrain.drive(xVelocityCmd, yVelocityCmd, rotVelCmd, true, drivetrain.getFieldRelative());

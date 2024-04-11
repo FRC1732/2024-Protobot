@@ -1,6 +1,7 @@
 package frc.robot.limelightVision.ApriltagVision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -49,6 +50,10 @@ public class VisionApriltagSubsystem extends SubsystemBase {
 
   public Pose2d getPose2dFromLimelight() {
     return LimelightHelpers.getBotPose2d(getLimelightName());
+  }
+
+  public Pose3d getPose3dTargetSpaceFromLimelight() {
+    return (LimelightHelpers.getBotPose3d_TargetSpace(getLimelightName()));
   }
 
   public PoseEstimate getPoseEstimate() {

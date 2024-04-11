@@ -42,17 +42,12 @@ public class DriveToPose extends Command {
   private boolean running = false;
   private Timer timer;
 
-  private static final TunableNumber driveKp =
-      new TunableNumber("DriveToPose/DriveKp", RobotConfig.getInstance().getDriveToPoseDriveKP());
-  private static final TunableNumber driveKd =
-      new TunableNumber("DriveToPose/DriveKd", RobotConfig.getInstance().getDriveToPoseDriveKD());
+  private static final TunableNumber driveKp = new TunableNumber("DriveToPose/DriveKp", 2);
+  private static final TunableNumber driveKd = new TunableNumber("DriveToPose/DriveKd", 0);
   private static final TunableNumber driveKi = new TunableNumber("DriveToPose/DriveKi", 0);
-  private static final TunableNumber thetaKp =
-      new TunableNumber("DriveToPose/ThetaKp", RobotConfig.getInstance().getDriveToPoseThetaKP());
-  private static final TunableNumber thetaKd =
-      new TunableNumber("DriveToPose/ThetaKd", RobotConfig.getInstance().getDriveToPoseThetaKD());
-  private static final TunableNumber thetaKi =
-      new TunableNumber("DriveToPose/ThetaKi", RobotConfig.getInstance().getDriveToPoseThetaKI());
+  private static final TunableNumber thetaKp = new TunableNumber("DriveToPose/ThetaKp", 7);
+  private static final TunableNumber thetaKd = new TunableNumber("DriveToPose/ThetaKd", 0);
+  private static final TunableNumber thetaKi = new TunableNumber("DriveToPose/ThetaKi", 0);
   private static final TunableNumber driveMaxVelocity =
       new TunableNumber(
           "DriveToPose/DriveMaxVelocity",
@@ -110,6 +105,22 @@ public class DriveToPose extends Command {
   public DriveToPose(Drivetrain drivetrain, Supplier<Pose2d> poseSupplier) {
     this.drivetrain = drivetrain;
     this.poseSupplier = poseSupplier;
+    this.timer = new Timer();
+    addRequirements(drivetrain);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+  }
+
+  /**
+   * Constructs a new DriveToPose command that drives the robot in a straight line to the specified
+   * pose. A pose supplier is specified instead of a pose since the target pose may not be known
+   * when this command is created.
+   *
+   * @param drivetrain the drivetrain subsystem required by this command
+   * @param poseSupplier a supplier that returns the pose to drive to
+   */
+  public DriveToPose(Drivetrain drivetrain, Pose2d poseSupplier) {
+    this.drivetrain = drivetrain;
+    this.poseSupplier = () -> poseSupplier;
     this.timer = new Timer();
     addRequirements(drivetrain);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -213,13 +224,13 @@ public class DriveToPose extends Command {
     Logger.recordOutput("DriveToPose/xErr", xController.atGoal());
     Logger.recordOutput("DriveToPose/yErr", yController.atGoal());
     Logger.recordOutput("DriveToPose/tErr", thetaController.atGoal());
-
+return false;
     // check that running is true (i.e., the calculate method has been invoked on the PID
     // controllers) and that each of the controllers is at their goal. This is important since these
     // controllers will return true for atGoal if the calculate method has not yet been invoked.
-    return !drivetrain.isMoveToPoseEnabled()
-        || this.timer.hasElapsed(timeout.get())
-        || (running && xController.atGoal() && yController.atGoal() && thetaController.atGoal());
+    //return !drivetrain.isMoveToPoseEnabled()
+    //    || this.timer.hasElapsed(timeout.get())
+    //    || (running && xController.atGoal() && yController.atGoal() && thetaController.atGoal());
   }
 
   /**
