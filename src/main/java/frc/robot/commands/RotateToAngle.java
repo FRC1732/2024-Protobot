@@ -37,7 +37,6 @@ public class RotateToAngle extends Command {
   private final BooleanSupplier endWhenAngleAchieved;
 
   private boolean lastManualRotationOverrideValue;
-  private double lastAngularVelocity;
 
   protected static final TunableNumber thetaKp = new TunableNumber("RotateToAngle/ThetaKp", 9);
   protected static final TunableNumber thetaKi = new TunableNumber("RotateToAngle/ThetaKi", 0);
@@ -174,15 +173,6 @@ public class RotateToAngle extends Command {
    */
   @Override
   public void execute() {
-    // Logger.recordOutput("RotateToAngle/AngleDeg", targetAngleSupplier.getAsDouble());
-    Logger.recordOutput(
-        "RotateToAngle/ThetaControllerMeasurement",
-        drivetrain.getPose().getRotation().getRadians());
-    Logger.recordOutput(
-        "RotateToAngle/ThetaControllerSetpoint",
-        Units.degreesToRadians(targetAngleSupplier.getAsDouble()));
-    Logger.recordOutput("RotateToAngle/ThetaControllerTolerance", thetaTolerance.get());
-
     // update from tunable numbers
     if (thetaKp.hasChanged()
         || thetaKd.hasChanged()
@@ -195,7 +185,7 @@ public class RotateToAngle extends Command {
       thetaController.setD(thetaKd.get());
       thetaController.setConstraints(
           new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
-      thetaController.setTolerance(thetaTolerance.get());
+      thetaController.setTolerance(Math.toRadians(thetaTolerance.get()));
     }
 
     Pose2d currentPose = drivetrain.getPose();
@@ -204,6 +194,11 @@ public class RotateToAngle extends Command {
           currentPose.getRotation().getRadians(),
           drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
     }
+    Logger.recordOutput(
+        "RotateToAngle/ThetaControllerMeasurementDegrees", currentPose.getRotation().getDegrees());
+    Logger.recordOutput(
+        "RotateToAngle/ThetaControllerGoalDegrees", targetAngleSupplier.getAsDouble());
+    Logger.recordOutput("RotateToAngle/ThetaControllerToleranceDegrees", thetaTolerance.get());
     Logger.recordOutput("RotateToAngle/WithinTolerance", withinTolerance(currentPose));
 
     double thetaVelocity =
@@ -211,6 +206,7 @@ public class RotateToAngle extends Command {
             currentPose.getRotation().getRadians(),
             Units.degreesToRadians(this.targetAngleSupplier.getAsDouble()));
     thetaVelocity += 0.026 * Math.signum(thetaVelocity);
+
     Logger.recordOutput("RotateToAngle/ThetaVelocity", thetaVelocity);
 
     if (withinTolerance(currentPose)) {
@@ -220,6 +216,7 @@ public class RotateToAngle extends Command {
     } else {
       statusRgb.targetReady(false);
     }
+
     Logger.recordOutput("RotateToAngle/ThetaVelocityAdjusted", thetaVelocity);
 
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
@@ -237,7 +234,6 @@ public class RotateToAngle extends Command {
     drivetrain.drive(xVelocity, yVelocity, rotVelCmd, true, drivetrain.getFieldRelative());
 
     lastManualRotationOverrideValue = manualRotationOverrideSupplier.getAsBoolean();
-    lastAngularVelocity = rotVelCmd;
   }
 
   private boolean withinTolerance(Pose2d currentPose) {
