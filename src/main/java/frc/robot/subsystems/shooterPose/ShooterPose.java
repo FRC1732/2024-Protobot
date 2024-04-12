@@ -395,7 +395,7 @@ public class ShooterPose extends SubsystemBase {
         }
         break;
       case SKIP:
-        targetAngle = 10.0;
+        targetAngle = 20.0;
         break;
       case POPSHOT:
         double speakerHeightPop = 83.0, shooterHeightPop = 27.0 + 14.75;

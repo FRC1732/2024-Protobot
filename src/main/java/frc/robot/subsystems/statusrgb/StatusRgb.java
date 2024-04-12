@@ -77,7 +77,7 @@ public class StatusRgb extends SubsystemBase {
         switch (specialMode) {
           case NOTE_CAPTURED: // blue and gold
             out3.set(!true);
-            //System.out.println("Special mode active");
+            // System.out.println("Special mode active");
             break;
           default: // do nothing
             break;

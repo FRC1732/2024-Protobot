@@ -364,19 +364,21 @@ public class RobotContainer {
                             .andThen(
                                 new SetShooterDistanceContinuous(
                                         shooterPose,
-                                        () -> getDistanceToTargetInches(getRobotToTargetVector()))
-                                    .asProxy())
-                            .alongWith(
-                                new BrakeFeeder(feeder, shooterWheels).asProxy(),
-                                new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        () -> getRotationToTargetDegrees(getRobotToTargetVector()),
-                                        (() -> false),
-                                        statusRgb)
-                                    .asProxy())),
+                                        () -> getDistanceToTargetInches(getRobotToTargetVector()),
+                                        getShooterTarget())
+                                    .alongWith(
+                                        new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                                        new RotateToAngle(
+                                                drivetrain,
+                                                oi::getTranslateX,
+                                                oi::getTranslateY,
+                                                oi::getRotate,
+                                                () ->
+                                                    getRotationToTargetDegrees(
+                                                        getRobotToTargetVector()),
+                                                (() -> false),
+                                                statusRgb)
+                                            .asProxy()))),
                 // Check ScoringMode
                 () -> scoringMode == ScoringMode.AMP));
 
