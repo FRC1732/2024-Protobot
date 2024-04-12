@@ -5,19 +5,25 @@ import frc.robot.RobotContainer.ShooterTarget;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterPose.ShooterPose.ShotType;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class SetShooterDistanceContinuous extends Command {
   private final ShooterPose shooterPose;
   private DoubleSupplier distanceSupplierInches;
   private ShooterTarget target;
+  BooleanSupplier isPopShot;
 
   public SetShooterDistanceContinuous(
-      ShooterPose shooterPose, DoubleSupplier distanceSupplierInches, ShooterTarget target) {
+      ShooterPose shooterPose,
+      DoubleSupplier distanceSupplierInches,
+      ShooterTarget target,
+      BooleanSupplier isPopShot) {
     addRequirements(shooterPose);
     this.shooterPose = shooterPose;
     this.distanceSupplierInches = distanceSupplierInches;
     this.target = target;
+    this.isPopShot = isPopShot;
   }
 
   public void initialize() {}
@@ -33,7 +39,11 @@ public class SetShooterDistanceContinuous extends Command {
         break;
       case SPEAKER:
       default:
-        shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.SPEAKER);
+        if (isPopShot.getAsBoolean()) {
+          shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.POPSHOT);
+        } else {
+          shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.SPEAKER);
+        }
         break;
     }
   }

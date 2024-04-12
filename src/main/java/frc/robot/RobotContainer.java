@@ -94,6 +94,8 @@ public class RobotContainer {
     SPEAKER
   }
 
+  public boolean popShotEnabled = false;
+
   public enum ShooterTarget {
     SPEAKER,
     AMP_ZONE,
@@ -366,7 +368,8 @@ public class RobotContainer {
                                 new SetShooterDistanceContinuous(
                                         shooterPose,
                                         () -> getDistanceToTargetInches(getRobotToTargetVector()),
-                                        getShooterTarget())
+                                        getShooterTarget(),
+                                        () -> popShotEnabled)
                                     .alongWith(
                                         new BrakeFeeder(feeder, shooterWheels).asProxy(),
                                         new RotateToAngle(
@@ -407,19 +410,22 @@ public class RobotContainer {
                 new IntakeNote(intake, feeder, shooterPose, statusRgb)
                     .asProxy() // intakes with object detection
                     .deadlineWith(
-                        new RotateToAngle(
-                                drivetrain,
-                                oi::getTranslateX,
-                                oi::getTranslateY,
-                                oi::getRotate,
-                                () -> noteDetectionAngleHelper(visionObjectDetectionSubsystem),
-                                // targetAngleHelper(
-                                // visionObjectDetectionSubsystem.getTX(),
-                                // visionObjectDetectionSubsystem.getLatencyPipeline()
-                                // + visionObjectDetectionSubsystem.getLatencyCapture()),
-                                () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
-                                statusRgb)
-                            .asProxy())
+                        new ConditionalCommand(
+                            new RotateToAngle(
+                                    drivetrain,
+                                    oi::getTranslateX,
+                                    oi::getTranslateY,
+                                    oi::getRotate,
+                                    () -> noteDetectionAngleHelper(visionObjectDetectionSubsystem),
+                                    // targetAngleHelper(
+                                    // visionObjectDetectionSubsystem.getTX(),
+                                    // visionObjectDetectionSubsystem.getLatencyPipeline()
+                                    // + visionObjectDetectionSubsystem.getLatencyCapture()),
+                                    () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
+                                    statusRgb)
+                                .asProxy(),
+                            new InstantCommand(),
+                            () -> visionObjectDetectionSubsystem.isAssistEnabled()))
                     .andThen(
                         new ConditionalCommand(
                             new RunShooterMedium(shooterWheels).asProxy(),
@@ -451,6 +457,9 @@ public class RobotContainer {
         .onTrue(
             new InstantCommand(() -> scoringMode = ScoringMode.AMP)
                 .andThen(new StopShooter(shooterWheels)));
+
+    oi.popShotToggleButton().onTrue(new InstantCommand(() -> popShotEnabled = true));
+    oi.popShotToggleButton().onFalse(new InstantCommand(() -> popShotEnabled = false));
 
     oi.armClimberSwitch().onTrue(new ArmClimber(climber));
     oi.armClimberSwitch().onFalse(new DisarmClimber(climber));

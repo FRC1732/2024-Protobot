@@ -194,11 +194,9 @@ public class RotateToAngle extends Command {
           currentPose.getRotation().getRadians(),
           drivetrain.getRobotRelativeSpeeds().omegaRadiansPerSecond);
     }
-    Logger.recordOutput(
-        "RotateToAngle/ThetaControllerMeasurementDegrees", currentPose.getRotation().getDegrees());
-    Logger.recordOutput(
-        "RotateToAngle/ThetaControllerGoalDegrees", targetAngleSupplier.getAsDouble());
-    Logger.recordOutput("RotateToAngle/ThetaControllerToleranceDegrees", thetaTolerance.get());
+    Logger.recordOutput("RotateToAngle/RobotAngle", currentPose.getRotation().getDegrees());
+    Logger.recordOutput("RotateToAngle/TargetGoal", targetAngleSupplier.getAsDouble());
+    Logger.recordOutput("RotateToAngle/AngleTolerance", thetaTolerance.get());
     Logger.recordOutput("RotateToAngle/WithinTolerance", withinTolerance(currentPose));
 
     double thetaVelocity =
