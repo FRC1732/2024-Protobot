@@ -104,8 +104,8 @@ public class RobotContainer {
   private double lastVisionError;
   private double lastRotateGoal;
 
-  private double lastObjectDetectionVisionError;
-  private double lastObjectDetectionRotateGoal;
+  // private double lastObjectDetectionVisionError;
+  // private double lastObjectDetectionRotateGoal;
 
   public ScoringMode scoringMode = ScoringMode.AMP;
 
@@ -180,11 +180,12 @@ public class RobotContainer {
   }
 
   private void createSubsystems() {
-    int[] driveMotorCANIDs = config.getSwerveDriveMotorCANIDs();
-    int[] steerMotorCANDIDs = config.getSwerveSteerMotorCANIDs();
-    int[] steerEncoderCANDIDs = config.getSwerveSteerEncoderCANIDs();
-    double[] steerOffsets = config.getSwerveSteerOffsets();
     /*
+     * int[] driveMotorCANIDs = config.getSwerveDriveMotorCANIDs();
+     * int[] steerMotorCANDIDs = config.getSwerveSteerMotorCANIDs();
+     * int[] steerEncoderCANDIDs = config.getSwerveSteerEncoderCANIDs();
+     * double[] steerOffsets = config.getSwerveSteerOffsets();
+     *
      * SwerveModuleIO flModule =
      * new SwerveModuleIOTalonFXPhoenix6(
      * 0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0],
@@ -411,11 +412,11 @@ public class RobotContainer {
                                 oi::getTranslateX,
                                 oi::getTranslateY,
                                 oi::getRotate,
-                                () ->
-                                    targetAngleHelper(
-                                        visionObjectDetectionSubsystem.getTX(),
-                                        visionObjectDetectionSubsystem.getLatencyPipeline()
-                                            + visionObjectDetectionSubsystem.getLatencyCapture()),
+                                () -> noteDetectionAngleHelper(visionObjectDetectionSubsystem),
+                                // targetAngleHelper(
+                                // visionObjectDetectionSubsystem.getTX(),
+                                // visionObjectDetectionSubsystem.getLatencyPipeline()
+                                // + visionObjectDetectionSubsystem.getLatencyCapture()),
                                 () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
                                 statusRgb)
                             .asProxy())
@@ -662,6 +663,21 @@ public class RobotContainer {
     lastVisionError = curVisionError;
     lastRotateGoal = angleAtTime - curVisionError;
     return lastRotateGoal;
+  }
+
+  public double noteDetectionAngleHelper(
+      VisionObjectDetectionSubsytem visionObjectDetectionSubsystem) {
+    // lets try .. the closer the note is the less correction to take.  Adjust tx by the size/height
+    // of ty;
+    double fovVertical = 49.7; // LL 3 docs
+
+    double tx = visionObjectDetectionSubsystem.getTX();
+    double ty = visionObjectDetectionSubsystem.getTY();
+
+    // 1.0 up high, 0.0 down low
+    double scale = (ty + fovVertical / 2.0) / fovVertical;
+
+    return scale * tx;
   }
 
   public void updateAngleTable() {
