@@ -10,7 +10,7 @@ import org.littletonrobotics.junction.Logger;
 public class VisionObjectDetectionSubsytem extends SubsystemBase {
   private ShuffleboardTab tab;
   private double lastDistance;
-  private boolean assistEnabled = true;
+  private boolean assistEnabled = false;
 
   @AutoLog
   public static class VisionObjectDetectionSubsystemIOInput {
