@@ -134,11 +134,11 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(130.0, -24.5);
     angleLookupTable.put(140.0, -23.5);
     angleLookupTable.put(150.0, -23.5);
-    angleLookupTable.put(160.0, -23.0);
-    angleLookupTable.put(170.0, -22.5);
-    angleLookupTable.put(180.0, -22.0);
-    angleLookupTable.put(190.0, -21.5);
-    angleLookupTable.put(200.0, -21.0);
+    angleLookupTable.put(160.0, -23.5);
+    angleLookupTable.put(170.0, -23.0);
+    angleLookupTable.put(180.0, -22.5);
+    angleLookupTable.put(190.0, -21.75);
+    angleLookupTable.put(200.0, -21.25);
     angleLookupTable.put(250.0, -20.5);
 
     popShotAngleLookupTable = new TreeMap<>();
