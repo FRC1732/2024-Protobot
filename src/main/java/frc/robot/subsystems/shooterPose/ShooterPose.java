@@ -125,15 +125,20 @@ public class ShooterPose extends SubsystemBase {
         31.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // subwoofer, min angle
     angleLookupTable.put(50.0, -41.0);
     angleLookupTable.put(60.0, -39.0);
-    angleLookupTable.put(70.0, -33.5);
-    angleLookupTable.put(80.0, -30.5);
-    angleLookupTable.put(90.0, -29.5);
-    angleLookupTable.put(100.0, -28.0);
-    angleLookupTable.put(110.0, -27.5);
-    angleLookupTable.put(120.0, -26.25);
-    angleLookupTable.put(130.0, -25.5);
-    angleLookupTable.put(140.0, -25.0);
-    angleLookupTable.put(150.0, -24.5);
+    angleLookupTable.put(70.0, -35.5);
+    angleLookupTable.put(80.0, -33.5);
+    angleLookupTable.put(90.0, -30.5);
+    angleLookupTable.put(100.0, -30.0);
+    angleLookupTable.put(110.0, -28.5);
+    angleLookupTable.put(120.0, -26.75);
+    angleLookupTable.put(130.0, -24.5);
+    angleLookupTable.put(140.0, -23.5);
+    angleLookupTable.put(150.0, -23.5);
+    angleLookupTable.put(160.0, -23.5);
+    angleLookupTable.put(170.0, -23.0);
+    angleLookupTable.put(180.0, -22.5);
+    angleLookupTable.put(190.0, -21.75);
+    angleLookupTable.put(200.0, -21.25);
     angleLookupTable.put(250.0, -20.5);
 
     popShotAngleLookupTable = new TreeMap<>();

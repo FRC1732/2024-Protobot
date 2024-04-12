@@ -115,10 +115,10 @@ public class ShooterWheels extends SubsystemBase {
     // shooterPidController.setP(shooterP.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_P));
     // shooterPidController.setI(shooterI.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_I));
     // shooterPidController.setD(shooterD.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_D));
-    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
+    //shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
     wheelMode = WheelMode.FAST;
 
-    // shooterPidController.setReference(5800, ControlType.kVelocity);
+    shooterPidController.setReference(6200, ControlType.kVelocity);
   }
 
   public void setShooterSpeedMedium() {

@@ -220,6 +220,7 @@ public class RotateToAngle extends Command {
     } else {
       statusRgb.targetReady(false);
     }
+    Logger.recordOutput("RotateToAngle/ThetaVelocityAdjusted", thetaVelocity);
 
     double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
     double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
