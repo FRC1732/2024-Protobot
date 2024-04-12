@@ -44,6 +44,7 @@ import frc.robot.commands.intakeCommands.StartIntakingNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterMedium;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
+import frc.robot.commands.shooterCommands.RunShooterTarget;
 import frc.robot.commands.shooterCommands.SetShooterDistance;
 import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
@@ -60,6 +61,7 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
+import frc.robot.subsystems.shooterPose.ShooterPose.ShotType;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.HashMap;
@@ -343,16 +345,13 @@ public class RobotContainer {
                                         statusRgb)
                                     .asProxy())),
                 // Has note AND is in SPEAKER scoring mode
-                new RunShooterFast(shooterWheels)
+                new RunShooterTarget(shooterWheels, ShotType.SPEAKER)
                     .andThen(
                         new WaitForNote(feeder)
                             .andThen(
                                 new SetShooterDistanceContinuous(
                                         shooterPose,
-                                        () ->
-                                            Units.metersToInches(
-                                                    getRobotToSpeakerVector().getNorm())
-                                                - 13.5)
+                                        () -> getDistanceToTargetInches(getRobotToTargetVector()))
                                     .asProxy())
                             .alongWith(
                                 new BrakeFeeder(feeder, shooterWheels).asProxy(),
@@ -361,8 +360,7 @@ public class RobotContainer {
                                         oi::getTranslateX,
                                         oi::getTranslateY,
                                         oi::getRotate,
-                                        () ->
-                                            getRobotToSpeakerVector().getAngle().getDegrees() + 180,
+                                        () -> getRotationToTargetDegrees(getRobotToTargetVector()),
                                         (() -> false),
                                         statusRgb)
                                     .asProxy())),
@@ -542,6 +540,22 @@ public class RobotContainer {
      * LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
      */
 
+  }
+
+  public Translation2d getRobotToTargetVector() {
+    // Speaker
+    return getRobotToSpeakerVector();
+    // Amp Zone
+
+    // Neutral Zone
+  }
+
+  public double getDistanceToTargetInches(Translation2d robotToTargetVector) {
+    return Units.metersToInches(robotToTargetVector.getNorm()) - 13.5;
+  }
+
+  public double getRotationToTargetDegrees(Translation2d robotToTargetVector) {
+    return robotToTargetVector.getAngle().getDegrees() + 180.0;
   }
 
   public Translation2d getRobotToSpeakerVector() {

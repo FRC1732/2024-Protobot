@@ -55,6 +55,13 @@ public class ShooterPose extends SubsystemBase {
     Pose pose = Pose.HANDOFF;
   }
 
+  public enum ShotType {
+    SPEAKER,
+    POPSHOT,
+    SKIP,
+    PASS
+  }
+
   private final ShooterPoseTiltIOInputAutoLogged loggedTiltIO =
       new ShooterPoseTiltIOInputAutoLogged();
   private final ShooterPoseHeightIOInputAutoLogged loggedHeightIO =
@@ -91,6 +98,7 @@ public class ShooterPose extends SubsystemBase {
 
   private NavigableMap<Double, Double> angleLookupTable;
   private NavigableMap<Double, Double> popShotAngleLookupTable;
+  private NavigableMap<Double, Double> passShotAngleLookupTable;
 
   // private final TunableNumber shooterHeightP =
   // new TunableNumber("Elevator Height P",
@@ -145,6 +153,22 @@ public class ShooterPose extends SubsystemBase {
     popShotAngleLookupTable.put(140.0, -22.0);
     popShotAngleLookupTable.put(150.0, -21.5);
     popShotAngleLookupTable.put(250.0, -20.5);
+
+    passShotAngleLookupTable = new TreeMap<>();
+    passShotAngleLookupTable.put(
+        10.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // (distance, optimal angle)
+    passShotAngleLookupTable.put(
+        31.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // subwoofer, min angle
+    passShotAngleLookupTable.put(50.0, -37.0);
+    passShotAngleLookupTable.put(150.0, -35.0);
+    passShotAngleLookupTable.put(200.0, -34.0);
+    passShotAngleLookupTable.put(250.0, -33.0);
+    passShotAngleLookupTable.put(300.0, -32.5);
+    passShotAngleLookupTable.put(350.0, -32.0);
+    passShotAngleLookupTable.put(400.0, -31.5);
+    passShotAngleLookupTable.put(450.0, -31.0);
+    passShotAngleLookupTable.put(550.0, -30.5);
+    passShotAngleLookupTable.put(650.0, -30.0);
 
     shooterHeightLeftMotor =
         new CANSparkMax(
@@ -330,34 +354,97 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void setShooterDistance(double distanceInches) {
-    if (distanceInches <= 0) {
-      return;
-    }
+    setShooterDistance(distanceInches, ShotType.SPEAKER);
+  }
 
+  public void setShooterDistance(double distanceInches, ShotType type) {
     shooterDistance = distanceInches;
-    double speakerHeight = 83, shooterHeight = 27;
-    double basicAngle =
-        -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
-
-    // Find the closest distances in the lookup table
-    Double lowerDistance = angleLookupTable.floorKey(distanceInches);
-    Double higherDistance = angleLookupTable.ceilingKey(distanceInches);
 
     double targetAngle;
 
-    // If exact match or only one boundary exists, use it directly
-    if (lowerDistance == null || higherDistance == null || lowerDistance.equals(higherDistance)) {
-      targetAngle = angleLookupTable.getOrDefault(distanceInches, basicAngle);
-    } else {
+    switch (type) {
+      case PASS:
+        double basicAnglePass = -30.0;
 
-      // Interpolate between the two angles for a more accurate angle
-      double lowerAngle = angleLookupTable.get(lowerDistance);
-      double higherAngle = angleLookupTable.get(higherDistance);
-      targetAngle =
-          interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
+        // Find the closest distances in the lookup table
+        Double lowerDistancePass = passShotAngleLookupTable.floorKey(distanceInches);
+        Double higherDistancePass = passShotAngleLookupTable.ceilingKey(distanceInches);
+
+        // If exact match or only one boundary exists, use it directly
+        if (lowerDistancePass == null
+            || higherDistancePass == null
+            || lowerDistancePass.equals(higherDistancePass)) {
+          targetAngle = passShotAngleLookupTable.getOrDefault(distanceInches, basicAnglePass);
+        } else {
+
+          // Interpolate between the two angles for a more accurate angle
+          double lowerAnglePass = passShotAngleLookupTable.get(lowerDistancePass);
+          double higherAnglePass = passShotAngleLookupTable.get(higherDistancePass);
+          targetAngle =
+              interpolate(
+                  distanceInches,
+                  lowerDistancePass,
+                  higherDistancePass,
+                  lowerAnglePass,
+                  higherAnglePass);
+        }
+        break;
+      case SKIP:
+        targetAngle = 10.0;
+        break;
+      case POPSHOT:
+        double speakerHeightPop = 83.0, shooterHeightPop = 27.0 + 14.75;
+        double basicAnglePop =
+            -1 * Math.toDegrees(Math.atan((speakerHeightPop - shooterHeightPop) / distanceInches));
+
+        // Find the closest distances in the lookup table
+        Double lowerDistancePop = popShotAngleLookupTable.floorKey(distanceInches);
+        Double higherDistancePop = popShotAngleLookupTable.ceilingKey(distanceInches);
+
+        // If exact match or only one boundary exists, use it directly
+        if (lowerDistancePop == null
+            || higherDistancePop == null
+            || lowerDistancePop.equals(higherDistancePop)) {
+          targetAngle = popShotAngleLookupTable.getOrDefault(distanceInches, basicAnglePop);
+        } else {
+
+          // Interpolate between the two angles for a more accurate angle
+          double lowerAnglePop = popShotAngleLookupTable.get(lowerDistancePop);
+          double higherAnglePop = popShotAngleLookupTable.get(higherDistancePop);
+          targetAngle =
+              interpolate(
+                  distanceInches,
+                  lowerDistancePop,
+                  higherDistancePop,
+                  lowerAnglePop,
+                  higherAnglePop);
+        }
+        break;
+      case SPEAKER:
+      default:
+        double speakerHeight = 83.0, shooterHeight = 27.0;
+        double basicAngle =
+            -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
+
+        // Find the closest distances in the lookup table
+        Double lowerDistance = angleLookupTable.floorKey(distanceInches);
+        Double higherDistance = angleLookupTable.ceilingKey(distanceInches);
+
+        // If exact match or only one boundary exists, use it directly
+        if (lowerDistance == null
+            || higherDistance == null
+            || lowerDistance.equals(higherDistance)) {
+          targetAngle = angleLookupTable.getOrDefault(distanceInches, basicAngle);
+        } else {
+
+          // Interpolate between the two angles for a more accurate angle
+          double lowerAngle = angleLookupTable.get(lowerDistance);
+          double higherAngle = angleLookupTable.get(higherDistance);
+          targetAngle =
+              interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
+        }
     }
 
-    // @TODO check targetAngle, raise elevator if it is too low
     if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 12) {
       shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
     } else {
