@@ -61,7 +61,6 @@ import frc.robot.subsystems.feeder.Feeder;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooterPose.Pose;
 import frc.robot.subsystems.shooterPose.ShooterPose;
-import frc.robot.subsystems.shooterPose.ShooterPose.ShotType;
 import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.HashMap;
@@ -93,6 +92,13 @@ public class RobotContainer {
   public enum ScoringMode {
     AMP,
     SPEAKER
+  }
+
+  public enum ShooterTarget {
+    SPEAKER,
+    AMP_ZONE,
+    AMP_ZONE_SKIP,
+    NEUTRAL_ZONE
   }
 
   private double lastVisionError;
@@ -129,6 +135,13 @@ public class RobotContainer {
       this.time = time;
     }
   }
+
+  private final Translation2d blueSpeakerLocation = new Translation2d(0.2286, 5.541518 - 0.1);
+  private final Translation2d redSpeakerLocation = new Translation2d(16.38935, 5.541518);
+  private final Translation2d blueAmpZoneLocation = new Translation2d(0.0, 7.1);
+  private final Translation2d redAmpZoneLocation = new Translation2d(16.61795, 7.1);
+  private final Translation2d blueNeutralZoneLocation = new Translation2d(6.60, 7.45);
+  private final Translation2d redNeutralZoneLocation = new Translation2d(10.0, 7.45);
 
   /**
    * Create the container for the robot. Contains subsystems, operator interface (OI) devices, and
@@ -345,7 +358,7 @@ public class RobotContainer {
                                         statusRgb)
                                     .asProxy())),
                 // Has note AND is in SPEAKER scoring mode
-                new RunShooterTarget(shooterWheels, ShotType.SPEAKER)
+                new RunShooterTarget(shooterWheels, getShooterTarget())
                     .andThen(
                         new WaitForNote(feeder)
                             .andThen(
@@ -543,11 +556,42 @@ public class RobotContainer {
   }
 
   public Translation2d getRobotToTargetVector() {
-    // Speaker
-    return getRobotToSpeakerVector();
-    // Amp Zone
+    return getRobotToTargetVector(getShooterTarget());
+  }
 
-    // Neutral Zone
+  public Translation2d getRobotToTargetVector(ShooterTarget target) {
+    switch (target) {
+      case NEUTRAL_ZONE:
+        return getRobotToneutralZoneVector();
+      case AMP_ZONE:
+      case AMP_ZONE_SKIP:
+        return getRobotToAmpZoneVector();
+      case SPEAKER:
+      default:
+        return getRobotToSpeakerVector();
+    }
+  }
+
+  public ShooterTarget getShooterTarget() {
+    Translation2d currentPose = drivetrain.getPose().getTranslation();
+    Translation2d fieldSize = new Translation2d(16.54, 8.21);
+    if (lastAlliance != Alliance.Blue) {
+      currentPose = fieldSize.minus(currentPose);
+    }
+    double NeutralZoneLocation = 6.75;
+    double farWingLocation = 12.0;
+    double centerLineLocation = 4.1;
+
+    if (currentPose.getX() < NeutralZoneLocation) {
+      return ShooterTarget.SPEAKER;
+    }
+    if (currentPose.getX() > farWingLocation) {
+      return ShooterTarget.NEUTRAL_ZONE;
+    }
+    if (currentPose.getY() < centerLineLocation) {
+      return ShooterTarget.AMP_ZONE;
+    }
+    return ShooterTarget.AMP_ZONE_SKIP;
   }
 
   public double getDistanceToTargetInches(Translation2d robotToTargetVector) {
@@ -560,11 +604,23 @@ public class RobotContainer {
 
   public Translation2d getRobotToSpeakerVector() {
     Translation2d speakerPose =
-        lastAlliance == Alliance.Blue
-            ? new Translation2d(0.2286, 5.541518 - 0.1)
-            : new Translation2d(16.38935, 5.541518);
+        lastAlliance == Alliance.Blue ? blueSpeakerLocation : redSpeakerLocation;
     Translation2d currentPose = drivetrain.getPose().getTranslation();
     return speakerPose.minus(currentPose);
+  }
+
+  public Translation2d getRobotToAmpZoneVector() {
+    Translation2d ampZone =
+        lastAlliance == Alliance.Blue ? blueAmpZoneLocation : redAmpZoneLocation;
+    Translation2d currentPose = drivetrain.getPose().getTranslation();
+    return ampZone.minus(currentPose);
+  }
+
+  public Translation2d getRobotToneutralZoneVector() {
+    Translation2d neutralZone =
+        lastAlliance == Alliance.Blue ? blueNeutralZoneLocation : redNeutralZoneLocation;
+    Translation2d currentPose = drivetrain.getPose().getTranslation();
+    return neutralZone.minus(currentPose);
   }
 
   public boolean isDrivetrainStopped() {
