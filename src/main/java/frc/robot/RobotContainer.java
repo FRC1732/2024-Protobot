@@ -65,6 +65,7 @@ import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -576,7 +577,9 @@ public class RobotContainer {
   }
 
   public Translation2d getRobotToTargetVector() {
-    return getRobotToTargetVector(getShooterTarget());
+    ShooterTarget target = getShooterTarget();
+    Logger.recordOutput("RobotContainer/ShooterTarget", target);
+    return getRobotToTargetVector(target);
   }
 
   public Translation2d getRobotToTargetVector(ShooterTarget target) {
@@ -595,9 +598,13 @@ public class RobotContainer {
   public ShooterTarget getShooterTarget() {
     Translation2d currentPose = drivetrain.getPose().getTranslation();
     Translation2d fieldSize = new Translation2d(16.54, 0.0);
+
+    Logger.recordOutput("RobotContainer/CurrentPose", currentPose);
     if (lastAlliance != Alliance.Blue) {
       currentPose = currentPose.minus(fieldSize).times(-1.0);
     }
+    Logger.recordOutput("RobotContainer/AlliancePose", currentPose);
+
     double NeutralZoneLocation = 6.75;
     double farWingLocation = 12.0;
     double centerLineLocation = 4.1;
