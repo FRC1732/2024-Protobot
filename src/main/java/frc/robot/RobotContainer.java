@@ -233,10 +233,10 @@ public class RobotContainer {
                 drivetrain
                     .getPose()
                     .getRotation()
-                    .plus(
-                        lastAlliance == Alliance.Blue
-                            ? Rotation2d.fromDegrees(0.0)
-                            : Rotation2d.fromDegrees(180.0))
+                    // .plus(
+                    //     lastAlliance == Alliance.Blue
+                    //         ? Rotation2d.fromDegrees(0.0)
+                    //         : Rotation2d.fromDegrees(180.0))
                     .getDegrees());
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
