@@ -213,11 +213,11 @@ public class RobotContainer {
     alignToClimbLookupPose.put(
         16.0,
         new Pose2d(
-            (182.73 + deltaX) * .0254 - .254, (146.19+deltaY) * .0254 - .254, new Rotation2d(Math.toRadians(-120))));
+            (182.73 + deltaX+1) * .0254 - .254, (146.19+deltaY-6) * .0254 - .254, new Rotation2d(Math.toRadians(-120))));
     alignToClimbLookupPose.put(
         15.0,
         new Pose2d(
-           (182.73 + deltaX) * .0254 - .254, (177.1+deltaY) * .0254 + .254, new Rotation2d(Math.toRadians(120))));
+           (182.73 + deltaX+1) * .0254 - .254, (177.1+deltaY+1) * .0254 + .254, new Rotation2d(Math.toRadians(120))));
     alignToClimbLookupPose.put(
         14.0, new Pose2d((209.48 + deltaX) * .0254+.17, (161.62+deltaY) * .0254, new Rotation2d(Math.toRadians(0))));
     alignToClimbLookupPose.put(
