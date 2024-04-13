@@ -686,7 +686,7 @@ public class RobotContainer {
     // 1.0 up high, 0.0 down low
     double scale = (ty + fovVertical / 2.0) / fovVertical;
 
-    return scale * tx;
+    return scale * tx + drivetrain.getPose().getRotation().getDegrees();
   }
 
   public void updateAngleTable() {
