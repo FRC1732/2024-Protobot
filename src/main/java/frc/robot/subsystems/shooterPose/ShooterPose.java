@@ -151,13 +151,18 @@ public class ShooterPose extends SubsystemBase {
     popShotAngleLookupTable.put(70.0, -27.5);
     popShotAngleLookupTable.put(80.0, -26.5);
     popShotAngleLookupTable.put(90.0, -25.5);
-    popShotAngleLookupTable.put(100.0, -24.5);
-    popShotAngleLookupTable.put(110.0, -23.5);
-    popShotAngleLookupTable.put(120.0, -23.0);
-    popShotAngleLookupTable.put(130.0, -22.5);
-    popShotAngleLookupTable.put(140.0, -22.0);
-    popShotAngleLookupTable.put(150.0, -21.5);
-    popShotAngleLookupTable.put(250.0, -20.5);
+    popShotAngleLookupTable.put(100.0, -23.0);
+    popShotAngleLookupTable.put(110.0, -22.5);
+    popShotAngleLookupTable.put(120.0, -20.5);
+    popShotAngleLookupTable.put(130.0, -18.5);
+    popShotAngleLookupTable.put(140.0, -16.75);
+    popShotAngleLookupTable.put(150.0, -16.25);
+    popShotAngleLookupTable.put(160.0, -15.75);
+    popShotAngleLookupTable.put(170.0, -15.5);
+    popShotAngleLookupTable.put(180.0, -15.25);
+    popShotAngleLookupTable.put(190.0, -15.215);
+    popShotAngleLookupTable.put(200.0, -15.20);
+    popShotAngleLookupTable.put(250.0, -10.25);
 
     passShotAngleLookupTable = new TreeMap<>();
     passShotAngleLookupTable.put(
