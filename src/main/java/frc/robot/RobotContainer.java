@@ -210,14 +210,14 @@ public class RobotContainer {
     alignToClimbLookupRot.put(11.0, -60.0);
 
     alignToClimbLookupPose.put(
-        16.0, new Pose2d(182.73 * .0254, 146.19 * .0254, new Rotation2d(Math.toRadians(-120))));
+        16.0, new Pose2d(182.73 * .0254-.254, 146.19 * .0254-.254, new Rotation2d(Math.toRadians(-120))));
     alignToClimbLookupPose.put(
-        15.0, new Pose2d(182.73 * .0254, 177.1 * .0254, new Rotation2d(Math.toRadians(120))));
-    alignToClimbLookupPose.put(14.0, new Pose2d(209.48 * .0254, 161.62 * .0254, new Rotation2d(Math.toRadians(0))));
-    alignToClimbLookupPose.put(13.0, new Pose2d(441.74 * .0254, 161.62 * .0254, new Rotation2d(Math.toRadians(0))));
-    alignToClimbLookupPose.put(12.0, new Pose2d(468.69 * .0254, 177.1 * .0254, new Rotation2d(Math.toRadians(60))));
+        15.0, new Pose2d(182.73 * .0254-.254, 177.1 * .0254+.254, new Rotation2d(Math.toRadians(120))));
+    alignToClimbLookupPose.put(14.0, new Pose2d(209.48 * .0254+.45, 161.62 * .0254, new Rotation2d(Math.toRadians(0))));
+    alignToClimbLookupPose.put(13.0, new Pose2d(441.74 * .0254-.45, 161.62 * .0254, new Rotation2d(Math.toRadians(0))));
+    alignToClimbLookupPose.put(12.0, new Pose2d(468.69 * .0254+.254, 177.1 * .0254+.254, new Rotation2d(Math.toRadians(60))));
     alignToClimbLookupPose.put(
-        11.0, new Pose2d(468.693 * .0254, 146.19 * .0254, new Rotation2d(Math.toRadians(-60))));
+        11.0, new Pose2d(468.693 * .0254+.254, 146.19 * .0254-.254, new Rotation2d(Math.toRadians(-60))));
 
     visionApriltagSubsystem =
         new VisionApriltagSubsystem(() -> drivetrain.getPose().getRotation().getDegrees());
@@ -330,16 +330,25 @@ public class RobotContainer {
             new InstantCommand(
                     () -> {
                       visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
-                   
-                    })
-                .andThen(new WaitCommand(.04))
-                .andThen(
+                })
+                .andThen(new WaitCommand(.02))
+                .andThen( 
                     new DriveToPose(
                         drivetrain,
-                            visionApriltagSubsystem.hasStageTarget()
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                            ()->visionApriltagSubsystem.hasStageTarget()
                                 ? alignToClimbLookupPose.get(
                                     visionApriltagSubsystem.getAprilTagId())
-                                :alignToClimbLookupPose.get(15.0))));
+                                : alignToClimbLookupPose.get(15.0), visionApriltagSubsystem::hasStageTarget))
+                  .andThen(new InstantCommand(                
+                   () ->{ 
+                    drivetrain.enableTranslationSlowMode();
+                    drivetrain.enableRotationSlowMode();
+                  })));
+
+
     oi.alignToClimbButton()
         .onFalse(
             new ConditionalCommand(
@@ -355,7 +364,19 @@ public class RobotContainer {
                       visionApriltagSubsystem.setPipeline(
                           VisionApriltagConstants.Pipelines.SPEAKER);
                     }),
-                oi.fieldCentricButton()::getAsBoolean));
+                oi.fieldCentricButton()::getAsBoolean)
+                .andThen(new ConditionalCommand(
+                  new InstantCommand(
+                    () -> {
+                      drivetrain.enableTranslationSlowMode();
+                      drivetrain.enableRotationSlowMode();
+                    })
+                  , new InstantCommand(
+                     () -> {
+                      drivetrain.disableTranslationSlowMode();
+                      drivetrain.disableRotationSlowMode();
+                    })
+                  , oi.slowModeSwitch()::getAsBoolean)));
     oi.aimOrSourceButton()
         .whileTrue(
             new ConditionalCommand(

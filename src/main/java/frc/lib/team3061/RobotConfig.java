@@ -600,7 +600,7 @@ public abstract class RobotConfig {
    *     pose during the drive-to-pose command
    */
   public double getDriveToPoseDriveTolerance() {
-    return 0.0;
+    return 0.1;
   }
 
   /**
@@ -611,7 +611,7 @@ public abstract class RobotConfig {
    *     pose during the drive-to-pose command
    */
   public double getDriveToPoseThetaTolerance() {
-    return 0.0;
+    return 0.01;
   }
 
   /**
