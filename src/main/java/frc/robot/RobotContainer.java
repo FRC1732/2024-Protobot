@@ -676,17 +676,16 @@ public class RobotContainer {
 
   public double noteDetectionAngleHelper(
       VisionObjectDetectionSubsytem visionObjectDetectionSubsystem) {
-    // lets try .. the closer the note is the less correction to take.  Adjust tx by the size/height
-    // of ty;
+    // lets try .. the closer the note is the less correction to take. Adjust tx by
+    // the size/height of ty;
     double fovVertical = 49.7; // LL 3 docs
 
     double tx = visionObjectDetectionSubsystem.getTX();
     double ty = visionObjectDetectionSubsystem.getTY();
 
-    // 1.0 up high, 0.0 down low
-    double scale = (ty + fovVertical / 2.0) / fovVertical;
+    double scale = (ty + fovVertical * 0.75) / (fovVertical) * 1.0;
 
-    return scale * tx + drivetrain.getPose().getRotation().getDegrees();
+    return (-1 * scale * tx) + drivetrain.getPose().getRotation().getDegrees();
   }
 
   public void updateAngleTable() {
