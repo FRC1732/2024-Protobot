@@ -164,16 +164,16 @@ public class ShooterPose extends SubsystemBase {
         10.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // (distance, optimal angle)
     passShotAngleLookupTable.put(
         31.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // subwoofer, min angle
-    passShotAngleLookupTable.put(50.0, -37.0);
-    passShotAngleLookupTable.put(150.0, -35.0);
-    passShotAngleLookupTable.put(200.0, -34.0);
-    passShotAngleLookupTable.put(250.0, -33.0);
-    passShotAngleLookupTable.put(300.0, -32.5);
-    passShotAngleLookupTable.put(350.0, -32.0);
-    passShotAngleLookupTable.put(400.0, -31.5);
-    passShotAngleLookupTable.put(450.0, -31.0);
-    passShotAngleLookupTable.put(550.0, -30.5);
-    passShotAngleLookupTable.put(650.0, -30.0);
+    passShotAngleLookupTable.put(50.0, -40.0);
+    passShotAngleLookupTable.put(150.0, -40.0);
+    passShotAngleLookupTable.put(200.0, -40.0);
+    passShotAngleLookupTable.put(250.0, -39.0);
+    passShotAngleLookupTable.put(300.0, -37.5);
+    passShotAngleLookupTable.put(350.0, -35.0);
+    passShotAngleLookupTable.put(400.0, -34.5);
+    passShotAngleLookupTable.put(450.0, -34.0);
+    passShotAngleLookupTable.put(550.0, -34.0);
+    passShotAngleLookupTable.put(650.0, -34.0);
 
     shooterHeightLeftMotor =
         new CANSparkMax(
@@ -395,7 +395,7 @@ public class ShooterPose extends SubsystemBase {
         }
         break;
       case SKIP:
-        targetAngle = 20.0;
+        targetAngle = -10.0;
         break;
       case POPSHOT:
         double speakerHeightPop = 83.0, shooterHeightPop = 27.0 + 14.75;
@@ -450,7 +450,7 @@ public class ShooterPose extends SubsystemBase {
         }
     }
 
-    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 12) {
+    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 12 || targetAngle > -15) {
       shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
     } else {
       shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);

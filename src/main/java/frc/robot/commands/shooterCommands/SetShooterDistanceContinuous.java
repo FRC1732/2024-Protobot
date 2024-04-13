@@ -7,17 +7,18 @@ import frc.robot.subsystems.shooterPose.ShooterPose;
 import frc.robot.subsystems.shooterPose.ShooterPose.ShotType;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class SetShooterDistanceContinuous extends Command {
   private final ShooterPose shooterPose;
   private DoubleSupplier distanceSupplierInches;
-  private ShooterTarget target;
+  private Supplier<ShooterTarget> target;
   BooleanSupplier isPopShot;
 
   public SetShooterDistanceContinuous(
       ShooterPose shooterPose,
       DoubleSupplier distanceSupplierInches,
-      ShooterTarget target,
+      Supplier<ShooterTarget> target,
       BooleanSupplier isPopShot) {
     addRequirements(shooterPose);
     this.shooterPose = shooterPose;
@@ -29,7 +30,7 @@ public class SetShooterDistanceContinuous extends Command {
   public void initialize() {}
 
   public void execute() {
-    switch (target) {
+    switch (target.get()) {
       case AMP_ZONE:
       case NEUTRAL_ZONE:
         shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.PASS);
@@ -40,7 +41,7 @@ public class SetShooterDistanceContinuous extends Command {
       case SPEAKER:
       default:
         if (isPopShot.getAsBoolean()) {
-          shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.POPSHOT);
+          shooterPose.setPopShotDistance(distanceSupplierInches.getAsDouble());
         } else {
           shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.SPEAKER);
         }

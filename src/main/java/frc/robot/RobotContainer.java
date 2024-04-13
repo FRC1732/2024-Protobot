@@ -142,8 +142,8 @@ public class RobotContainer {
   private final Translation2d redSpeakerLocation = new Translation2d(16.38935, 5.541518);
   private final Translation2d blueAmpZoneLocation = new Translation2d(0.0, 7.1);
   private final Translation2d redAmpZoneLocation = new Translation2d(16.61795, 7.1);
-  private final Translation2d blueNeutralZoneLocation = new Translation2d(6.60, 7.45);
-  private final Translation2d redNeutralZoneLocation = new Translation2d(10.0, 7.45);
+  private final Translation2d blueNeutralZoneLocation = new Translation2d(6.60, 7.1);
+  private final Translation2d redNeutralZoneLocation = new Translation2d(10.0, 7.1);
 
   /**
    * Create the container for the robot. Contains subsystems, operator interface (OI) devices, and
@@ -361,14 +361,14 @@ public class RobotContainer {
                                         statusRgb)
                                     .asProxy())),
                 // Has note AND is in SPEAKER scoring mode
-                new RunShooterTarget(shooterWheels, getShooterTarget())
+                new RunShooterTarget(shooterWheels, () -> getShooterTarget())
                     .andThen(
                         new WaitForNote(feeder)
                             .andThen(
                                 new SetShooterDistanceContinuous(
                                         shooterPose,
                                         () -> getDistanceToTargetInches(getRobotToTargetVector()),
-                                        getShooterTarget(),
+                                        () -> getShooterTarget(),
                                         () -> popShotEnabled)
                                     .alongWith(
                                         new BrakeFeeder(feeder, shooterWheels).asProxy(),
