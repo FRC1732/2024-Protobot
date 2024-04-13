@@ -164,16 +164,16 @@ public class ShooterPose extends SubsystemBase {
         10.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // (distance, optimal angle)
     passShotAngleLookupTable.put(
         31.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // subwoofer, min angle
-    passShotAngleLookupTable.put(50.0, -40.0);
-    passShotAngleLookupTable.put(150.0, -40.0);
-    passShotAngleLookupTable.put(200.0, -40.0);
-    passShotAngleLookupTable.put(250.0, -39.0);
-    passShotAngleLookupTable.put(300.0, -37.5);
-    passShotAngleLookupTable.put(350.0, -35.0);
-    passShotAngleLookupTable.put(400.0, -34.5);
-    passShotAngleLookupTable.put(450.0, -34.0);
-    passShotAngleLookupTable.put(550.0, -34.0);
-    passShotAngleLookupTable.put(650.0, -34.0);
+    passShotAngleLookupTable.put(50.0, -42.0);
+    passShotAngleLookupTable.put(150.0, -42.0);
+    passShotAngleLookupTable.put(200.0, -42.0);
+    passShotAngleLookupTable.put(250.0, -41.0);
+    passShotAngleLookupTable.put(300.0, -39.5);
+    passShotAngleLookupTable.put(350.0, -37.0);
+    passShotAngleLookupTable.put(400.0, -36.5);
+    passShotAngleLookupTable.put(450.0, -36.0);
+    passShotAngleLookupTable.put(550.0, -36.0);
+    passShotAngleLookupTable.put(650.0, -36.0);
 
     shooterHeightLeftMotor =
         new CANSparkMax(
@@ -450,18 +450,25 @@ public class ShooterPose extends SubsystemBase {
         }
     }
 
-    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 12 || targetAngle > -15) {
+    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_WHEELS_CLEARANCE_DEGREES
+        || targetAngle > -15) {
       shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
     } else {
       shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
     }
 
-    if (targetAngle > ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES + 12
+    if (targetAngle > ShooterPoseConstants.MIN_SHOOTER_WHEELS_CLEARANCE_DEGREES
         || shooterHeightEncoder.getPosition()
             > ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + .75) {
       shooterTiltPID.setGoal(
           MathUtil.clamp(
               angleModulusDeg(targetAngle),
+              ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+              ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
+    } else {
+      shooterTiltPID.setGoal(
+          MathUtil.clamp(
+              angleModulusDeg(ShooterPoseConstants.MIN_SHOOTER_BEARING_CLEARANCE_DEGREES),
               ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
               ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
     }

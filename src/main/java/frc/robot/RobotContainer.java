@@ -32,7 +32,6 @@ import frc.robot.commands.ClimberCommands.DisarmClimber;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.StrafeToPosition;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.feederCommands.BrakeFeeder;
 import frc.robot.commands.feederCommands.FeedShooterManual;
 import frc.robot.commands.feederCommands.WaitForNote;
 import frc.robot.commands.intakeCommands.Eject;
@@ -100,7 +99,8 @@ public class RobotContainer {
     SPEAKER,
     AMP_ZONE,
     AMP_ZONE_SKIP,
-    NEUTRAL_ZONE
+    NEUTRAL_ZONE,
+    NEUTRAL_ZONE_SKIP
   }
 
   private double lastVisionError;
@@ -140,10 +140,10 @@ public class RobotContainer {
 
   private final Translation2d blueSpeakerLocation = new Translation2d(0.2286, 5.541518 - 0.1);
   private final Translation2d redSpeakerLocation = new Translation2d(16.38935, 5.541518);
-  private final Translation2d blueAmpZoneLocation = new Translation2d(0.0, 7.1);
-  private final Translation2d redAmpZoneLocation = new Translation2d(16.61795, 7.1);
-  private final Translation2d blueNeutralZoneLocation = new Translation2d(6.60, 7.1);
-  private final Translation2d redNeutralZoneLocation = new Translation2d(10.0, 7.1);
+  private final Translation2d blueAmpZoneLocation = new Translation2d(0.0, 6.9);
+  private final Translation2d redAmpZoneLocation = new Translation2d(16.61795, 6.9);
+  private final Translation2d blueNeutralZoneLocation = new Translation2d(6.60, 6.9);
+  private final Translation2d redNeutralZoneLocation = new Translation2d(10.0, 6.9);
 
   /**
    * Create the container for the robot. Contains subsystems, operator interface (OI) devices, and
@@ -370,19 +370,18 @@ public class RobotContainer {
                                         () -> getDistanceToTargetInches(getRobotToTargetVector()),
                                         () -> getShooterTarget(),
                                         () -> popShotEnabled)
-                                    .alongWith(
-                                        new BrakeFeeder(feeder, shooterWheels).asProxy(),
-                                        new RotateToAngle(
-                                                drivetrain,
-                                                oi::getTranslateX,
-                                                oi::getTranslateY,
-                                                oi::getRotate,
-                                                () ->
-                                                    getRotationToTargetDegrees(
-                                                        getRobotToTargetVector()),
-                                                (() -> false),
-                                                statusRgb)
-                                            .asProxy()))),
+                                    .asProxy())
+                            .alongWith(
+                                // new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                                new RotateToAngle(
+                                        drivetrain,
+                                        oi::getTranslateX,
+                                        oi::getTranslateY,
+                                        oi::getRotate,
+                                        () -> getRotationToTargetDegrees(getRobotToTargetVector()),
+                                        (() -> false),
+                                        statusRgb)
+                                    .asProxy())),
                 // Check ScoringMode
                 () -> scoringMode == ScoringMode.AMP));
 
@@ -598,7 +597,10 @@ public class RobotContainer {
       return ShooterTarget.SPEAKER;
     }
     if (currentPose.getX() > farWingLocation) {
-      return ShooterTarget.NEUTRAL_ZONE;
+      if (currentPose.getY() < centerLineLocation) {
+        return ShooterTarget.NEUTRAL_ZONE;
+      }
+      return ShooterTarget.NEUTRAL_ZONE_SKIP;
     }
     if (currentPose.getY() < centerLineLocation) {
       return ShooterTarget.AMP_ZONE;

@@ -35,6 +35,7 @@ public class SetShooterDistanceContinuous extends Command {
       case NEUTRAL_ZONE:
         shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.PASS);
         break;
+      case NEUTRAL_ZONE_SKIP:
       case AMP_ZONE_SKIP:
         shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.SKIP);
         break;
