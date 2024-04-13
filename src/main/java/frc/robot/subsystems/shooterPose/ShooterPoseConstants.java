@@ -52,7 +52,7 @@ public class ShooterPoseConstants {
   public static final double SHOOTER_HEIGHT_RPM_TO_INCHES_PER_SECOND =
       0.006109; // RPM to inch/sec (spool diam * 3.14 / reduction / 60 = 1.75 * 3.14 / 15 / 60)
 
-  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -25; //-30.7
+  public static final double SHOOTER_TILT_HANDOFF_SETPOINT = -30.7;
   public static final double SHOOTER_TILT_SUBWOOFER_SETPOINT = -60;
   public static final double SHOOTER_TILT_AMP_SETPOINT = 36;
   public static final double SHOOTER_TILT_TRAP_SETPOINT = 50;
