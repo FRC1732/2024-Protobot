@@ -13,7 +13,6 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -291,11 +290,11 @@ public class Drivetrain extends SubsystemBase {
    *
    * @param poseSupplier the supplier of the pose to which set the robot's odometry
    */
-  public void resetPoseToVision(Supplier<Pose3d> poseSupplier) {
-    Pose3d pose = poseSupplier.get();
+  public void resetPoseToVision(Supplier<Pose2d> poseSupplier) {
+    Pose2d pose = poseSupplier.get();
     if (pose != null) {
       noPoseAlert.set(false);
-      this.io.resetPose(pose.toPose2d());
+      this.io.resetPose(new Pose2d(pose.getX(), pose.getY(), this.getRotation()));
     } else {
       noPoseAlert.set(true);
     }

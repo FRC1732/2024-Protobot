@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
-
+import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
@@ -40,10 +40,11 @@ import org.littletonrobotics.junction.Logger;
 public class DriveToPose extends Command {
   private final Drivetrain drivetrain;
   private final Supplier<Pose2d> poseSupplier;
-  private final Supplier<Boolean> hasTargetSupplier;  
+  private final Supplier<Boolean> hasTargetSupplier;
   private final DoubleSupplier translationXSupplier;
   private final DoubleSupplier translationYSupplier;
   private final DoubleSupplier rotationSupplier;
+  private final VisionApriltagSubsystem visionApriltagSubsystem;
   private Pose2d targetPose;
   private boolean poseSet;
 
@@ -110,17 +111,21 @@ public class DriveToPose extends Command {
    * @param drivetrain the drivetrain subsystem required by this command
    * @param poseSupplier a supplier that returns the pose to drive to
    */
-  public DriveToPose(Drivetrain drivetrain, 
+  public DriveToPose(
+      Drivetrain drivetrain,
       DoubleSupplier translationXSupplier,
       DoubleSupplier translationYSupplier,
       DoubleSupplier rotationSupplier,
-  Supplier<Pose2d> poseSupplier, Supplier<Boolean> hasTargetSupplier) {
+      VisionApriltagSubsystem visionApriltagSubsystem,
+      Supplier<Pose2d> poseSupplier,
+      Supplier<Boolean> hasTargetSupplier) {
     this.drivetrain = drivetrain;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
     this.rotationSupplier = rotationSupplier;
     this.poseSupplier = poseSupplier;
     this.hasTargetSupplier = hasTargetSupplier;
+    this.visionApriltagSubsystem = visionApriltagSubsystem;
     this.timer = new Timer();
     addRequirements(drivetrain);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -146,7 +151,8 @@ public class DriveToPose extends Command {
     yController.setTolerance(driveTolerance.get());
     thetaController.setTolerance(thetaTolerance.get());
     poseSet = hasTargetSupplier.get();
-    this.targetPose = hasTargetSupplier.get() ? poseSupplier.get() : new Pose2d(0,0,new Rotation2d(0));
+    this.targetPose =
+        hasTargetSupplier.get() ? poseSupplier.get() : new Pose2d(0, 0, new Rotation2d(0));
 
     Logger.recordOutput("DriveToPose/targetPose", targetPose);
 
@@ -163,7 +169,7 @@ public class DriveToPose extends Command {
     // set running to true in this method to capture that the calculate method has been invoked on
     // the PID controllers. This is important since these controllers will return true for atGoal if
     // the calculate method has not yet been invoked.
-    if(poseSet){
+    if (poseSet) {
       running = true;
 
       // Update from tunable numbers
@@ -211,29 +217,30 @@ public class DriveToPose extends Command {
       if (thetaController.atGoal()) thetaVelocity = 0.0;
 
       drivetrain.drive(xVelocity, yVelocity, thetaVelocity, true, true);
-  }
-  else{
-    if(hasTargetSupplier.get()){
-      targetPose = poseSupplier.get();
-    Pose2d currentPose = drivetrain.getPose();
-    xController.reset(currentPose.getX());
-    yController.reset(currentPose.getY());
-    thetaController.reset(currentPose.getRotation().getRadians());
-      poseSet = true;
-    }else{
-      double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
-    double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
-    double rotationPercentage = TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0) * 1.0;
+    } else {
+      if (hasTargetSupplier.get()) {
+        drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
+        targetPose = poseSupplier.get();
+        Pose2d currentPose = drivetrain.getPose();
+        xController.reset(currentPose.getX());
+        yController.reset(currentPose.getY());
+        thetaController.reset(currentPose.getRotation().getRadians());
+        poseSet = true;
+      } else {
+        double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
+        double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
+        double rotationPercentage =
+            TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0) * 1.0;
 
-    double xVelocity = xPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
-    double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
-    double rotationalVelocity =
-        rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
+        double xVelocity = xPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
+        double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
+        double rotationalVelocity =
+            rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
 
-    drivetrain.drive(xVelocity, yVelocity, rotationalVelocity, true, drivetrain.getFieldRelative());
-
+        drivetrain.drive(
+            xVelocity, yVelocity, rotationalVelocity, true, drivetrain.getFieldRelative());
+      }
     }
-  }
   }
 
   /**
@@ -252,9 +259,9 @@ public class DriveToPose extends Command {
     // check that running is true (i.e., the calculate method has been invoked on the PID
     // controllers) and that each of the controllers is at their goal. This is important since these
     // controllers will return true for atGoal if the calculate method has not yet been invoked.
-    //return !drivetrain.isMoveToPoseEnabled()
+    // return !drivetrain.isMoveToPoseEnabled()
     //    || this.timer.hasElapsed(timeout.get())
-    //    || 
+    //    ||
     return (running && xController.atGoal() && yController.atGoal() && thetaController.atGoal());
   }
 

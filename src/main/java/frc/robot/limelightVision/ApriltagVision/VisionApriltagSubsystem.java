@@ -52,6 +52,10 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     return LimelightHelpers.getBotPose2d(getLimelightName());
   }
 
+  public Pose2d getMegaTag2Pose2dFromLimelight() {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(getLimelightName()).pose;
+  }
+
   public Pose3d getPose3dTargetSpaceFromLimelight() {
     return (LimelightHelpers.getBotPose3d_TargetSpace(getLimelightName()));
   }
