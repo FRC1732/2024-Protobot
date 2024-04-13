@@ -228,7 +228,16 @@ public class RobotContainer {
     alignToClimbLookup.put(11.0, -60.0);
 
     visionApriltagSubsystem =
-        new VisionApriltagSubsystem(() -> drivetrain.getPose().getRotation().getDegrees());
+        new VisionApriltagSubsystem(
+            () ->
+                drivetrain
+                    .getPose()
+                    .getRotation()
+                    .plus(
+                        lastAlliance == Alliance.Blue
+                            ? Rotation2d.fromDegrees(0.0)
+                            : Rotation2d.fromDegrees(180.0))
+                    .getDegrees());
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
     statusRgb =
