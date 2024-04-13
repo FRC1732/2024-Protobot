@@ -585,9 +585,9 @@ public class RobotContainer {
 
   public ShooterTarget getShooterTarget() {
     Translation2d currentPose = drivetrain.getPose().getTranslation();
-    Translation2d fieldSize = new Translation2d(16.54, 8.21);
+    Translation2d fieldSize = new Translation2d(16.54, 0.0);
     if (lastAlliance != Alliance.Blue) {
-      currentPose = fieldSize.minus(currentPose);
+      currentPose = currentPose.minus(fieldSize).times(-1.0);
     }
     double NeutralZoneLocation = 6.75;
     double farWingLocation = 12.0;
