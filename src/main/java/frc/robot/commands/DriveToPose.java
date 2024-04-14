@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.RobotConfig;
@@ -51,6 +52,7 @@ public class DriveToPose extends Command {
 
   private boolean running = false;
   private Timer timer;
+  private Alliance alliance;
 
   private static final TunableNumber driveKp = new TunableNumber("DriveToPose/DriveKp", 4);
   private static final TunableNumber driveKd = new TunableNumber("DriveToPose/DriveKd", 0);
@@ -119,7 +121,8 @@ public class DriveToPose extends Command {
       DoubleSupplier rotationSupplier,
       VisionApriltagSubsystem visionApriltagSubsystem,
       Supplier<Pose2d> poseSupplier,
-      Supplier<Boolean> hasTargetSupplier) {
+      Supplier<Boolean> hasTargetSupplier,
+      Alliance alliance) {
     this.drivetrain = drivetrain;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
@@ -128,6 +131,7 @@ public class DriveToPose extends Command {
     this.hasTargetSupplier = hasTargetSupplier;
     this.visionApriltagSubsystem = visionApriltagSubsystem;
     this.timer = new Timer();
+    this.alliance = alliance;
     addRequirements(drivetrain);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
@@ -153,9 +157,9 @@ public class DriveToPose extends Command {
     thetaController.setTolerance(thetaTolerance.get());
     poseSet = hasTargetSupplier.get();
     driveToPoseState = poseSet ? 2 : 0;
-    if(poseSet){
-          drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
-         
+    if (poseSet) {
+      drivetrain.resetPoseToVision(
+          () -> visionApriltagSubsystem.getMegaTag2Pose2dFromLimelight(this.alliance));
     }
     this.targetPose =
         hasTargetSupplier.get() ? poseSupplier.get() : new Pose2d(0, 0, new Rotation2d(0));
@@ -175,7 +179,7 @@ public class DriveToPose extends Command {
     // set running to true in this method to capture that the calculate method has been invoked on
     // the PID controllers. This is important since these controllers will return true for atGoal if
     // the calculate method has not yet been invoked.
-    if (poseSet ) {
+    if (poseSet) {
       running = true;
 
       // Update from tunable numbers
@@ -221,14 +225,14 @@ public class DriveToPose extends Command {
       if (xController.atGoal()) xVelocity = 0.0;
       if (yController.atGoal()) yVelocity = 0.0;
       if (thetaController.atGoal()) thetaVelocity = 0.0;
-
-      drivetrain.drive(xVelocity, yVelocity, thetaVelocity, true, true);
+      drivetrain.driveWOAlliance(xVelocity, yVelocity, thetaVelocity, true, true);
     } else {
       if (hasTargetSupplier.get()) {
-        if(driveToPoseState == 0){
-          drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
+        if (driveToPoseState == 0) {
+          drivetrain.resetPoseToVision(
+              () -> visionApriltagSubsystem.getMegaTag2Pose2dFromLimelight(this.alliance));
           driveToPoseState = 1;
-        }else if (driveToPoseState == 1){
+        } else if (driveToPoseState == 1) {
           targetPose = poseSupplier.get();
           Pose2d currentPose = drivetrain.getPose();
           xController.reset(currentPose.getX());

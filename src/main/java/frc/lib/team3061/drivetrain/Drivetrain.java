@@ -369,6 +369,43 @@ public class Drivetrain extends SubsystemBase {
     }
   }
 
+  public void driveWOAlliance(
+      double xVelocity,
+      double yVelocity,
+      double rotationalVelocity,
+      boolean isOpenLoop,
+      boolean isFieldRelative) {
+
+    if (driveMode == DriveMode.NORMAL) {
+      // get the slow-mode multiplier from the config
+      double slowModeMultiplier = RobotConfig.getInstance().getRobotSlowModeMultiplier();
+
+      // if translation or rotation is in slow mode, multiply the x and y velocities by the
+      // slow-mode multiplier
+      if (isTranslationSlowMode) {
+        xVelocity *= slowModeMultiplier;
+        yVelocity *= slowModeMultiplier;
+      }
+
+      // if rotation is in slow mode, multiply the rotational velocity by the slow-mode multiplier
+      if (isRotationSlowMode) {
+        rotationalVelocity *= slowModeMultiplier;
+      }
+
+      if (isFieldRelative) {
+        // the origin of the field is always the corner to the right of the blue alliance driver
+        // station. As a result, "forward" from a field-relative perspective when on the red
+        // alliance, is in the negative x direction. Similarly, "left" from a field-relative
+        // perspective when on the red alliance is in the negative y direction.
+        this.io.driveFieldRelative(xVelocity, yVelocity, rotationalVelocity, isOpenLoop);
+      } else {
+        this.io.driveRobotRelative(xVelocity, yVelocity, rotationalVelocity, isOpenLoop);
+      }
+    } else {
+      this.io.holdXStance();
+    }
+  }
+
   /**
    * Stops the motion of the robot. Since the motors are in break mode, the robot will stop soon
    * after this method is invoked.
