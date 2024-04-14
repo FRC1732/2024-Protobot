@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -769,13 +770,13 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SetShooterDistance150", new SetShooterDistance(shooterPose, 126));
     NamedCommands.registerCommand(
-        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 30));
+        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 30 - 24));
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand(
         "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 + 10));
     NamedCommands.registerCommand("SetShooterDistanceF5", new SetShooterDistance(shooterPose, 150));
     NamedCommands.registerCommand(
-        "ShootThrough", new ShootThrough(shooterPose, () -> 100.0, intake, feeder));
+        "ShootThrough", new ShootThrough(shooterPose, () -> 120.0, intake, feeder));
     NamedCommands.registerCommand(
         "IntakeSpoil",
         new IntakeSpoil(intake, feeder, shooterPose, visionObjectDetectionSubsystem));
@@ -783,9 +784,9 @@ public class RobotContainer {
         "AimShot",
         new RotateToAngle(
                 drivetrain,
-                oi::getTranslateX,
-                oi::getTranslateY,
-                oi::getRotate,
+                () -> 0.0,
+                () -> 0.0,
+                () -> 0.0,
                 () -> getRotationToTargetDegrees(getRobotToTargetVector()),
                 () -> false,
                 statusRgb,
@@ -797,7 +798,8 @@ public class RobotContainer {
                     () -> getDistanceToTargetInches(getRobotToTargetVector()),
                     () -> ShooterTarget.SPEAKER,
                     () -> false),
-                new InstantCommand(() -> updateVisionPose())));
+                new FunctionalCommand(
+                    () -> {}, () -> updateVisionPose(), (temp) -> {}, () -> false)));
 
     // build auto path commands
 

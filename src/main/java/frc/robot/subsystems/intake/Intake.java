@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
   private CANSparkMax intakeCentererMotor;
 
   public static Double intakeMainMotorSpeed = 0.80;
-  public static Double intakeCentererMotorSpeed = 0.80;
+  public static Double intakeCentererMotorSpeed = 0.95;
   private double previousValue;
   private double averageValue;
 
