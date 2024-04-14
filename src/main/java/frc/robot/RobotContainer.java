@@ -102,6 +102,7 @@ public class RobotContainer {
 
   private HashMap<Double, Double> alignToClimbLookupRot = new HashMap<>();
   private HashMap<Double, Pose2d> alignToClimbLookupPose = new HashMap<>();
+  private HashMap<Double, Pose2d> alignToClimbLookupStartPose = new HashMap<>();
 
   // use AdvantageKit's LoggedDashboardChooser instead of SendableChooser to
   // ensure accurate logging
@@ -208,28 +209,68 @@ public class RobotContainer {
     alignToClimbLookupRot.put(13.0, 0.0);
     alignToClimbLookupRot.put(12.0, 60.0);
     alignToClimbLookupRot.put(11.0, -60.0);
-    double deltaX =0;
+    double deltaX = 0;
     double deltaY = 0;
     alignToClimbLookupPose.put(
         16.0,
         new Pose2d(
-            (182.73 + deltaX+1) * .0254 - .254, (146.19+deltaY-6) * .0254 - .254, new Rotation2d(Math.toRadians(-120))));
+            (182.73 + deltaX) * .0254 - 7*.0254,
+            (146.19 + deltaY) * .0254 - 12.8*.0254,
+            new Rotation2d(Math.toRadians(-120))));
     alignToClimbLookupPose.put(
         15.0,
         new Pose2d(
-           (182.73 + deltaX+1) * .0254 - .254, (177.1+deltaY+1) * .0254 + .254, new Rotation2d(Math.toRadians(120))));
+            (182.73 + deltaX + 1) * .0254 - 7.25*.0254,
+            (177.1 + deltaY + 1) * .0254 + 6.5*.0254,
+            new Rotation2d(Math.toRadians(120))));
     alignToClimbLookupPose.put(
-        14.0, new Pose2d((209.48 + deltaX) * .0254+.17, (161.62+deltaY) * .0254, new Rotation2d(Math.toRadians(0))));
+        14.0,
+        new Pose2d(
+            (209.48 + deltaX) * .0254 + .35,
+            (161.62 + deltaY-7) * .0254,
+            new Rotation2d(Math.toRadians(0))));
     alignToClimbLookupPose.put(
-        13.0, new Pose2d(441.74 * .0254 - .45, 161.62 * .0254, new Rotation2d(Math.toRadians(0))));
+        13.0, new Pose2d(441.74 * .0254 - .35, (161.62-7) * .0254, new Rotation2d(Math.toRadians(0))));
     alignToClimbLookupPose.put(
         12.0,
         new Pose2d(
-            468.69 * .0254 + .254, 177.1 * .0254 + .254, new Rotation2d(Math.toRadians(60))));
+            468.69 * .0254 + 7.25*.0254, 177.1 * .0254 + 6.5*.0254, new Rotation2d(Math.toRadians(60))));
     alignToClimbLookupPose.put(
         11.0,
         new Pose2d(
-            468.693 * .0254 + .254, 146.19 * .0254 - .254, new Rotation2d(Math.toRadians(-60))));
+            468.693 * .0254 + 7*.0254, 146.19 * .0254 - 12.8*.0254, new Rotation2d(Math.toRadians(-60))));
+
+  alignToClimbLookupStartPose.put(
+        16.0,
+        new Pose2d(
+            (182.73 + deltaX) * .0254 - 26.5*.0254,
+            (146.19 + deltaY) * .0254 - (29+17)*.0254,
+            new Rotation2d(Math.toRadians(-120))));
+
+  alignToClimbLookupStartPose.put(
+        15.0,
+        new Pose2d(
+            (182.73 + deltaX) * .0254 - 23.75*.0254,
+            (177.1 + deltaY) * .0254 + (5.3+36)*.0254,
+            new Rotation2d(Math.toRadians(120))));
+
+  alignToClimbLookupStartPose.put(
+        14.0,
+        new Pose2d(
+            (209.48 + deltaX) * .0254 + 1.30,
+            (161.62 + deltaY-3) * .0254,
+            new Rotation2d(Math.toRadians(0))));
+
+    alignToClimbLookupStartPose.put(
+        13.0, new Pose2d(441.74 * .0254 - 1.30, (161.62-7) * .0254, new Rotation2d(Math.toRadians(0))));
+    alignToClimbLookupStartPose.put(
+        12.0,
+        new Pose2d(
+            468.69 * .0254 + 23.75*.0254, 177.1 * .0254 + 41.3*.0254, new Rotation2d(Math.toRadians(60))));
+    alignToClimbLookupStartPose.put(
+        11.0,
+        new Pose2d(
+            468.693 * .0254 + 26.5*.0254, 146.19 * .0254 - 36*.0254, new Rotation2d(Math.toRadians(-60))));        
 
     visionApriltagSubsystem =
         new VisionApriltagSubsystem(() -> drivetrain.getPose().getRotation().getDegrees());
@@ -352,11 +393,26 @@ public class RobotContainer {
                         oi::getRotate,
                         visionApriltagSubsystem,
                         () ->
-                            visionApriltagSubsystem.hasStageTarget()
+                            (lastAlliance == Alliance.Blue ? visionApriltagSubsystem.hasStageTargetBlue() : visionApriltagSubsystem.hasStageTargetRed())
+                                ? alignToClimbLookupStartPose.get(
+                                    visionApriltagSubsystem.getAprilTagId())
+                                : alignToClimbLookupStartPose.get(16.0),
+                        () ->
+                            (lastAlliance == Alliance.Blue ? visionApriltagSubsystem.hasStageTargetBlue() : visionApriltagSubsystem.hasStageTargetRed())))
+                .andThen(
+                    new DriveToPose(
+                        drivetrain,
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                        visionApriltagSubsystem,
+                        () ->
+                            (lastAlliance == Alliance.Blue ? visionApriltagSubsystem.hasStageTargetBlue() : visionApriltagSubsystem.hasStageTargetRed())
                                 ? alignToClimbLookupPose.get(
                                     visionApriltagSubsystem.getAprilTagId())
                                 : alignToClimbLookupPose.get(15.0),
-                        visionApriltagSubsystem::hasStageTarget))
+                        () ->
+                            (lastAlliance == Alliance.Blue ? visionApriltagSubsystem.hasStageTargetBlue() : visionApriltagSubsystem.hasStageTargetRed())))
                 .andThen(
                     new InstantCommand(
                         () -> {

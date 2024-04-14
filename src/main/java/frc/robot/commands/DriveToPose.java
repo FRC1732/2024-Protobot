@@ -46,12 +46,13 @@ public class DriveToPose extends Command {
   private final DoubleSupplier rotationSupplier;
   private final VisionApriltagSubsystem visionApriltagSubsystem;
   private Pose2d targetPose;
+  private int driveToPoseState = 0;
   private boolean poseSet;
 
   private boolean running = false;
   private Timer timer;
 
-  private static final TunableNumber driveKp = new TunableNumber("DriveToPose/DriveKp", 2);
+  private static final TunableNumber driveKp = new TunableNumber("DriveToPose/DriveKp", 4);
   private static final TunableNumber driveKd = new TunableNumber("DriveToPose/DriveKd", 0);
   private static final TunableNumber driveKi = new TunableNumber("DriveToPose/DriveKi", 0);
   private static final TunableNumber thetaKp = new TunableNumber("DriveToPose/ThetaKp", 7);
@@ -151,6 +152,11 @@ public class DriveToPose extends Command {
     yController.setTolerance(driveTolerance.get());
     thetaController.setTolerance(thetaTolerance.get());
     poseSet = hasTargetSupplier.get();
+    driveToPoseState = poseSet ? 2 : 0;
+    if(poseSet){
+          drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
+         
+    }
     this.targetPose =
         hasTargetSupplier.get() ? poseSupplier.get() : new Pose2d(0, 0, new Rotation2d(0));
 
@@ -169,7 +175,7 @@ public class DriveToPose extends Command {
     // set running to true in this method to capture that the calculate method has been invoked on
     // the PID controllers. This is important since these controllers will return true for atGoal if
     // the calculate method has not yet been invoked.
-    if (poseSet) {
+    if (poseSet ) {
       running = true;
 
       // Update from tunable numbers
@@ -219,13 +225,18 @@ public class DriveToPose extends Command {
       drivetrain.drive(xVelocity, yVelocity, thetaVelocity, true, true);
     } else {
       if (hasTargetSupplier.get()) {
-        drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
-        targetPose = poseSupplier.get();
-        Pose2d currentPose = drivetrain.getPose();
-        xController.reset(currentPose.getX());
-        yController.reset(currentPose.getY());
-        thetaController.reset(currentPose.getRotation().getRadians());
-        poseSet = true;
+        if(driveToPoseState == 0){
+          drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
+          driveToPoseState = 1;
+        }else if (driveToPoseState == 1){
+          targetPose = poseSupplier.get();
+          Pose2d currentPose = drivetrain.getPose();
+          xController.reset(currentPose.getX());
+          yController.reset(currentPose.getY());
+          thetaController.reset(currentPose.getRotation().getRadians());
+          poseSet = true;
+          driveToPoseState = 2;
+        }
       } else {
         double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
         double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
