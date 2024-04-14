@@ -366,48 +366,8 @@ public class RobotContainer {
     return robotContainer;
   }
 
-  private <T> T inLine(T t) {
-    System.out.println(t);
-    return t;
-  }
-
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    /*oi.alignToClimbButton()
-    .whileTrue(
-        new InstantCommand(
-                () -> {
-                  visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
-                })
-            .andThen(
-                new RotateToAngle(
-                    drivetrain,
-                    oi::getTranslateX,
-                    oi::getTranslateY,
-                    oi::getRotate,
-                    () ->
-                        visionApriltagSubsystem.hasStageTarget()
-                            ? alignToClimbLookup.get(visionApriltagSubsystem.getAprilTagId())
-                            : 0,
-                    () -> !visionApriltagSubsystem.hasStageTarget(),
-                    statusRgb,
-                    () -> visionApriltagSubsystem.hasStageTarget()))
-            .andThen(
-                new InstantCommand(
-                    () -> {
-                      drivetrain.disableFieldRelative();
-                    }))
-            .andThen(
-                new StrafeToPosition(
-                    drivetrain,
-                    oi::getTranslateX,
-                    oi::getTranslateY,
-                    oi::getRotate,
-                    () -> visionApriltagSubsystem.getTX(),
-                    () -> visionApriltagSubsystem.getPose3dTargetSpaceFromLimelight().getZ(),
-                    drivetrain.getPose().getRotation().getDegrees(),
-                    statusRgb)));*/
-
     oi.alignToClimbButton()
         .whileTrue(
             new InstantCommand(
