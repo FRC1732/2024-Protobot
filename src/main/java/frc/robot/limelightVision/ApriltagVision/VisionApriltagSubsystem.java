@@ -1,6 +1,7 @@
 package frc.robot.limelightVision.ApriltagVision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,6 +52,14 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     return LimelightHelpers.getBotPose2d(getLimelightName());
   }
 
+  public Pose2d getMegaTag2Pose2dFromLimelight() {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(getLimelightName()).pose;
+  }
+
+  public Pose3d getPose3dTargetSpaceFromLimelight() {
+    return (LimelightHelpers.getBotPose3d_TargetSpace(getLimelightName()));
+  }
+
   public PoseEstimate getPoseEstimate() {
     return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(getLimelightName());
   }
@@ -70,6 +79,18 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   public boolean hasStageTarget() {
     return LimelightHelpers.getTV(getLimelightName())
         && getAprilTagId() >= 11
+        && getAprilTagId() <= 16;
+  }
+
+  public boolean hasStageTargetRed() {
+    return LimelightHelpers.getTV(getLimelightName())
+        && getAprilTagId() >= 11
+        && getAprilTagId() <= 13;
+  }
+
+  public boolean hasStageTargetBlue() {
+    return LimelightHelpers.getTV(getLimelightName())
+        && getAprilTagId() >= 14
         && getAprilTagId() <= 16;
   }
 

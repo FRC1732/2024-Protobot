@@ -13,12 +13,15 @@ import static frc.robot.Constants.*;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team6328.util.TunableNumber;
+import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -37,22 +40,24 @@ import org.littletonrobotics.junction.Logger;
 public class DriveToPose extends Command {
   private final Drivetrain drivetrain;
   private final Supplier<Pose2d> poseSupplier;
+  private final Supplier<Boolean> hasTargetSupplier;
+  private final DoubleSupplier translationXSupplier;
+  private final DoubleSupplier translationYSupplier;
+  private final DoubleSupplier rotationSupplier;
+  private final VisionApriltagSubsystem visionApriltagSubsystem;
   private Pose2d targetPose;
+  private int driveToPoseState = 0;
+  private boolean poseSet;
 
   private boolean running = false;
   private Timer timer;
 
-  private static final TunableNumber driveKp =
-      new TunableNumber("DriveToPose/DriveKp", RobotConfig.getInstance().getDriveToPoseDriveKP());
-  private static final TunableNumber driveKd =
-      new TunableNumber("DriveToPose/DriveKd", RobotConfig.getInstance().getDriveToPoseDriveKD());
+  private static final TunableNumber driveKp = new TunableNumber("DriveToPose/DriveKp", 4);
+  private static final TunableNumber driveKd = new TunableNumber("DriveToPose/DriveKd", 0);
   private static final TunableNumber driveKi = new TunableNumber("DriveToPose/DriveKi", 0);
-  private static final TunableNumber thetaKp =
-      new TunableNumber("DriveToPose/ThetaKp", RobotConfig.getInstance().getDriveToPoseThetaKP());
-  private static final TunableNumber thetaKd =
-      new TunableNumber("DriveToPose/ThetaKd", RobotConfig.getInstance().getDriveToPoseThetaKD());
-  private static final TunableNumber thetaKi =
-      new TunableNumber("DriveToPose/ThetaKi", RobotConfig.getInstance().getDriveToPoseThetaKI());
+  private static final TunableNumber thetaKp = new TunableNumber("DriveToPose/ThetaKp", 7);
+  private static final TunableNumber thetaKd = new TunableNumber("DriveToPose/ThetaKd", 0);
+  private static final TunableNumber thetaKi = new TunableNumber("DriveToPose/ThetaKi", 0);
   private static final TunableNumber driveMaxVelocity =
       new TunableNumber(
           "DriveToPose/DriveMaxVelocity",
@@ -107,9 +112,21 @@ public class DriveToPose extends Command {
    * @param drivetrain the drivetrain subsystem required by this command
    * @param poseSupplier a supplier that returns the pose to drive to
    */
-  public DriveToPose(Drivetrain drivetrain, Supplier<Pose2d> poseSupplier) {
+  public DriveToPose(
+      Drivetrain drivetrain,
+      DoubleSupplier translationXSupplier,
+      DoubleSupplier translationYSupplier,
+      DoubleSupplier rotationSupplier,
+      VisionApriltagSubsystem visionApriltagSubsystem,
+      Supplier<Pose2d> poseSupplier,
+      Supplier<Boolean> hasTargetSupplier) {
     this.drivetrain = drivetrain;
+    this.translationXSupplier = translationXSupplier;
+    this.translationYSupplier = translationYSupplier;
+    this.rotationSupplier = rotationSupplier;
     this.poseSupplier = poseSupplier;
+    this.hasTargetSupplier = hasTargetSupplier;
+    this.visionApriltagSubsystem = visionApriltagSubsystem;
     this.timer = new Timer();
     addRequirements(drivetrain);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -134,7 +151,14 @@ public class DriveToPose extends Command {
     xController.setTolerance(driveTolerance.get());
     yController.setTolerance(driveTolerance.get());
     thetaController.setTolerance(thetaTolerance.get());
-    this.targetPose = poseSupplier.get();
+    poseSet = hasTargetSupplier.get();
+    driveToPoseState = poseSet ? 2 : 0;
+    if(poseSet){
+          drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
+         
+    }
+    this.targetPose =
+        hasTargetSupplier.get() ? poseSupplier.get() : new Pose2d(0, 0, new Rotation2d(0));
 
     Logger.recordOutput("DriveToPose/targetPose", targetPose);
 
@@ -151,53 +175,83 @@ public class DriveToPose extends Command {
     // set running to true in this method to capture that the calculate method has been invoked on
     // the PID controllers. This is important since these controllers will return true for atGoal if
     // the calculate method has not yet been invoked.
-    running = true;
+    if (poseSet ) {
+      running = true;
 
-    // Update from tunable numbers
-    if (driveKp.hasChanged()
-        || driveKd.hasChanged()
-        || driveKi.hasChanged()
-        || thetaKp.hasChanged()
-        || thetaKd.hasChanged()
-        || thetaKi.hasChanged()
-        || driveMaxVelocity.hasChanged()
-        || driveMaxAcceleration.hasChanged()
-        || thetaMaxVelocity.hasChanged()
-        || thetaMaxAcceleration.hasChanged()
-        || driveTolerance.hasChanged()
-        || thetaTolerance.hasChanged()) {
-      xController.setP(driveKp.get());
-      xController.setD(driveKd.get());
-      xController.setI(driveKi.get());
-      xController.setConstraints(
-          new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
-      xController.setTolerance(driveTolerance.get());
-      yController.setP(driveKp.get());
-      yController.setD(driveKd.get());
-      yController.setI(driveKi.get());
-      yController.setConstraints(
-          new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
-      yController.setTolerance(driveTolerance.get());
-      thetaController.setP(thetaKp.get());
-      thetaController.setD(thetaKd.get());
-      thetaController.setI(thetaKi.get());
-      thetaController.setConstraints(
-          new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
-      thetaController.setTolerance(thetaTolerance.get());
+      // Update from tunable numbers
+      if (driveKp.hasChanged()
+          || driveKd.hasChanged()
+          || driveKi.hasChanged()
+          || thetaKp.hasChanged()
+          || thetaKd.hasChanged()
+          || thetaKi.hasChanged()
+          || driveMaxVelocity.hasChanged()
+          || driveMaxAcceleration.hasChanged()
+          || thetaMaxVelocity.hasChanged()
+          || thetaMaxAcceleration.hasChanged()
+          || driveTolerance.hasChanged()
+          || thetaTolerance.hasChanged()) {
+        xController.setP(driveKp.get());
+        xController.setD(driveKd.get());
+        xController.setI(driveKi.get());
+        xController.setConstraints(
+            new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
+        xController.setTolerance(driveTolerance.get());
+        yController.setP(driveKp.get());
+        yController.setD(driveKd.get());
+        yController.setI(driveKi.get());
+        yController.setConstraints(
+            new TrapezoidProfile.Constraints(driveMaxVelocity.get(), driveMaxAcceleration.get()));
+        yController.setTolerance(driveTolerance.get());
+        thetaController.setP(thetaKp.get());
+        thetaController.setD(thetaKd.get());
+        thetaController.setI(thetaKi.get());
+        thetaController.setConstraints(
+            new TrapezoidProfile.Constraints(thetaMaxVelocity.get(), thetaMaxAcceleration.get()));
+        thetaController.setTolerance(thetaTolerance.get());
+      }
+
+      Pose2d currentPose = drivetrain.getPose();
+
+      double xVelocity = xController.calculate(currentPose.getX(), this.targetPose.getX());
+      double yVelocity = yController.calculate(currentPose.getY(), this.targetPose.getY());
+      double thetaVelocity =
+          thetaController.calculate(
+              currentPose.getRotation().getRadians(), this.targetPose.getRotation().getRadians());
+      if (xController.atGoal()) xVelocity = 0.0;
+      if (yController.atGoal()) yVelocity = 0.0;
+      if (thetaController.atGoal()) thetaVelocity = 0.0;
+
+      drivetrain.drive(xVelocity, yVelocity, thetaVelocity, true, true);
+    } else {
+      if (hasTargetSupplier.get()) {
+        if(driveToPoseState == 0){
+          drivetrain.resetPoseToVision(visionApriltagSubsystem::getMegaTag2Pose2dFromLimelight);
+          driveToPoseState = 1;
+        }else if (driveToPoseState == 1){
+          targetPose = poseSupplier.get();
+          Pose2d currentPose = drivetrain.getPose();
+          xController.reset(currentPose.getX());
+          yController.reset(currentPose.getY());
+          thetaController.reset(currentPose.getRotation().getRadians());
+          poseSet = true;
+          driveToPoseState = 2;
+        }
+      } else {
+        double xPercentage = TeleopSwerve.modifyAxis(translationXSupplier.getAsDouble(), 2.0);
+        double yPercentage = TeleopSwerve.modifyAxis(translationYSupplier.getAsDouble(), 2.0);
+        double rotationPercentage =
+            TeleopSwerve.modifyAxis(rotationSupplier.getAsDouble(), 2.0) * 1.0;
+
+        double xVelocity = xPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
+        double yVelocity = yPercentage * RobotConfig.getInstance().getRobotMaxVelocity();
+        double rotationalVelocity =
+            rotationPercentage * RobotConfig.getInstance().getRobotMaxAngularVelocity();
+
+        drivetrain.drive(
+            xVelocity, yVelocity, rotationalVelocity, true, drivetrain.getFieldRelative());
+      }
     }
-
-    Pose2d currentPose = drivetrain.getPose();
-
-    double xVelocity = xController.calculate(currentPose.getX(), this.targetPose.getX());
-    double yVelocity = yController.calculate(currentPose.getY(), this.targetPose.getY());
-    double thetaVelocity =
-        thetaController.calculate(
-            currentPose.getRotation().getRadians(), this.targetPose.getRotation().getRadians());
-    if (xController.atGoal()) xVelocity = 0.0;
-    if (yController.atGoal()) yVelocity = 0.0;
-    if (thetaController.atGoal()) thetaVelocity = 0.0;
-
-    drivetrain.drive(xVelocity, yVelocity, thetaVelocity, true, true);
   }
 
   /**
@@ -213,13 +267,13 @@ public class DriveToPose extends Command {
     Logger.recordOutput("DriveToPose/xErr", xController.atGoal());
     Logger.recordOutput("DriveToPose/yErr", yController.atGoal());
     Logger.recordOutput("DriveToPose/tErr", thetaController.atGoal());
-
     // check that running is true (i.e., the calculate method has been invoked on the PID
     // controllers) and that each of the controllers is at their goal. This is important since these
     // controllers will return true for atGoal if the calculate method has not yet been invoked.
-    return !drivetrain.isMoveToPoseEnabled()
-        || this.timer.hasElapsed(timeout.get())
-        || (running && xController.atGoal() && yController.atGoal() && thetaController.atGoal());
+    // return !drivetrain.isMoveToPoseEnabled()
+    //    || this.timer.hasElapsed(timeout.get())
+    //    ||
+    return (running && xController.atGoal() && yController.atGoal() && thetaController.atGoal());
   }
 
   /**
