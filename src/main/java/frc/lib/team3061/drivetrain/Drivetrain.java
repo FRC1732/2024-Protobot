@@ -364,6 +364,10 @@ public class Drivetrain extends SubsystemBase {
       } else {
         this.io.driveRobotRelative(xVelocity, yVelocity, rotationalVelocity, isOpenLoop);
       }
+    } else if (driveMode == DriveMode.INVERT_Y) {
+      if (!isFieldRelative) {
+        this.io.driveRobotRelative(-xVelocity, -yVelocity, rotationalVelocity, isOpenLoop);
+      }
     } else {
       this.io.holdXStance();
     }
@@ -393,10 +397,6 @@ public class Drivetrain extends SubsystemBase {
       }
 
       if (isFieldRelative) {
-        // the origin of the field is always the corner to the right of the blue alliance driver
-        // station. As a result, "forward" from a field-relative perspective when on the red
-        // alliance, is in the negative x direction. Similarly, "left" from a field-relative
-        // perspective when on the red alliance is in the negative y direction.
         this.io.driveFieldRelative(xVelocity, yVelocity, rotationalVelocity, isOpenLoop);
       } else {
         this.io.driveRobotRelative(xVelocity, yVelocity, rotationalVelocity, isOpenLoop);
@@ -527,6 +527,14 @@ public class Drivetrain extends SubsystemBase {
    */
   public void disableRotationSlowMode() {
     this.isRotationSlowMode = false;
+  }
+
+  public void enableInvertedY() {
+    this.driveMode = DriveMode.INVERT_Y;
+  }
+
+  public void disableInvertedY() {
+    this.driveMode = DriveMode.NORMAL;
   }
 
   /**
@@ -782,6 +790,7 @@ public class Drivetrain extends SubsystemBase {
 
   private enum DriveMode {
     NORMAL,
+    INVERT_Y,
     X
   }
 }

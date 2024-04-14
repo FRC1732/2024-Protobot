@@ -400,7 +400,7 @@ public class RobotContainer {
                                     : visionApriltagSubsystem.hasStageTargetRed())
                                 ? alignToClimbLookupStartPose.get(
                                     visionApriltagSubsystem.getAprilTagId())
-                                : alignToClimbLookupStartPose.get(16.0),
+                                : alignToClimbLookupStartPose.get(13.0),
                         () ->
                             (lastAlliance == Alliance.Blue
                                 ? visionApriltagSubsystem.hasStageTargetBlue()
@@ -419,7 +419,7 @@ public class RobotContainer {
                                     : visionApriltagSubsystem.hasStageTargetRed())
                                 ? alignToClimbLookupPose.get(
                                     visionApriltagSubsystem.getAprilTagId())
-                                : alignToClimbLookupPose.get(15.0),
+                                : alignToClimbLookupPose.get(13.0),
                         () ->
                             (lastAlliance == Alliance.Blue
                                 ? visionApriltagSubsystem.hasStageTargetBlue()
@@ -430,6 +430,8 @@ public class RobotContainer {
                         () -> {
                           drivetrain.enableTranslationSlowMode();
                           drivetrain.enableRotationSlowMode();
+                          drivetrain.disableFieldRelative();
+                          drivetrain.enableInvertedY();
                         })));
 
     oi.alignToClimbButton()
@@ -440,12 +442,14 @@ public class RobotContainer {
                           drivetrain.enableFieldRelative();
                           visionApriltagSubsystem.setPipeline(
                               VisionApriltagConstants.Pipelines.SPEAKER);
+                          drivetrain.disableInvertedY();
                         }),
                     new InstantCommand(
                         () -> {
                           drivetrain.enableFieldRelative();
                           visionApriltagSubsystem.setPipeline(
                               VisionApriltagConstants.Pipelines.SPEAKER);
+                          drivetrain.disableInvertedY();
                         }),
                     oi.fieldCentricButton()::getAsBoolean)
                 .andThen(
