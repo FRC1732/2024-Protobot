@@ -147,7 +147,7 @@ public class RobotContainer {
   }
 
   private final Translation2d blueSpeakerLocation = new Translation2d(0.2286, 5.541518 - 0.1);
-  private final Translation2d redSpeakerLocation = new Translation2d(16.38935, 5.541518);
+  private final Translation2d redSpeakerLocation = new Translation2d(16.38935, 5.541518 - 0.1);
   private final Translation2d blueAmpZoneLocation = new Translation2d(0.0, 6.9);
   private final Translation2d redAmpZoneLocation = new Translation2d(16.61795, 6.9);
   private final Translation2d blueNeutralZoneLocation = new Translation2d(6.60, 6.9);
@@ -718,7 +718,8 @@ public class RobotContainer {
 
     Logger.recordOutput("RobotContainer/CurrentPose", currentPose);
     if (lastAlliance != Alliance.Blue) {
-      currentPose = currentPose.minus(fieldSize).times(-1.0);
+      currentPose = currentPose.minus(fieldSize);
+      currentPose = new Translation2d(currentPose.getX() * -1.0, currentPose.getY());
     }
     Logger.recordOutput("RobotContainer/AlliancePose", currentPose);
 
