@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -40,14 +41,17 @@ import frc.robot.commands.intakeCommands.FeedThrough;
 import frc.robot.commands.intakeCommands.FinishIntakingCommand;
 import frc.robot.commands.intakeCommands.IntakeNote;
 import frc.robot.commands.intakeCommands.IntakeSourceNote;
+import frc.robot.commands.intakeCommands.IntakeSpoil;
 import frc.robot.commands.intakeCommands.StartIntakingNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterMedium;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
+import frc.robot.commands.shooterCommands.RunShooterSpoil;
 import frc.robot.commands.shooterCommands.RunShooterTarget;
 import frc.robot.commands.shooterCommands.SetShooterDistance;
 import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
+import frc.robot.commands.shooterCommands.ShootThrough;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
 import frc.robot.limelightVision.ApriltagVision.VisionApriltagConstants;
@@ -872,6 +876,8 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
     NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
+    NamedCommands.registerCommand("SpinShooterSlow", new RunShooterSlow(shooterWheels));
+    NamedCommands.registerCommand("SpinShooterSpoil", new RunShooterSpoil(shooterWheels));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
     NamedCommands.registerCommand(
         "IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));
@@ -887,10 +893,42 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "SetShooterDistance150", new SetShooterDistance(shooterPose, 126));
     NamedCommands.registerCommand(
-        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 30));
+        "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 30 - 24));
+    NamedCommands.registerCommand(
+        "SetShooterDistanceFadeawaySource", new SetShooterDistance(shooterPose, 110 - 30));
+    NamedCommands.registerCommand(
+        "SetShooterDistanceFadeawayAmp", new SetShooterDistance(shooterPose, 110 - 30));
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand(
         "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 + 10));
+    NamedCommands.registerCommand("SetShooterDistanceF5", new SetShooterDistance(shooterPose, 150));
+    NamedCommands.registerCommand(
+        "ShootThrough", new ShootThrough(shooterPose, () -> 120.0, intake, feeder));
+    NamedCommands.registerCommand(
+        "ShootThroughAmp", new ShootThrough(shooterPose, () -> 120.0, intake, feeder));
+    NamedCommands.registerCommand(
+        "IntakeSpoil",
+        new IntakeSpoil(intake, feeder, shooterPose, visionObjectDetectionSubsystem));
+    NamedCommands.registerCommand(
+        "AimShot",
+        new RotateToAngle(
+                drivetrain,
+                () -> 0.0,
+                () -> 0.0,
+                () -> 0.0,
+                () -> getRotationToTargetDegrees(getRobotToTargetVector()),
+                () -> false,
+                statusRgb,
+                () -> false)
+            .deadlineWith(
+                // new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                new SetShooterDistanceContinuous(
+                    shooterPose,
+                    () -> getDistanceToTargetInches(getRobotToTargetVector()),
+                    () -> ShooterTarget.SPEAKER,
+                    () -> false),
+                new FunctionalCommand(
+                    () -> {}, () -> updateVisionPose(), (temp) -> {}, () -> false)));
 
     // build auto path commands
 
@@ -908,6 +946,9 @@ public class RobotContainer {
 
     Command Fadeaway = new PathPlannerAuto("Fadeaway");
     autoChooser.addOption("Source Side Fadeaway", Fadeaway);
+
+    Command CenterFadeaway = new PathPlannerAuto("Center Fadeaway");
+    autoChooser.addOption("Center Fadeaway", CenterFadeaway);
 
     // Command autoTest = new PathPlannerAuto("TestAuto");
     // Command testLine = new PathPlannerAuto("DistanceTest");

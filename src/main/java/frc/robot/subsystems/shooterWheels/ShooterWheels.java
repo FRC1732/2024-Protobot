@@ -131,6 +131,11 @@ public class ShooterWheels extends SubsystemBase {
     wheelMode = WheelMode.SLOW;
   }
 
+  public void setShooterSpeedSpoil() {
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SPOIL);
+    wheelMode = WheelMode.SPOIL;
+  }
+
   public void setShooterSpeedBackwards() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_BACKWARDS);
     wheelMode = WheelMode.REVERSE;
@@ -213,6 +218,7 @@ public class ShooterWheels extends SubsystemBase {
 
   private enum WheelMode {
     SLOW,
+    SPOIL,
     MEDIUM,
     FAST,
     REVERSE,
