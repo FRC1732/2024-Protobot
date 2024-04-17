@@ -45,6 +45,7 @@ import frc.robot.commands.intakeCommands.StartIntakingNote;
 import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterMedium;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
+import frc.robot.commands.shooterCommands.RunShooterSpoil;
 import frc.robot.commands.shooterCommands.RunShooterTarget;
 import frc.robot.commands.shooterCommands.SetShooterDistance;
 import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
@@ -755,6 +756,7 @@ public class RobotContainer {
         "wait5Seconds", Commands.print("passed marker 1")); // Commands.waitSeconds(5.0));
     NamedCommands.registerCommand("SpinShooter", new RunShooterFast(shooterWheels));
     NamedCommands.registerCommand("SpinShooterSlow", new RunShooterSlow(shooterWheels));
+    NamedCommands.registerCommand("SpinShooterSpoil", new RunShooterSpoil(shooterWheels));
     NamedCommands.registerCommand("ShootNote", new FeedShooterManual(feeder));
     NamedCommands.registerCommand(
         "IntakeNote", new IntakeNote(intake, feeder, shooterPose, statusRgb));
@@ -771,12 +773,18 @@ public class RobotContainer {
         "SetShooterDistance150", new SetShooterDistance(shooterPose, 126));
     NamedCommands.registerCommand(
         "SetShooterDistanceFadeaway", new SetShooterDistance(shooterPose, 110 - 30 - 24));
+    NamedCommands.registerCommand(
+        "SetShooterDistanceFadeawaySource", new SetShooterDistance(shooterPose, 110 - 30));
+    NamedCommands.registerCommand(
+        "SetShooterDistanceFadeawayAmp", new SetShooterDistance(shooterPose, 110 - 30));
     NamedCommands.registerCommand("SetShooterDistanceF3", new SetShooterDistance(shooterPose, 55));
     NamedCommands.registerCommand(
         "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 + 10));
     NamedCommands.registerCommand("SetShooterDistanceF5", new SetShooterDistance(shooterPose, 150));
     NamedCommands.registerCommand(
         "ShootThrough", new ShootThrough(shooterPose, () -> 120.0, intake, feeder));
+    NamedCommands.registerCommand(
+        "ShootThroughAmp", new ShootThrough(shooterPose, () -> 120.0, intake, feeder));
     NamedCommands.registerCommand(
         "IntakeSpoil",
         new IntakeSpoil(intake, feeder, shooterPose, visionObjectDetectionSubsystem));
