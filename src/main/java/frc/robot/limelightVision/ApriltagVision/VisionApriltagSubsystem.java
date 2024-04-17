@@ -22,6 +22,7 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     double Distance = 0.0;
     double LatencyCapture = 0.0;
     double LatencyPipline = 0.0;
+    double AprilTagID = 0;
     double TX = 0.0;
     double TY = 0.0;
     boolean hasTarget = false;
@@ -162,6 +163,7 @@ public class VisionApriltagSubsystem extends SubsystemBase {
     inputs.hasTarget = hasTarget();
     inputs.hasStageTarget = hasStageTarget();
     inputs.pipelineString = getPipelineAsString();
+    inputs.AprilTagID = getAprilTagId();
 
     Logger.processInputs("VisionApriltag", inputs);
   }
