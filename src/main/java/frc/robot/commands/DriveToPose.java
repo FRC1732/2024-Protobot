@@ -156,8 +156,7 @@ public class DriveToPose extends Command {
     poseSet = hasTargetSupplier.get();
     driveToPoseState = poseSet ? 2 : 0;
     if (poseSet) {
-      drivetrain.resetPoseToVision(
-          () -> visionApriltagSubsystem.getMegaTag2Pose2dFromLimelight(this.alliance));
+      drivetrain.resetPoseToVision(() -> visionApriltagSubsystem.getMegaTag2Pose2dFromLimelight());
     }
     this.targetPose =
         hasTargetSupplier.get() ? poseSupplier.get() : new Pose2d(0, 0, new Rotation2d(0));
@@ -230,7 +229,7 @@ public class DriveToPose extends Command {
       if (hasTargetSupplier.get()) {
         if (driveToPoseState == 0) {
           drivetrain.resetPoseToVision(
-              () -> visionApriltagSubsystem.getMegaTag2Pose2dFromLimelight(this.alliance));
+              () -> visionApriltagSubsystem.getMegaTag2Pose2dFromLimelight());
           driveToPoseState = 1;
         } else if (driveToPoseState == 1) {
           targetPose = poseSupplier.get();
