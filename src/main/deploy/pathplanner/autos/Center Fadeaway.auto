@@ -235,6 +235,12 @@
                 "data": {
                   "commands": [
                     {
+                      "type": "named",
+                      "data": {
+                        "name": "FinishIntakingNote"
+                      }
+                    },
+                    {
                       "type": "wait",
                       "data": {
                         "waitTime": 0.4

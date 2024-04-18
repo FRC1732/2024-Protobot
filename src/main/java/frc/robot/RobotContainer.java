@@ -904,9 +904,9 @@ public class RobotContainer {
         "SetShooterDistanceF4", new SetShooterDistance(shooterPose, 115 + 10));
     NamedCommands.registerCommand("SetShooterDistanceF5", new SetShooterDistance(shooterPose, 150));
     NamedCommands.registerCommand(
-        "ShootThrough", new ShootThrough(shooterPose, () -> 120.0, intake, feeder));
+        "ShootThrough", new ShootThrough(shooterPose, () -> 125.0, intake, feeder));
     NamedCommands.registerCommand(
-        "ShootThroughAmp", new ShootThrough(shooterPose, () -> 120.0, intake, feeder));
+        "ShootThroughAmp", new ShootThrough(shooterPose, () -> 125.0, intake, feeder));
     NamedCommands.registerCommand(
         "IntakeSpoil",
         new IntakeSpoil(intake, feeder, shooterPose, visionObjectDetectionSubsystem));
