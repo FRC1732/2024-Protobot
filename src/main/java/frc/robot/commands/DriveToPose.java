@@ -121,8 +121,7 @@ public class DriveToPose extends Command {
       DoubleSupplier rotationSupplier,
       VisionApriltagSubsystem visionApriltagSubsystem,
       Supplier<Pose2d> poseSupplier,
-      Supplier<Boolean> hasTargetSupplier,
-      Alliance alliance) {
+      Supplier<Boolean> hasTargetSupplier) {
     this.drivetrain = drivetrain;
     this.translationXSupplier = translationXSupplier;
     this.translationYSupplier = translationYSupplier;
@@ -131,7 +130,6 @@ public class DriveToPose extends Command {
     this.hasTargetSupplier = hasTargetSupplier;
     this.visionApriltagSubsystem = visionApriltagSubsystem;
     this.timer = new Timer();
-    this.alliance = alliance;
     addRequirements(drivetrain);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }

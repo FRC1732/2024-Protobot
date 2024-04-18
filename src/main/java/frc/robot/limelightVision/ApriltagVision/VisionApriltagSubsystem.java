@@ -55,9 +55,7 @@ public class VisionApriltagSubsystem extends SubsystemBase {
   }
 
   public Pose2d getMegaTag2Pose2dFromLimelight(Alliance alliance) {
-    if (alliance == Alliance.Red)
-      return LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(getLimelightName()).pose;
-    else return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(getLimelightName()).pose;
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(getLimelightName()).pose;
   }
 
   public Pose3d getPose3dTargetSpaceFromLimelight() {

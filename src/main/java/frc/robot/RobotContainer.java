@@ -408,8 +408,7 @@ public class RobotContainer {
                         () ->
                             (lastAlliance == Alliance.Blue
                                 ? visionApriltagSubsystem.hasStageTargetBlue()
-                                : visionApriltagSubsystem.hasStageTargetRed()),
-                        lastAlliance))
+                                : visionApriltagSubsystem.hasStageTargetRed())))
                 .andThen(
                     new DriveToPose(
                         drivetrain,
@@ -427,8 +426,7 @@ public class RobotContainer {
                         () ->
                             (lastAlliance == Alliance.Blue
                                 ? visionApriltagSubsystem.hasStageTargetBlue()
-                                : visionApriltagSubsystem.hasStageTargetRed()),
-                        lastAlliance))
+                                : visionApriltagSubsystem.hasStageTargetRed())))
                 .andThen(
                     new InstantCommand(
                         () -> {
