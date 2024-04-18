@@ -941,9 +941,12 @@ public class RobotContainer {
      *
      */
     Command testAmpSide = new PathPlannerAuto("Amp Side Test");
-    autoChooser.addDefaultOption("Amp Side 4 Piece", testAmpSide);
+    autoChooser.addDefaultOption("Amp Side 1 then 2", testAmpSide);
 
-    Command Fadeaway = new PathPlannerAuto("Fadeaway");
+    Command testAmpSide2 = new PathPlannerAuto("Amp Side Test 2");
+    autoChooser.addDefaultOption("Amp Side 2 then 1", testAmpSide2);
+
+    Command Fadeaway = new PathPlannerAuto("Fadeaway New");
     autoChooser.addOption("Source Side Fadeaway", Fadeaway);
 
     Command CenterFadeaway = new PathPlannerAuto("Center Fadeaway");
