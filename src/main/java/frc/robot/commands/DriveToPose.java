@@ -222,9 +222,8 @@ public class DriveToPose extends Command {
       if (xController.atGoal()) xVelocity = 0.0;
       if (yController.atGoal()) yVelocity = 0.0;
       if (thetaController.atGoal()) thetaVelocity = 0.0;
-      //double multiplier = this.alliance == Alliance.Blue ? 1 : -1;
-      drivetrain.driveWOAlliance(
-          xVelocity, yVelocity, thetaVelocity, true, true);
+      // double multiplier = this.alliance == Alliance.Blue ? 1 : -1;
+      drivetrain.driveWOAlliance(xVelocity, yVelocity, thetaVelocity, true, true);
     } else {
       if (hasTargetSupplier.get()) {
         if (driveToPoseState == 0) {
