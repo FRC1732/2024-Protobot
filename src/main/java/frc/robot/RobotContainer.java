@@ -641,7 +641,7 @@ public class RobotContainer {
 
     // oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
 
-    // oi.ejectButton().whileTrue(new Eject(feeder, intake, shooterWheels));
+    oi.ejectButton().whileTrue(new Eject(feeder, intake, shooterWheels));
     oi.operatorEjectButton().whileTrue(new Eject(feeder, intake, shooterWheels));
 
     // oi.feedThroughButton().whileTrue(new FeedThrough(feeder, intake,

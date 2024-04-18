@@ -67,7 +67,7 @@ public class DualJoysticksOI implements OperatorInterface {
 
   @Override
   public Trigger ejectButton() {
-    return translateJoystickButtons[7];
+    return translateJoystickButtons[3];
   }
 
   // Rotate Joystick
