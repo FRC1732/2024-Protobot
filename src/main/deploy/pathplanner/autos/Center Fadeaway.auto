@@ -2,7 +2,7 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4,
+      "x": 1.35,
       "y": 5.55
     },
     "rotation": 0
@@ -208,9 +208,67 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "StopShooter"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "F2-W3"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "StartIntakingNote"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.4
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.25
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "ShootNote"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AimShot"
+                }
+              }
+            ]
           }
         }
       ]
