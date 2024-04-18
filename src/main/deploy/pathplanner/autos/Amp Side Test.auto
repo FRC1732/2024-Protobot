@@ -18,25 +18,51 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
+          "data": {
+            "pathName": "S1-C1"
+          }
+        },
+        {
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 1.0
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.25
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "ShootNote"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "SetShooterDistance115"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "S1-C1"
+                  "name": "AimShot"
                 }
               }
             ]
@@ -47,28 +73,28 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "path",
                 "data": {
-                  "waitTime": 0.25
+                  "pathName": "C1-M1"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootNote"
+                  "name": "StartIntakingNote"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "wait",
                 "data": {
-                  "pathName": "C1-M1"
+                  "waitTime": 0.25
                 }
               },
               {
@@ -81,31 +107,45 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "SetShooterDistance125"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 0.25
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.25
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "ShootNote"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootNote"
+                  "name": "AimShot"
                 }
               }
             ]
@@ -118,7 +158,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -137,7 +177,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -153,22 +193,9 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishIntakingNote"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "SetShooterDistance115"
-                      }
-                    }
-                  ]
+                  "name": "FinishIntakingNote"
                 }
               }
             ]
@@ -179,15 +206,41 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 0.25
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.25
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "ShootNote"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootNote"
+                  "name": "AimShot"
                 }
               }
             ]
@@ -200,7 +253,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -219,7 +272,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -235,22 +288,9 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishIntakingNote"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "SetShooterDistance115"
-                      }
-                    }
-                  ]
+                  "name": "FinishIntakingNote"
                 }
               }
             ]
@@ -261,15 +301,41 @@
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 0.25
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.3
+                      }
+                    },
+                    {
+                      "type": "deadline",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.25
+                            }
+                          },
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "ShootNote"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootNote"
+                  "name": "AimShot"
                 }
               }
             ]

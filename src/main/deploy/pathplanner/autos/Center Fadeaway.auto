@@ -227,6 +227,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "FinishIntakingNote"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -234,12 +240,6 @@
                 "type": "sequential",
                 "data": {
                   "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "FinishIntakingNote"
-                      }
-                    },
                     {
                       "type": "wait",
                       "data": {
