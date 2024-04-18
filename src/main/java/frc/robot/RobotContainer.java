@@ -575,12 +575,18 @@ public class RobotContainer {
                         () -> feeder.hasNote())));
     oi.ampModeButton()
         .onTrue(
-            new InstantCommand(() -> scoringMode = ScoringMode.AMP)
-                .andThen(new StopShooter(shooterWheels)));
+            new ConditionalCommand(
+                    new StopShooter(shooterWheels).asProxy(),
+                    new InstantCommand(),
+                    () -> scoringMode == ScoringMode.SPEAKER)
+                .andThen(new InstantCommand(() -> scoringMode = ScoringMode.AMP)));
     oi.operatorAmpButton()
         .onTrue(
-            new InstantCommand(() -> scoringMode = ScoringMode.AMP)
-                .andThen(new StopShooter(shooterWheels)));
+            new ConditionalCommand(
+                    new StopShooter(shooterWheels).asProxy(),
+                    new InstantCommand(),
+                    () -> scoringMode == ScoringMode.SPEAKER)
+                .andThen(new InstantCommand(() -> scoringMode = ScoringMode.AMP)));
 
     oi.popShotToggleButton().onTrue(new InstantCommand(() -> popShotEnabled = true));
     oi.popShotToggleButton().onFalse(new InstantCommand(() -> popShotEnabled = false));
