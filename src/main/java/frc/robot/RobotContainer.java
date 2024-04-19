@@ -958,6 +958,9 @@ public class RobotContainer {
     Command CenterFadeaway = new PathPlannerAuto("Center Fadeaway");
     autoChooser.addOption("Center Fadeaway", CenterFadeaway);
 
+    Command CenterFadeawayBasic = new PathPlannerAuto("Center Fadeaway Basic");
+    autoChooser.addOption("Center Fadeaway No Spoil", CenterFadeawayBasic);
+
     // Command autoTest = new PathPlannerAuto("TestAuto");
     // Command testLine = new PathPlannerAuto("DistanceTest");
     // autoChooser.addOption("Test Auto", autoTest);
