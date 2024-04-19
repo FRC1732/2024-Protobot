@@ -95,11 +95,11 @@ public class Feeder extends SubsystemBase {
     double currentValue = analog.getValue();
     averageValue = (currentValue + previousValue) / 2.0;
     previousValue = currentValue;
-    return averageValue > 900;
+    return averageValue > 1000;
   }
 
   public boolean isAnalogTriggered() {
-    return averageValue > 900;
+    return averageValue > 1000;
   }
 
   public boolean checkStopped() {
