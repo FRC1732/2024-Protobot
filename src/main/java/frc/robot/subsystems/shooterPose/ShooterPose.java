@@ -169,16 +169,16 @@ public class ShooterPose extends SubsystemBase {
         10.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // (distance, optimal angle)
     passShotAngleLookupTable.put(
         31.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // subwoofer, min angle
-    passShotAngleLookupTable.put(50.0, -42.0);
-    passShotAngleLookupTable.put(150.0, -42.0);
-    passShotAngleLookupTable.put(200.0, -42.0);
-    passShotAngleLookupTable.put(250.0, -41.0);
-    passShotAngleLookupTable.put(300.0, -39.5);
-    passShotAngleLookupTable.put(350.0, -37.0);
-    passShotAngleLookupTable.put(400.0, -36.5);
-    passShotAngleLookupTable.put(450.0, -36.0);
-    passShotAngleLookupTable.put(550.0, -36.0);
-    passShotAngleLookupTable.put(650.0, -36.0);
+    passShotAngleLookupTable.put(50.0, -43.0);
+    passShotAngleLookupTable.put(150.0, -43.0);
+    passShotAngleLookupTable.put(200.0, -43.0);
+    passShotAngleLookupTable.put(250.0, -42.0);
+    passShotAngleLookupTable.put(300.0, -40.4);
+    passShotAngleLookupTable.put(350.0, -39.0);
+    passShotAngleLookupTable.put(400.0, -38.5);
+    passShotAngleLookupTable.put(450.0, -38.0);
+    passShotAngleLookupTable.put(550.0, -38.0);
+    passShotAngleLookupTable.put(650.0, -38.0);
 
     shooterHeightLeftMotor =
         new CANSparkMax(

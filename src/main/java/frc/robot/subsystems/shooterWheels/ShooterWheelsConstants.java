@@ -16,13 +16,17 @@ public class ShooterWheelsConstants {
   public static final int SHOOTER_LOW_MOTOR_CAN_ID = 59; // TODO: set to comp bot values
 
   public static final double SHOOTER_SPEED_FAST = 0.85;
-  public static final double SHOOTER_SPEED_MEDIUM = 0.46;
+  public static final double SHOOTER_SPEED_MEDIUM = 0.48;
   public static final double SHOOTER_SPEED_SLOW = 0.25;
-  public static final double SHOOTER_SPEED_SPOIL = 0.16;
+  public static final double SHOOTER_SPEED_SPOIL = 0.10;
   public static final double SHOOTER_SPEED_BACKWARDS = -0.40;
   public static final double SHOOTER_SPEED_STOPPED = 0.0;
 
   public static final double SHOOTER_SPEED_P = 0.0015;
   public static final double SHOOTER_SPEED_I = 0.0000008;
   public static final double SHOOTER_SPEED_D = 0;
+
+  public static final double SHOOTER_SLOW_SPEED_P = 0.0001;
+  public static final double SHOOTER_SLOW_SPEED_I = 0.0000009;
+  public static final double SHOOTER_SLOW_SPEED_D = 0;
 }

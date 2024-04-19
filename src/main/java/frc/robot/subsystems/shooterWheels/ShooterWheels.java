@@ -47,7 +47,7 @@ public class ShooterWheels extends SubsystemBase {
   private GenericEntry shooterP;
   private GenericEntry shooterI;
   private GenericEntry shooterD;
-
+  private boolean wasFast;
   public ShooterWheels() {
     shooterHighMotor =
         new CANSparkFlex(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
@@ -84,6 +84,8 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.setOpenLoopRampRate(0.5);
     shooterHighMotor.stopMotor();
 
+    wasFast = true;
+
     /*
      * shooterSpeedBackwards =
      * new TunableNumber(
@@ -112,10 +114,15 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void setShooterSpeedFast() {
+    if(!wasFast){
+      shooterPidController.setP(ShooterWheelsConstants.SHOOTER_SPEED_P);
+      shooterPidController.setI(ShooterWheelsConstants.SHOOTER_SPEED_I);
+      shooterPidController.setD(ShooterWheelsConstants.SHOOTER_SPEED_D);
+      wasFast = true;
+    }
     // shooterPidController.setP(shooterP.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_P));
     // shooterPidController.setI(shooterI.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_I));
     // shooterPidController.setD(shooterD.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_D));
-    // shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
     wheelMode = WheelMode.FAST;
 
     shooterPidController.setReference(6200, ControlType.kVelocity);
@@ -123,6 +130,7 @@ public class ShooterWheels extends SubsystemBase {
 
   public void setShooterSpeedMedium() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_MEDIUM);
+    
     wheelMode = WheelMode.MEDIUM;
   }
 
@@ -132,7 +140,13 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void setShooterSpeedSpoil() {
-    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SPOIL);
+    if(wasFast){
+      shooterPidController.setP(ShooterWheelsConstants.SHOOTER_SLOW_SPEED_P);
+      shooterPidController.setI(ShooterWheelsConstants.SHOOTER_SLOW_SPEED_I);
+      shooterPidController.setD(ShooterWheelsConstants.SHOOTER_SLOW_SPEED_D);
+      wasFast = false;
+    }
+    shooterPidController.setReference(300, ControlType.kVelocity);
     wheelMode = WheelMode.SPOIL;
   }
 
