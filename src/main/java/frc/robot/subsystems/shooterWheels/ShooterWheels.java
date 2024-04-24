@@ -128,6 +128,10 @@ public class ShooterWheels extends SubsystemBase {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
   }
 
+  public void setShooterSpeedPop() {
+    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_POP);
+  }
+
   public void setShooterSpeedMedium() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_MEDIUM);
     

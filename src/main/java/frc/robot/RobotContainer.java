@@ -487,7 +487,7 @@ public class RobotContainer {
                                         statusRgb)
                                     .asProxy())),
                 // Has note AND is in SPEAKER scoring mode
-                new RunShooterTarget(shooterWheels, () -> getShooterTarget())
+                new RunShooterTarget(shooterWheels, () -> getShooterTarget(), () -> popShotEnabled)
                     .andThen(
                         new WaitForNote(feeder)
                             .andThen(

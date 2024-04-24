@@ -354,9 +354,12 @@ public class ShooterPose extends SubsystemBase {
     //   targetAngle =
     //       interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
     // }
-    shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_SETPOINT);
-
-    shooterTiltPID.setGoal(-20);
+   if (shooterHeightEncoder.getPosition()
+           > ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + .75) {
+       shooterTiltPID.setGoal(-40);
+     } else {
+      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_SETPOINT);
+     }
   }
 
   public void setShooterDistance(double distanceInches) {
@@ -475,7 +478,7 @@ public class ShooterPose extends SubsystemBase {
   //   }
   // }
   shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
-  shooterTiltPID.setGoal(-10);
+  shooterTiltPID.setGoal(-15);
 
   }
 
