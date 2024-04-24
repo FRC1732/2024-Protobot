@@ -356,7 +356,7 @@ public class ShooterPose extends SubsystemBase {
     // }
     shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_SETPOINT);
 
-    shooterTiltPID.setGoal(0);
+    shooterTiltPID.setGoal(-20);
   }
 
   public void setShooterDistance(double distanceInches) {
@@ -475,7 +475,7 @@ public class ShooterPose extends SubsystemBase {
   //   }
   // }
   shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
-  shooterTiltPID.setGoal(0);
+  shooterTiltPID.setGoal(-10);
 
   }
 

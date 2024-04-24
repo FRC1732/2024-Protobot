@@ -347,7 +347,7 @@ public class Drivetrain extends SubsystemBase {
 
       // if rotation is in slow mode, multiply the rotational velocity by the slow-mode multiplier
       if (isRotationSlowMode) {
-        rotationalVelocity *= slowModeMultiplier;
+        rotationalVelocity *= (slowModeMultiplier+.10);
       }
 
       if (isFieldRelative) {

@@ -1151,22 +1151,22 @@ public class RobotContainer {
                 drivetrain::getFieldRelative));
 
     // slow-mode toggle
-    oi.slowModeSwitch()
-        .onTrue(
-            Commands.runOnce(
-                () -> {
-                  drivetrain.enableTranslationSlowMode();
-                  drivetrain.enableRotationSlowMode();
-                },
-                drivetrain));
-    oi.slowModeSwitch()
-        .onFalse(
-            Commands.runOnce(
-                () -> {
-                  drivetrain.disableTranslationSlowMode();
-                  drivetrain.disableRotationSlowMode();
-                },
-                drivetrain));
+    // oi.slowModeSwitch()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //             () -> {
+    //               drivetrain.enableTranslationSlowMode();
+    //               drivetrain.enableRotationSlowMode();
+    //             },
+    //             drivetrain));
+    // oi.slowModeSwitch()
+    //     .onFalse(
+    //         Commands.runOnce(
+    //             () -> {
+    //               drivetrain.disableTranslationSlowMode();
+    //               drivetrain.disableRotationSlowMode();
+    //             },
+    //             drivetrain));
 
     // reset gyro to 0 degrees
     oi.resetGyroButton()
