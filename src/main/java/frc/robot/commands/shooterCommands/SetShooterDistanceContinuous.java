@@ -31,20 +31,20 @@ public class SetShooterDistanceContinuous extends Command {
 
   public void execute() {
     switch (target.get()) {
-      case AMP_ZONE:
-      case NEUTRAL_ZONE:
-        shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.PASS);
-        break;
-      case NEUTRAL_ZONE_SKIP:
-      case AMP_ZONE_SKIP:
-        shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.SKIP);
-        break;
+      // case AMP_ZONE:
+      // case NEUTRAL_ZONE:
+      //   shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.PASS);
+      //   break;
+      // case NEUTRAL_ZONE_SKIP:
+      // case AMP_ZONE_SKIP:
+      //   shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.SKIP);
+      //   break;
       case SPEAKER:
       default:
         if (isPopShot.getAsBoolean()) {
-          shooterPose.setPopShotDistance(distanceSupplierInches.getAsDouble());
+          shooterPose.setPopShotDistance(100);
         } else {
-          shooterPose.setShooterDistance(distanceSupplierInches.getAsDouble(), ShotType.SPEAKER);
+          shooterPose.setShooterDistance(100, ShotType.SPEAKER);
         }
         break;
     }

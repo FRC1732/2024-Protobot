@@ -384,89 +384,90 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.alignToClimbButton()
-        .whileTrue(
-            new InstantCommand(
-                    () -> {
-                      visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
-                    })
-                .andThen(new WaitCommand(.02))
-                .andThen(
-                    new DriveToPose(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        visionApriltagSubsystem,
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                    ? visionApriltagSubsystem.hasStageTargetBlue()
-                                    : visionApriltagSubsystem.hasStageTargetRed())
-                                ? alignToClimbLookupStartPose.get(
-                                    visionApriltagSubsystem.getAprilTagId())
-                                : alignToClimbLookupStartPose.get(13.0),
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                ? visionApriltagSubsystem.hasStageTargetBlue()
-                                : visionApriltagSubsystem.hasStageTargetRed())))
-                .andThen(
-                    new DriveToPose(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        visionApriltagSubsystem,
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                    ? visionApriltagSubsystem.hasStageTargetBlue()
-                                    : visionApriltagSubsystem.hasStageTargetRed())
-                                ? alignToClimbLookupPose.get(
-                                    visionApriltagSubsystem.getAprilTagId())
-                                : alignToClimbLookupPose.get(13.0),
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                ? visionApriltagSubsystem.hasStageTargetBlue()
-                                : visionApriltagSubsystem.hasStageTargetRed())))
-                .andThen(
-                    new InstantCommand(
-                        () -> {
-                          drivetrain.enableTranslationSlowMode();
-                          drivetrain.enableRotationSlowMode();
-                          drivetrain.disableFieldRelative();
-                          drivetrain.enableInvertedY();
-                        })));
+    // oi.alignToClimbButton()
+    //     .whileTrue(
+    //         new InstantCommand(
+    //                 () -> {
+    //                   visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
+    //                 })
+    //             .andThen(new WaitCommand(.02))
+    //             .andThen(
+    //                 new DriveToPose(
+    //                     drivetrain,
+    //                     oi::getTranslateX,
+    //                     oi::getTranslateY,
+    //                     oi::getRotate,
+    //                     visionApriltagSubsystem,
+    //                     () ->
+    //                         (lastAlliance == Alliance.Blue
+    //                                 ? visionApriltagSubsystem.hasStageTargetBlue()
+    //                                 : visionApriltagSubsystem.hasStageTargetRed())
+    //                             ? alignToClimbLookupStartPose.get(
+    //                                 visionApriltagSubsystem.getAprilTagId())
+    //                             : alignToClimbLookupStartPose.get(13.0),
+    //                     () ->
+    //                         (lastAlliance == Alliance.Blue
+    //                             ? visionApriltagSubsystem.hasStageTargetBlue()
+    //                             : visionApriltagSubsystem.hasStageTargetRed())))
+    //             .andThen(
+    //                 new DriveToPose(
+    //                     drivetrain,
+    //                     oi::getTranslateX,
+    //                     oi::getTranslateY,
+    //                     oi::getRotate,
+    //                     visionApriltagSubsystem,
+    //                     () ->
+    //                         (lastAlliance == Alliance.Blue
+    //                                 ? visionApriltagSubsystem.hasStageTargetBlue()
+    //                                 : visionApriltagSubsystem.hasStageTargetRed())
+    //                             ? alignToClimbLookupPose.get(
+    //                                 visionApriltagSubsystem.getAprilTagId())
+    //                             : alignToClimbLookupPose.get(13.0),
+    //                     () ->
+    //                         (lastAlliance == Alliance.Blue
+    //                             ? visionApriltagSubsystem.hasStageTargetBlue()
+    //                             : visionApriltagSubsystem.hasStageTargetRed())))
+    //             .andThen(
+    //                 new InstantCommand(
+    //                     () -> {
+    //                       drivetrain.enableTranslationSlowMode();
+    //                       drivetrain.enableRotationSlowMode();
+    //                       drivetrain.disableFieldRelative();
+    //                       drivetrain.enableInvertedY();
+    //                     })));
 
-    oi.alignToClimbButton()
-        .onFalse(
-            new ConditionalCommand(
-                    new InstantCommand(
-                        () -> {
-                          drivetrain.enableFieldRelative();
-                          visionApriltagSubsystem.setPipeline(
-                              VisionApriltagConstants.Pipelines.SPEAKER);
-                          drivetrain.disableInvertedY();
-                        }),
-                    new InstantCommand(
-                        () -> {
-                          drivetrain.enableFieldRelative();
-                          visionApriltagSubsystem.setPipeline(
-                              VisionApriltagConstants.Pipelines.SPEAKER);
-                          drivetrain.disableInvertedY();
-                        }),
-                    oi.fieldCentricButton()::getAsBoolean)
-                .andThen(
-                    new ConditionalCommand(
-                        new InstantCommand(
-                            () -> {
-                              drivetrain.enableTranslationSlowMode();
-                              drivetrain.enableRotationSlowMode();
-                            }),
-                        new InstantCommand(
-                            () -> {
-                              drivetrain.disableTranslationSlowMode();
-                              drivetrain.disableRotationSlowMode();
-                            }),
-                        oi.slowModeSwitch()::getAsBoolean)));
+    // oi.alignToClimbButton()
+    //     .onFalse(
+    //         new ConditionalCommand(
+    //                 new InstantCommand(
+    //                     () -> {
+    //                       drivetrain.enableFieldRelative();
+    //                       visionApriltagSubsystem.setPipeline(
+    //                           VisionApriltagConstants.Pipelines.SPEAKER);
+    //                       drivetrain.disableInvertedY();
+    //                     }),
+    //                 new InstantCommand(
+    //                     () -> {
+    //                       drivetrain.enableFieldRelative();
+    //                       visionApriltagSubsystem.setPipeline(
+    //                           VisionApriltagConstants.Pipelines.SPEAKER);
+    //                       drivetrain.disableInvertedY();
+    //                     }),
+    //                 oi.fieldCentricButton()::getAsBoolean)
+    //             .andThen(
+    //                 new ConditionalCommand(
+    //                     new InstantCommand(
+    //                         () -> {
+    //                           drivetrain.enableTranslationSlowMode();
+    //                           drivetrain.enableRotationSlowMode();
+    //                         }),
+    //                     new InstantCommand(
+    //                         () -> {
+    //                           drivetrain.disableTranslationSlowMode();
+    //                           drivetrain.disableRotationSlowMode();
+    //                         }),
+    //                     oi.slowModeSwitch()::getAsBoolean)));
+
     oi.aimOrSourceButton()
         .whileTrue(
             new ConditionalCommand(
@@ -495,18 +496,18 @@ public class RobotContainer {
                                         () -> getDistanceToTargetInches(getRobotToTargetVector()),
                                         () -> getShooterTarget(),
                                         () -> popShotEnabled)
-                                    .asProxy())
-                            .alongWith(
-                                // new BrakeFeeder(feeder, shooterWheels).asProxy(),
-                                new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        () -> getRotationToTargetDegrees(getRobotToTargetVector()),
-                                        (() -> false),
-                                        statusRgb)
                                     .asProxy())),
+                            // .alongWith(
+                            //     // new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                            //     new RotateToAngle(
+                            //             drivetrain,
+                            //             oi::getTranslateX,
+                            //             oi::getTranslateY,
+                            //             oi::getRotate,
+                            //             () -> getRotationToTargetDegrees(getRobotToTargetVector()),
+                            //             (() -> false),
+                            //             statusRgb)
+                            //         .asProxy())),
                 // Check ScoringMode
                 () -> scoringMode == ScoringMode.AMP));
 
@@ -717,33 +718,34 @@ public class RobotContainer {
   }
 
   public ShooterTarget getShooterTarget() {
-    Translation2d currentPose = drivetrain.getPose().getTranslation();
-    Translation2d fieldSize = new Translation2d(16.54, 0.0);
+    return ShooterTarget.SPEAKER;
+    // Translation2d currentPose = drivetrain.getPose().getTranslation();
+    // Translation2d fieldSize = new Translation2d(16.54, 0.0);
 
-    Logger.recordOutput("RobotContainer/CurrentPose", currentPose);
-    if (lastAlliance != Alliance.Blue) {
-      currentPose = currentPose.minus(fieldSize);
-      currentPose = new Translation2d(currentPose.getX() * -1.0, currentPose.getY());
-    }
-    Logger.recordOutput("RobotContainer/AlliancePose", currentPose);
+    // Logger.recordOutput("RobotContainer/CurrentPose", currentPose);
+    // if (lastAlliance != Alliance.Blue) {
+    //   currentPose = currentPose.minus(fieldSize);
+    //   currentPose = new Translation2d(currentPose.getX() * -1.0, currentPose.getY());
+    // }
+    // Logger.recordOutput("RobotContainer/AlliancePose", currentPose);
 
-    double NeutralZoneLocation = 6.75;
-    double farWingLocation = 12.0;
-    double centerLineLocation = 4.1;
+    // double NeutralZoneLocation = 6.75;
+    // double farWingLocation = 12.0;
+    // double centerLineLocation = 4.1;
 
-    if (currentPose.getX() < NeutralZoneLocation) {
-      return ShooterTarget.SPEAKER;
-    }
-    if (currentPose.getX() > farWingLocation) {
-      if (currentPose.getY() < centerLineLocation) {
-        return ShooterTarget.NEUTRAL_ZONE;
-      }
-      return ShooterTarget.NEUTRAL_ZONE_SKIP;
-    }
-    if (currentPose.getY() < centerLineLocation) {
-      return ShooterTarget.AMP_ZONE;
-    }
-    return ShooterTarget.AMP_ZONE_SKIP;
+    // if (currentPose.getX() < NeutralZoneLocation) {
+    //   return ShooterTarget.SPEAKER;
+    // }
+    // if (currentPose.getX() > farWingLocation) {
+    //   if (currentPose.getY() < centerLineLocation) {
+    //     return ShooterTarget.NEUTRAL_ZONE;
+    //   }
+    //   return ShooterTarget.NEUTRAL_ZONE_SKIP;
+    // }
+    // if (currentPose.getY() < centerLineLocation) {
+    //   return ShooterTarget.AMP_ZONE;
+    // }
+    // return ShooterTarget.AMP_ZONE_SKIP;
   }
 
   public double getDistanceToTargetInches(Translation2d robotToTargetVector) {

@@ -332,35 +332,31 @@ public class ShooterPose extends SubsystemBase {
       return;
     }
 
-    shooterDistance = distanceInches;
-    double speakerHeight = 83, shooterHeight = 27 + 14.75;
-    double basicAngle =
-        -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
+    // shooterDistance = distanceInches;
+    // double speakerHeight = 83, shooterHeight = 27 + 14.75;
+    // double basicAngle =
+    //     -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
 
-    // Find the closest distances in the lookup table
-    Double lowerDistance = popShotAngleLookupTable.floorKey(distanceInches);
-    Double higherDistance = popShotAngleLookupTable.ceilingKey(distanceInches);
+    // // Find the closest distances in the lookup table
+    // Double lowerDistance = popShotAngleLookupTable.floorKey(distanceInches);
+    // Double higherDistance = popShotAngleLookupTable.ceilingKey(distanceInches);
 
-    double targetAngle;
+    // double targetAngle;
 
-    // If exact match or only one boundary exists, use it directly
-    if (lowerDistance == null || higherDistance == null || lowerDistance.equals(higherDistance)) {
-      targetAngle = popShotAngleLookupTable.getOrDefault(distanceInches, basicAngle);
-    } else {
+    // // If exact match or only one boundary exists, use it directly
+    // if (lowerDistance == null || higherDistance == null || lowerDistance.equals(higherDistance)) {
+    //   targetAngle = popShotAngleLookupTable.getOrDefault(distanceInches, basicAngle);
+    // } else {
 
-      // Interpolate between the two angles for a more accurate angle
-      double lowerAngle = popShotAngleLookupTable.get(lowerDistance);
-      double higherAngle = popShotAngleLookupTable.get(higherDistance);
-      targetAngle =
-          interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
-    }
+    //   // Interpolate between the two angles for a more accurate angle
+    //   double lowerAngle = popShotAngleLookupTable.get(lowerDistance);
+    //   double higherAngle = popShotAngleLookupTable.get(higherDistance);
+    //   targetAngle =
+    //       interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
+    // }
     shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_TRAP_SETPOINT);
 
-    shooterTiltPID.setGoal(
-        MathUtil.clamp(
-            angleModulusDeg(targetAngle),
-            ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
-            ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
+    shooterTiltPID.setGoal(0);
   }
 
   public void setShooterDistance(double distanceInches) {
@@ -368,115 +364,119 @@ public class ShooterPose extends SubsystemBase {
   }
 
   public void setShooterDistance(double distanceInches, ShotType type) {
-    shooterDistance = distanceInches;
+  //   shooterDistance = distanceInches;
 
-    double targetAngle;
+  //   double targetAngle;
 
-    switch (type) {
-      case PASS:
-        double basicAnglePass = -30.0;
+  //   switch (type) {
+  //     case PASS:
+  //       double basicAnglePass = -30.0;
 
-        // Find the closest distances in the lookup table
-        Double lowerDistancePass = passShotAngleLookupTable.floorKey(distanceInches);
-        Double higherDistancePass = passShotAngleLookupTable.ceilingKey(distanceInches);
+  //       // Find the closest distances in the lookup table
+  //       Double lowerDistancePass = passShotAngleLookupTable.floorKey(distanceInches);
+  //       Double higherDistancePass = passShotAngleLookupTable.ceilingKey(distanceInches);
 
-        // If exact match or only one boundary exists, use it directly
-        if (lowerDistancePass == null
-            || higherDistancePass == null
-            || lowerDistancePass.equals(higherDistancePass)) {
-          targetAngle = passShotAngleLookupTable.getOrDefault(distanceInches, basicAnglePass);
-        } else {
+  //       // If exact match or only one boundary exists, use it directly
+  //       if (lowerDistancePass == null
+  //           || higherDistancePass == null
+  //           || lowerDistancePass.equals(higherDistancePass)) {
+  //         targetAngle = passShotAngleLookupTable.getOrDefault(distanceInches, basicAnglePass);
+  //       } else {
 
-          // Interpolate between the two angles for a more accurate angle
-          double lowerAnglePass = passShotAngleLookupTable.get(lowerDistancePass);
-          double higherAnglePass = passShotAngleLookupTable.get(higherDistancePass);
-          targetAngle =
-              interpolate(
-                  distanceInches,
-                  lowerDistancePass,
-                  higherDistancePass,
-                  lowerAnglePass,
-                  higherAnglePass);
-        }
-        break;
-      case SKIP:
-        targetAngle = -5.0;
-        break;
-      case POPSHOT:
-        double speakerHeightPop = 83.0, shooterHeightPop = 27.0 + 14.75;
-        double basicAnglePop =
-            -1 * Math.toDegrees(Math.atan((speakerHeightPop - shooterHeightPop) / distanceInches));
+  //         // Interpolate between the two angles for a more accurate angle
+  //         double lowerAnglePass = passShotAngleLookupTable.get(lowerDistancePass);
+  //         double higherAnglePass = passShotAngleLookupTable.get(higherDistancePass);
+  //         targetAngle =
+  //             interpolate(
+  //                 distanceInches,
+  //                 lowerDistancePass,
+  //                 higherDistancePass,
+  //                 lowerAnglePass,
+  //                 higherAnglePass);
+  //       }
+  //       break;
+  //     case SKIP:
+  //       targetAngle = -5.0;
+  //       break;
+  //     case POPSHOT:
+  //       double speakerHeightPop = 83.0, shooterHeightPop = 27.0 + 14.75;
+  //       double basicAnglePop =
+  //           -1 * Math.toDegrees(Math.atan((speakerHeightPop - shooterHeightPop) / distanceInches));
 
-        // Find the closest distances in the lookup table
-        Double lowerDistancePop = popShotAngleLookupTable.floorKey(distanceInches);
-        Double higherDistancePop = popShotAngleLookupTable.ceilingKey(distanceInches);
+  //       // Find the closest distances in the lookup table
+  //       Double lowerDistancePop = popShotAngleLookupTable.floorKey(distanceInches);
+  //       Double higherDistancePop = popShotAngleLookupTable.ceilingKey(distanceInches);
 
-        // If exact match or only one boundary exists, use it directly
-        if (lowerDistancePop == null
-            || higherDistancePop == null
-            || lowerDistancePop.equals(higherDistancePop)) {
-          targetAngle = popShotAngleLookupTable.getOrDefault(distanceInches, basicAnglePop);
-        } else {
+  //       // If exact match or only one boundary exists, use it directly
+  //       if (lowerDistancePop == null
+  //           || higherDistancePop == null
+  //           || lowerDistancePop.equals(higherDistancePop)) {
+  //         targetAngle = popShotAngleLookupTable.getOrDefault(distanceInches, basicAnglePop);
+  //       } else {
 
-          // Interpolate between the two angles for a more accurate angle
-          double lowerAnglePop = popShotAngleLookupTable.get(lowerDistancePop);
-          double higherAnglePop = popShotAngleLookupTable.get(higherDistancePop);
-          targetAngle =
-              interpolate(
-                  distanceInches,
-                  lowerDistancePop,
-                  higherDistancePop,
-                  lowerAnglePop,
-                  higherAnglePop);
-        }
-        break;
-      case SPEAKER:
-      default:
-        double speakerHeight = 83.0, shooterHeight = 27.0;
-        double basicAngle =
-            -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
+  //         // Interpolate between the two angles for a more accurate angle
+  //         double lowerAnglePop = popShotAngleLookupTable.get(lowerDistancePop);
+  //         double higherAnglePop = popShotAngleLookupTable.get(higherDistancePop);
+  //         targetAngle =
+  //             interpolate(
+  //                 distanceInches,
+  //                 lowerDistancePop,
+  //                 higherDistancePop,
+  //                 lowerAnglePop,
+  //                 higherAnglePop);
+  //       }
+  //       break;
+  //     case SPEAKER:
+  //     default:
+  //       double speakerHeight = 83.0, shooterHeight = 27.0;
+  //       double basicAngle =
+  //           -1 * Math.toDegrees(Math.atan((speakerHeight - shooterHeight) / distanceInches));
 
-        // Find the closest distances in the lookup table
-        Double lowerDistance = angleLookupTable.floorKey(distanceInches);
-        Double higherDistance = angleLookupTable.ceilingKey(distanceInches);
+  //       // Find the closest distances in the lookup table
+  //       Double lowerDistance = angleLookupTable.floorKey(distanceInches);
+  //       Double higherDistance = angleLookupTable.ceilingKey(distanceInches);
 
-        // If exact match or only one boundary exists, use it directly
-        if (lowerDistance == null
-            || higherDistance == null
-            || lowerDistance.equals(higherDistance)) {
-          targetAngle = angleLookupTable.getOrDefault(distanceInches, basicAngle);
-        } else {
+  //       // If exact match or only one boundary exists, use it directly
+  //       if (lowerDistance == null
+  //           || higherDistance == null
+  //           || lowerDistance.equals(higherDistance)) {
+  //         targetAngle = angleLookupTable.getOrDefault(distanceInches, basicAngle);
+  //       } else {
 
-          // Interpolate between the two angles for a more accurate angle
-          double lowerAngle = angleLookupTable.get(lowerDistance);
-          double higherAngle = angleLookupTable.get(higherDistance);
-          targetAngle =
-              interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
-        }
-    }
+  //         // Interpolate between the two angles for a more accurate angle
+  //         double lowerAngle = angleLookupTable.get(lowerDistance);
+  //         double higherAngle = angleLookupTable.get(higherDistance);
+  //         targetAngle =
+  //             interpolate(distanceInches, lowerDistance, higherDistance, lowerAngle, higherAngle);
+  //       }
+  //   }
 
-    if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_WHEELS_CLEARANCE_DEGREES
-        || targetAngle > -15) {
-      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
-    } else {
-      shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
-    }
+  //   if (targetAngle < ShooterPoseConstants.MIN_SHOOTER_WHEELS_CLEARANCE_DEGREES
+  //       || targetAngle > -15) {
+  //     shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
+  //   } else {
+  //     shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
+  //   }
 
-    if (targetAngle > ShooterPoseConstants.MIN_SHOOTER_WHEELS_CLEARANCE_DEGREES
-        || shooterHeightEncoder.getPosition()
-            > ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + .75) {
-      shooterTiltPID.setGoal(
-          MathUtil.clamp(
-              angleModulusDeg(targetAngle),
-              ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
-              ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
-    } else {
-      shooterTiltPID.setGoal(
-          MathUtil.clamp(
-              angleModulusDeg(ShooterPoseConstants.MIN_SHOOTER_BEARING_CLEARANCE_DEGREES),
-              ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
-              ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
-    }
+  //   if (targetAngle > ShooterPoseConstants.MIN_SHOOTER_WHEELS_CLEARANCE_DEGREES
+  //       || shooterHeightEncoder.getPosition()
+  //           > ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + .75) {
+  //     shooterTiltPID.setGoal(
+  //         MathUtil.clamp(
+  //             angleModulusDeg(targetAngle),
+  //             ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+  //             ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
+  //   } else {
+  //     shooterTiltPID.setGoal(
+  //         MathUtil.clamp(
+  //             angleModulusDeg(ShooterPoseConstants.MIN_SHOOTER_BEARING_CLEARANCE_DEGREES),
+  //             ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+  //             ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
+  //   }
+  // }
+  shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
+  shooterTiltPID.setGoal(0);
+
   }
 
   private static double interpolate(double x, double x0, double x1, double y0, double y1) {

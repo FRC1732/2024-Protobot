@@ -125,7 +125,7 @@ public class ShooterWheels extends SubsystemBase {
     // shooterPidController.setD(shooterD.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_D));
     wheelMode = WheelMode.FAST;
 
-    shooterPidController.setReference(6200, ControlType.kVelocity);
+    shooterPidController.setReference(2000, ControlType.kVelocity);
   }
 
   public void setShooterSpeedMedium() {

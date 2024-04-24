@@ -70,8 +70,8 @@ public class Drivetrain extends SubsystemBase {
 
   private boolean isFieldRelative;
 
-  private boolean isTranslationSlowMode = false;
-  private boolean isRotationSlowMode = false;
+  private boolean isTranslationSlowMode = true;
+  private boolean isRotationSlowMode = true;
 
   private boolean brakeMode;
   private Timer brakeModeTimer = new Timer();
