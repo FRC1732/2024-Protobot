@@ -477,7 +477,7 @@ public class ShooterPose extends SubsystemBase {
   //             ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES));
   //   }
   // }
-  shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT);
+  shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
   shooterTiltPID.setGoal(-15);
 
   }
