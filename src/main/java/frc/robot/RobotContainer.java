@@ -22,20 +22,19 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.lib.team3061.drivetrain.DrivetrainIOCTRE;
 import frc.lib.team3061.util.RobotOdometry;
+import frc.robot.commands.AdditionalCommands;
 import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
 import frc.robot.commands.ClimberCommands.DisarmClimber;
-import frc.robot.commands.DriveToPose;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.FeedShooterManual;
-import frc.robot.commands.feederCommands.WaitForNote;
 import frc.robot.commands.intakeCommands.Eject;
 import frc.robot.commands.intakeCommands.FeedThrough;
 import frc.robot.commands.intakeCommands.FinishIntakingCommand;
@@ -47,14 +46,12 @@ import frc.robot.commands.shooterCommands.RunShooterFast;
 import frc.robot.commands.shooterCommands.RunShooterMedium;
 import frc.robot.commands.shooterCommands.RunShooterSlow;
 import frc.robot.commands.shooterCommands.RunShooterSpoil;
-import frc.robot.commands.shooterCommands.RunShooterTarget;
 import frc.robot.commands.shooterCommands.SetShooterDistance;
 import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.ShootThrough;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
-import frc.robot.limelightVision.ApriltagVision.VisionApriltagConstants;
 import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
 import frc.robot.limelightVision.LimelightHelpers;
 import frc.robot.limelightVision.ObjectDetectionVision.VisionObjectDetectionSubsytem;
@@ -70,6 +67,7 @@ import frc.robot.subsystems.statusrgb.StatusRgb;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -166,8 +164,6 @@ public class RobotContainer {
      */
     createRobotConfig();
 
-    // LEDs.getInstance();
-
     createSubsystems();
 
     // disable all telemetry in the LiveWindow to reduce the processing during each
@@ -190,35 +186,6 @@ public class RobotContainer {
   }
 
   private void createSubsystems() {
-    /*
-     * int[] driveMotorCANIDs = config.getSwerveDriveMotorCANIDs();
-     * int[] steerMotorCANDIDs = config.getSwerveSteerMotorCANIDs();
-     * int[] steerEncoderCANDIDs = config.getSwerveSteerEncoderCANIDs();
-     * double[] steerOffsets = config.getSwerveSteerOffsets();
-     *
-     * SwerveModuleIO flModule =
-     * new SwerveModuleIOTalonFXPhoenix6(
-     * 0, driveMotorCANIDs[0], steerMotorCANDIDs[0], steerEncoderCANDIDs[0],
-     * steerOffsets[0]);
-     *
-     * SwerveModuleIO frModule =
-     * new SwerveModuleIOTalonFXPhoenix6(
-     * 1, driveMotorCANIDs[1], steerMotorCANDIDs[1], steerEncoderCANDIDs[1],
-     * steerOffsets[1]);
-     *
-     * SwerveModuleIO blModule =
-     * new SwerveModuleIOTalonFXPhoenix6(
-     * 2, driveMotorCANIDs[2], steerMotorCANDIDs[2], steerEncoderCANDIDs[2],
-     * steerOffsets[2]);
-     *
-     * SwerveModuleIO brModule =
-     * new SwerveModuleIOTalonFXPhoenix6(
-     * 3, driveMotorCANIDs[3], steerMotorCANDIDs[3], steerEncoderCANDIDs[3],
-     * steerOffsets[3]);
-     */
-    // GyroIO gyro = new GyroIOPigeon2Phoenix6(config.getGyroCANID());
-    // DrivetrainIO drivetrainIO =
-    // new DrivetrainIOGeneric(gyro, flModule, frModule, blModule, brModule);
     DrivetrainIOCTRE drivetrainIO = new DrivetrainIOCTRE();
     drivetrain = new Drivetrain(drivetrainIO);
 
@@ -316,9 +283,9 @@ public class RobotContainer {
                     .getPose()
                     .getRotation()
                     // .plus(
-                    //     lastAlliance == Alliance.Blue
-                    //         ? Rotation2d.fromDegrees(0.0)
-                    //         : Rotation2d.fromDegrees(180.0))
+                    // lastAlliance == Alliance.Blue
+                    // ? Rotation2d.fromDegrees(0.0)
+                    // : Rotation2d.fromDegrees(180.0))
                     .getDegrees());
     visionObjectDetectionSubsystem = new VisionObjectDetectionSubsytem();
 
@@ -384,135 +351,12 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
+    oi.alignToClimbButton().whileTrue(alignToClimbCommand());
     oi.alignToClimbButton()
-        .whileTrue(
-            new InstantCommand(
-                    () -> {
-                      visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
-                    })
-                .andThen(new WaitCommand(.02))
-                .andThen(
-                    new DriveToPose(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        visionApriltagSubsystem,
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                    ? visionApriltagSubsystem.hasStageTargetBlue()
-                                    : visionApriltagSubsystem.hasStageTargetRed())
-                                ? alignToClimbLookupStartPose.get(
-                                    visionApriltagSubsystem.getAprilTagId())
-                                : alignToClimbLookupStartPose.get(13.0),
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                ? visionApriltagSubsystem.hasStageTargetBlue()
-                                : visionApriltagSubsystem.hasStageTargetRed())))
-                .andThen(
-                    new DriveToPose(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        visionApriltagSubsystem,
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                    ? visionApriltagSubsystem.hasStageTargetBlue()
-                                    : visionApriltagSubsystem.hasStageTargetRed())
-                                ? alignToClimbLookupPose.get(
-                                    visionApriltagSubsystem.getAprilTagId())
-                                : alignToClimbLookupPose.get(13.0),
-                        () ->
-                            (lastAlliance == Alliance.Blue
-                                ? visionApriltagSubsystem.hasStageTargetBlue()
-                                : visionApriltagSubsystem.hasStageTargetRed())))
-                .andThen(
-                    new InstantCommand(
-                        () -> {
-                          drivetrain.enableTranslationSlowMode();
-                          drivetrain.enableRotationSlowMode();
-                          drivetrain.disableFieldRelative();
-                          drivetrain.enableInvertedY();
-                        })));
+        .onFalse(restoreFieldConfiguration().andThen(restoreSlowModeConfiguration()));
 
-    oi.alignToClimbButton()
-        .onFalse(
-            new ConditionalCommand(
-                    new InstantCommand(
-                        () -> {
-                          drivetrain.enableFieldRelative();
-                          visionApriltagSubsystem.setPipeline(
-                              VisionApriltagConstants.Pipelines.SPEAKER);
-                          drivetrain.disableInvertedY();
-                        }),
-                    new InstantCommand(
-                        () -> {
-                          drivetrain.enableFieldRelative();
-                          visionApriltagSubsystem.setPipeline(
-                              VisionApriltagConstants.Pipelines.SPEAKER);
-                          drivetrain.disableInvertedY();
-                        }),
-                    oi.fieldCentricButton()::getAsBoolean)
-                .andThen(
-                    new ConditionalCommand(
-                        new InstantCommand(
-                            () -> {
-                              drivetrain.enableTranslationSlowMode();
-                              drivetrain.enableRotationSlowMode();
-                            }),
-                        new InstantCommand(
-                            () -> {
-                              drivetrain.disableTranslationSlowMode();
-                              drivetrain.disableRotationSlowMode();
-                            }),
-                        oi.slowModeSwitch()::getAsBoolean)));
-    oi.aimOrSourceButton()
-        .whileTrue(
-            new ConditionalCommand(
-                // Has note AND is in AMP scoring mode
-                new RunShooterSlow(shooterWheels)
-                    .andThen(
-                        new WaitForNote(feeder)
-                            .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy())
-                            .alongWith(
-                                new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        () -> -90,
-                                        () -> false,
-                                        statusRgb)
-                                    .asProxy())),
-                // Has note AND is in SPEAKER scoring mode
-                new RunShooterTarget(shooterWheels, () -> getShooterTarget())
-                    .andThen(
-                        new WaitForNote(feeder)
-                            .andThen(
-                                new SetShooterDistanceContinuous(
-                                        shooterPose,
-                                        () -> getDistanceToTargetInches(getRobotToTargetVector()),
-                                        () -> getShooterTarget(),
-                                        () -> popShotEnabled)
-                                    .asProxy())
-                            .alongWith(
-                                // new BrakeFeeder(feeder, shooterWheels).asProxy(),
-                                new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        () -> getRotationToTargetDegrees(getRobotToTargetVector()),
-                                        (() -> false),
-                                        statusRgb)
-                                    .asProxy())),
-                // Check ScoringMode
-                () -> scoringMode == ScoringMode.AMP));
-
-    oi.aimOrSourceButton()
-        .onFalse(
-            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+    oi.aimOrSourceButton().whileTrue(aimOrSourceCommand());
+    oi.aimOrSourceButton().onFalse(postAimOrSourceCommand());
 
     oi.sourceLoadButton()
         .whileTrue(
@@ -573,20 +417,9 @@ public class RobotContainer {
                         new RunShooterMedium(shooterWheels),
                         new InstantCommand(),
                         () -> feeder.hasNote())));
-    oi.ampModeButton()
-        .onTrue(
-            new ConditionalCommand(
-                    new StopShooter(shooterWheels).asProxy(),
-                    new InstantCommand(),
-                    () -> scoringMode == ScoringMode.SPEAKER)
-                .andThen(new InstantCommand(() -> scoringMode = ScoringMode.AMP)));
-    oi.operatorAmpButton()
-        .onTrue(
-            new ConditionalCommand(
-                    new StopShooter(shooterWheels).asProxy(),
-                    new InstantCommand(),
-                    () -> scoringMode == ScoringMode.SPEAKER)
-                .andThen(new InstantCommand(() -> scoringMode = ScoringMode.AMP)));
+
+    oi.ampModeButton().onTrue(ampModeCommand());
+    oi.operatorAmpButton().onTrue(ampModeCommand());
 
     oi.popShotToggleButton().onTrue(new InstantCommand(() -> popShotEnabled = true));
     oi.popShotToggleButton().onFalse(new InstantCommand(() -> popShotEnabled = false));
@@ -670,31 +503,84 @@ public class RobotContainer {
                     && DriverStation.getMatchTime() > 0.0
                     && DriverStation.getMatchTime() <= Math.round(endgameAlert1.get()))
         .onTrue(new PrintCommand("End Game Alert 1."));
-    /*
-     * Commands.run(() -> LEDs.getInstance().setEndgameAlert(true))
-     * .withTimeout(1.5)
-     * .andThen(
-     * Commands.run(() -> LEDs.getInstance().setEndgameAlert(false))
-     * .withTimeout(1.0)));
-     */
+
     new Trigger(
             () ->
                 DriverStation.isTeleopEnabled()
                     && DriverStation.getMatchTime() > 0.0
                     && DriverStation.getMatchTime() <= Math.round(endgameAlert2.get()))
         .onTrue(new PrintCommand("End Game Alert 2."));
-    /*
-     * Commands.sequence(
-     * Commands.run(() ->
-     * LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
-     * Commands.run(() ->
-     * LEDs.getInstance().setEndgameAlert(false)).withTimeout(0.5),
-     * Commands.run(() ->
-     * LEDs.getInstance().setEndgameAlert(true)).withTimeout(0.5),
-     * Commands.run(() ->
-     * LEDs.getInstance().setEndgameAlert(false)).withTimeout(1.0)));
-     */
+  }
 
+  private SequentialCommandGroup ampModeCommand() {
+    return new ConditionalCommand(
+            new StopShooter(shooterWheels).asProxy(),
+            new InstantCommand(),
+            () -> scoringMode == ScoringMode.SPEAKER)
+        .andThen(new InstantCommand(() -> scoringMode = ScoringMode.AMP));
+  }
+
+  private SequentialCommandGroup postAimOrSourceCommand() {
+    return new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF));
+  }
+
+  private ConditionalCommand aimOrSourceCommand() {
+    return AdditionalCommands.aimOrSourceCommand(
+        shooterWheels,
+        oi,
+        feeder,
+        shooterPose,
+        drivetrain,
+        statusRgb,
+        () -> getDistanceToTargetInches(getRobotToTargetVector()),
+        () -> getRotationToTargetDegrees(getRobotToTargetVector()),
+        () -> getShooterTarget(),
+        () -> popShotEnabled,
+        () -> scoringMode == ScoringMode.AMP);
+  }
+
+  private ConditionalCommand restoreSlowModeConfiguration() {
+    return AdditionalCommands.restoreSlowModeConfigurationCommand(drivetrain, oi);
+  }
+
+  private ConditionalCommand restoreFieldConfiguration() {
+    return AdditionalCommands.restoreFieldConfigurationCommand(
+        drivetrain, oi, visionApriltagSubsystem);
+  }
+
+  private SequentialCommandGroup alignToClimbCommand() {
+    return AdditionalCommands.alignToClimbCommand(
+        visionApriltagSubsystem,
+        drivetrain,
+        oi,
+        getStageStartPoseSupplier(),
+        getStagePoseSupplier(),
+        hasStageTargetSupplier());
+  }
+
+  private Supplier<Boolean> hasStageTargetSupplier() {
+    return () ->
+        (lastAlliance == Alliance.Blue
+            ? visionApriltagSubsystem.hasStageTargetBlue()
+            : visionApriltagSubsystem.hasStageTargetRed());
+  }
+
+  private Supplier<Pose2d> getStagePoseSupplier() {
+    return () ->
+        (lastAlliance == Alliance.Blue
+                ? visionApriltagSubsystem.hasStageTargetBlue()
+                : visionApriltagSubsystem.hasStageTargetRed())
+            ? alignToClimbLookupPose.get(visionApriltagSubsystem.getAprilTagId())
+            : alignToClimbLookupPose.get(13.0);
+  }
+
+  private Supplier<Pose2d> getStageStartPoseSupplier() {
+    return () ->
+        (lastAlliance == Alliance.Blue
+                ? visionApriltagSubsystem.hasStageTargetBlue()
+                : visionApriltagSubsystem.hasStageTargetRed())
+            ? alignToClimbLookupStartPose.get(visionApriltagSubsystem.getAprilTagId())
+            : alignToClimbLookupStartPose.get(13.0);
   }
 
   public Translation2d getRobotToTargetVector() {
