@@ -5,13 +5,9 @@
 package frc.lib.team3061.vision;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.lib.team6328.util.Alert;
-import frc.lib.team6328.util.Alert.AlertType;
 import frc.robot.limelightVision.LimelightHelpers;
 
 public class VisionIOLimelight implements VisionIO {
-  private Alert noCameraConnectedAlert =
-      new Alert("specified camera not connected", AlertType.WARNING);
   private double lastTimestamp = 0;
   String limelightName;
 

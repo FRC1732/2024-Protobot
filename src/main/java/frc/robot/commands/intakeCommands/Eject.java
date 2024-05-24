@@ -27,6 +27,8 @@ public class Eject extends Command {
   @Override
   public void initialize() {
     intake.runIntakeOut();
+    feeder.reverseFeeder();
+    shooter.setShooterSpeedBackwards();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -37,6 +39,8 @@ public class Eject extends Command {
   @Override
   public void end(boolean interrupted) {
     intake.stopIntake();
+    feeder.stopFeeder();
+    shooter.stopShooter();
   }
 
   // Returns true when the command should end.

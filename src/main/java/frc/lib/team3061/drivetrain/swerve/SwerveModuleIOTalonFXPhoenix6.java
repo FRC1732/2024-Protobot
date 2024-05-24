@@ -20,11 +20,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.ctre.phoenix6.sim.CANcoderSimState;
-import com.ctre.phoenix6.sim.TalonFXSimState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import frc.lib.team3015.subsystem.FaultReporter;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.DrivetrainIO.SwerveIOInputs;
@@ -89,13 +84,6 @@ public class SwerveModuleIOTalonFXPhoenix6 implements SwerveModuleIO {
   private Alert driveMotorConfigAlert =
       new Alert("Failed to apply configuration for drive motor.", AlertType.ERROR);
 
-  private TalonFXSimState angleMotorSimState;
-  private TalonFXSimState driveMotorSimState;
-  private CANcoderSimState angleEncoderSimState;
-  private LinearSystemSim<N1, N1, N1> driveSim;
-  private LinearSystemSim<N2, N1, N1> turnSim;
-  private double lastSimAnglePositionRot = 0.0;
-
   /**
    * Make a new SwerveModuleIOTalonFX object.
    *
@@ -118,6 +106,13 @@ public class SwerveModuleIOTalonFXPhoenix6 implements SwerveModuleIO {
       angleGearRatio = MK4_L2_ANGLE_GEAR_RATIO;
       angleMotorInverted = MK4_L2_ANGLE_MOTOR_INVERTED;
       canCoderInverted = MK4_L2_CAN_CODER_INVERTED;
+    } else if (RobotConfig.getInstance().getSwerveType() == SwerveType.MK4IL3) {
+      wheelCircumference = MK4I_L3_WHEEL_CIRCUMFERENCE;
+      driveGearRatio = MK4I_L3_DRIVE_GEAR_RATIO;
+      driveMotorInverted = MK4I_L3_DRIVE_MOTOR_INVERTED;
+      angleGearRatio = MK4I_L3_ANGLE_GEAR_RATIO;
+      angleMotorInverted = MK4I_L3_ANGLE_MOTOR_INVERTED;
+      canCoderInverted = MK4I_L3_CAN_CODER_INVERTED;
     } else { // MK4I
 
       wheelCircumference = MK4I_L2_WHEEL_CIRCUMFERENCE;

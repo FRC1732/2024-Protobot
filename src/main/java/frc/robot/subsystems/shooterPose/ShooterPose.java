@@ -1,11 +1,15 @@
 package frc.robot.subsystems.shooterPose;
 
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkLimitSwitch;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
@@ -15,13 +19,9 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import java.util.Map;
-import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.Logger;
 
 public class ShooterPose extends SubsystemBase {
 
@@ -73,10 +73,10 @@ public class ShooterPose extends SubsystemBase {
 
   private ShuffleboardTab shooterPoseTab;
 
-  private GenericEntry goalEntry;
+  // private GenericEntry goalEntry;
 
   private GenericEntry maxVelocityEntry, maxAccelerationEntry;
-  private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
+  // private GenericEntry shooterHeightP, shooterHeightI, shooterHeightD;
   private GenericEntry shooterTiltP, shooterTiltI, shooterTiltD;
 
   // private final TunableNumber shooterHeightP =
@@ -303,17 +303,17 @@ public class ShooterPose extends SubsystemBase {
     shooterTiltI = shooterPoseTab.add("Shooter Tilt I", 0).getEntry();
     shooterTiltD = shooterPoseTab.add("Shooter Tilt D", 0).getEntry();
 
-    goalEntry =
-        shooterPoseTab
-            .add("Goal", 66)
-            .withWidget(BuiltInWidgets.kNumberSlider)
-            .withProperties(
-                Map.of(
-                    "min",
-                    ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
-                    "max",
-                    ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES))
-            .getEntry();
+    // goalEntry =
+    //     shooterPoseTab
+    //         .add("Goal", 66)
+    //         .withWidget(BuiltInWidgets.kNumberSlider)
+    //         .withProperties(
+    //             Map.of(
+    //                 "min",
+    //                 ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES,
+    //                 "max",
+    //                 ShooterPoseConstants.MAX_SHOOTER_TILT_DEGREES))
+    //         .getEntry();
     maxVelocityEntry =
         shooterPoseTab
             .add("MaxVelocity", ShooterPoseConstants.SHOOTER_TILT_MAX_VELOCITY)
