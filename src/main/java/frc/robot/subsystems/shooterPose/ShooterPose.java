@@ -119,6 +119,7 @@ public class ShooterPose extends SubsystemBase {
 
   public ShooterPose() {
     angleLookupTable = new TreeMap<>();
+    double adjust = 1.5;
     angleLookupTable.put(
         10.0, ShooterPoseConstants.MIN_SHOOTER_TILT_DEGREES); // (distance, optimal angle)
     angleLookupTable.put(
@@ -129,17 +130,17 @@ public class ShooterPose extends SubsystemBase {
     angleLookupTable.put(80.0, -33.5);
     angleLookupTable.put(90.0, -30.5);
     angleLookupTable.put(100.0, -30.0);
-    angleLookupTable.put(110.0, -28.5);
-    angleLookupTable.put(120.0, -26.75);
-    angleLookupTable.put(130.0, -24.5);
-    angleLookupTable.put(140.0, -23.5);
-    angleLookupTable.put(150.0, -23.5);
-    angleLookupTable.put(160.0, -23.5);
-    angleLookupTable.put(170.0, -23.0);
-    angleLookupTable.put(180.0, -22.5);
-    angleLookupTable.put(190.0, -21.75);
-    angleLookupTable.put(200.0, -21.25);
-    angleLookupTable.put(250.0, -20.5);
+    angleLookupTable.put(110.0, -28.5 + adjust);
+    angleLookupTable.put(120.0, -26.75 + adjust);
+    angleLookupTable.put(130.0, -24.5 + adjust);
+    angleLookupTable.put(140.0, -23.5 + adjust);
+    angleLookupTable.put(150.0, -23.5 + adjust);
+    angleLookupTable.put(160.0, -23.5 + adjust);
+    angleLookupTable.put(170.0, -23.0 + adjust);
+    angleLookupTable.put(180.0, -22.5 + adjust);
+    angleLookupTable.put(190.0, -21.75 + adjust);
+    angleLookupTable.put(200.0, -21.25 + adjust);
+    angleLookupTable.put(250.0, -20.5 + adjust);
 
     popShotAngleLookupTable = new TreeMap<>();
     popShotAngleLookupTable.put(
