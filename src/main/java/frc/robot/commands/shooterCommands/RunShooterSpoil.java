@@ -12,7 +12,7 @@ public class RunShooterSpoil extends Command {
   }
 
   public void initialize() {
-    shooterWheels.setShooterSpeedSlow();
+    shooterWheels.setShooterSpeedSpoil();
   }
 
   public void execute() {}
