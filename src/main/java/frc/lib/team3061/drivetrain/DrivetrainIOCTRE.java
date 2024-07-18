@@ -3,9 +3,12 @@ package frc.lib.team3061.drivetrain;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveDrivetrain;
@@ -81,97 +84,177 @@ public class DrivetrainIOCTRE extends SwerveDrivetrain implements DrivetrainIO {
   private final TunableNumber steerKd =
       new TunableNumber("Drive/TurnKd", RobotConfig.getInstance().getSwerveAngleKD());
 
-  private static final CustomSlotGains steerGains =
-      new CustomSlotGains(
-          RobotConfig.getInstance().getSwerveAngleKP(),
-          RobotConfig.getInstance().getSwerveAngleKI(),
-          RobotConfig.getInstance().getSwerveAngleKD(),
-          RobotConfig.getInstance().getSwerveAngleKA(),
-          RobotConfig.getInstance().getSwerveAngleKV(),
-          RobotConfig.getInstance().getSwerveAngleKS());
-  private static final CustomSlotGains driveGains =
-      new CustomSlotGains(
-          RobotConfig.getInstance().getSwerveDriveKP(),
-          RobotConfig.getInstance().getSwerveDriveKI(),
-          RobotConfig.getInstance().getSwerveDriveKD(),
-          RobotConfig.getInstance().getDriveKA(),
-          RobotConfig.getInstance().getDriveKV(),
-          RobotConfig.getInstance().getDriveKS());
-
-  // The closed-loop output type to use for the steer motors
-  // This affects the PID/FF gains for the steer motors
-  // TorqueCurrentFOC is not currently supported in simulation.
-  private static final ClosedLoopOutputType steerClosedLoopOutput = getSteerClosedLoopOutputType();
-
-  // The closed-loop output type to use for the drive motors
-  // This affects the PID/FF gains for the drive motors
-  // TorqueCurrentFOC is not currently supported in simulation.
-  private static final ClosedLoopOutputType driveClosedLoopOutput = getDriveClosedLoopOutputType();
-
   private static final double COUPLE_RATIO = 0.0;
   private static final double STEER_INERTIA = 0.00001;
   private static final double DRIVE_INERTIA = 0.001;
+  // The steer motor uses any SwerveModule.SteerRequestType control request with the
+  // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
+  private static final Slot0Configs steerGains =
+      new Slot0Configs().withKP(100).withKI(0).withKD(0.2).withKS(0).withKV(1.5).withKA(0);
+  // When using closed-loop control, the drive motor uses the control
+  // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
+  private static final Slot0Configs driveGains =
+      new Slot0Configs().withKP(3).withKI(0).withKD(0).withKS(0).withKV(0).withKA(0);
+
+  // The closed-loop output type to use for the steer motors;
+  // This affects the PID/FF gains for the steer motors
+  private static final ClosedLoopOutputType steerClosedLoopOutput = ClosedLoopOutputType.Voltage;
+  // The closed-loop output type to use for the drive motors;
+  // This affects the PID/FF gains for the drive motors
+  private static final ClosedLoopOutputType driveClosedLoopOutput = ClosedLoopOutputType.Voltage;
+
+  // The stator current at which the wheels start to slip;
+  // This needs to be tuned to your individual robot
+  private static final double kSlipCurrentA = 150.0;
+
+  // Initial configs for the drive and steer motors and the CANcoder; these cannot be null.
+  // Some configs will be overwritten; check the `with*InitialConfigs()` API documentation.
+  private static final TalonFXConfiguration driveInitialConfigs = new TalonFXConfiguration();
+  private static final TalonFXConfiguration steerInitialConfigs =
+      new TalonFXConfiguration()
+          .withCurrentLimits(
+              new CurrentLimitsConfigs()
+                  // Swerve azimuth does not require much torque output, so we can set a relatively
+                  // low
+                  // stator current limit to help avoid brownouts without impacting performance.
+                  .withStatorCurrentLimit(60)
+                  .withStatorCurrentLimitEnable(true));
+  private static final CANcoderConfiguration cancoderInitialConfigs = new CANcoderConfiguration();
+  // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
+  private static final Pigeon2Configuration pigeonConfigs = null;
+
+  // Theoretical free speed (m/s) at 12v applied output;
+  // This needs to be tuned to your individual robot
+  public static final double kSpeedAt12VoltsMps = 5.96;
+
+  // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
+  // This may need to be tuned to your individual robot
+  private static final double kCoupleRatio = 3.125;
+
+  private static final double kDriveGearRatio = 5.357142857142857;
+  private static final double kSteerGearRatio = 21.428571428571427;
+  private static final double kWheelRadiusInches = 2;
+
+  private static final boolean kInvertLeftSide = false;
+  private static final boolean kInvertRightSide = true;
+
+  private static final String kCANbusName = "Monke";
+  private static final int kPigeonId = 7;
+
+  // These are only used for simulation
+  private static final double kSteerInertia = 0.00001;
+  private static final double kDriveInertia = 0.001;
+  // Simulated voltage necessary to overcome friction
+  private static final double kSteerFrictionVoltage = 0.25;
+  private static final double kDriveFrictionVoltage = 0.25;
 
   private static final SwerveDrivetrainConstants drivetrainConstants =
       new SwerveDrivetrainConstants()
-          .withPigeon2Id(RobotConfig.getInstance().getGyroCANID())
-          .withCANbusName(RobotConfig.getInstance().getCANBusName());
+          .withCANbusName(kCANbusName)
+          .withPigeon2Id(kPigeonId)
+          .withPigeon2Configs(pigeonConfigs);
 
-  private static final SwerveModuleConstantsFactory constantCreator =
+  private static final SwerveModuleConstantsFactory ConstantCreator =
       new SwerveModuleConstantsFactory()
-          .withDriveMotorGearRatio(SwerveConstants.MK4I_L2_DRIVE_GEAR_RATIO)
-          .withSteerMotorGearRatio(SwerveConstants.MK4I_L2_ANGLE_GEAR_RATIO)
-          .withWheelRadius(
-              Units.metersToInches(SwerveConstants.MK4I_L2_WHEEL_DIAMETER_METERS / 2.0))
-          .withSlipCurrent(800)
+          .withDriveMotorGearRatio(kDriveGearRatio)
+          .withSteerMotorGearRatio(kSteerGearRatio)
+          .withWheelRadius(kWheelRadiusInches)
+          .withSlipCurrent(kSlipCurrentA)
           .withSteerMotorGains(steerGains)
           .withDriveMotorGains(driveGains)
           .withSteerMotorClosedLoopOutput(steerClosedLoopOutput)
           .withDriveMotorClosedLoopOutput(driveClosedLoopOutput)
-          .withSpeedAt12VoltsMps(RobotConfig.getInstance().getRobotMaxVelocity())
-          .withSteerInertia(STEER_INERTIA)
-          .withDriveInertia(DRIVE_INERTIA)
+          .withSpeedAt12VoltsMps(kSpeedAt12VoltsMps)
+          .withSteerInertia(kSteerInertia)
+          .withDriveInertia(kDriveInertia)
+          .withSteerFrictionVoltage(kSteerFrictionVoltage)
+          .withDriveFrictionVoltage(kDriveFrictionVoltage)
           .withFeedbackSource(SteerFeedbackType.FusedCANcoder)
-          .withCouplingGearRatio(
-              COUPLE_RATIO) // Every 1 rotation of the azimuth results in couple ratio drive turns
-          .withSteerMotorInverted(SwerveConstants.MK4I_L2_ANGLE_MOTOR_INVERTED);
+          .withCouplingGearRatio(kCoupleRatio)
+          .withDriveMotorInitialConfigs(driveInitialConfigs)
+          .withSteerMotorInitialConfigs(steerInitialConfigs)
+          .withCANcoderInitialConfigs(cancoderInitialConfigs);
+
+  // Front Left
+  private static final int kFrontLeftDriveMotorId = 20;
+  private static final int kFrontLeftSteerMotorId = 21;
+  private static final int kFrontLeftEncoderId = 22;
+  private static final double kFrontLeftEncoderOffset = 0.21435546875;
+  private static final boolean kFrontLeftSteerInvert = false;
+
+  private static final double kFrontLeftXPosInches = 11.25;
+  private static final double kFrontLeftYPosInches = 11.25;
+
+  // Front Right
+  private static final int kFrontRightDriveMotorId = 30;
+  private static final int kFrontRightSteerMotorId = 31;
+  private static final int kFrontRightEncoderId = 32;
+  private static final double kFrontRightEncoderOffset = -0.435546875;
+  private static final boolean kFrontRightSteerInvert = false;
+
+  private static final double kFrontRightXPosInches = 11.25;
+  private static final double kFrontRightYPosInches = -11.25;
+
+  // Back Left
+  private static final int kBackLeftDriveMotorId = 10;
+  private static final int kBackLeftSteerMotorId = 11;
+  private static final int kBackLeftEncoderId = 12;
+  private static final double kBackLeftEncoderOffset = 0.205322265625;
+  private static final boolean kBackLeftSteerInvert = false;
+
+  private static final double kBackLeftXPosInches = -11.25;
+  private static final double kBackLeftYPosInches = 11.25;
+
+  // Back Right
+  private static final int kBackRightDriveMotorId = 40;
+  private static final int kBackRightSteerMotorId = 41;
+  private static final int kBackRightEncoderId = 42;
+  private static final double kBackRightEncoderOffset = 0.025634765625;
+  private static final boolean kBackRightSteerInvert = false;
+
+  private static final double kBackRightXPosInches = -11.25;
+  private static final double kBackRightYPosInches = -11.25;
 
   private static final SwerveModuleConstants frontLeft =
-      constantCreator.createModuleConstants(
-          RobotConfig.getInstance().getSwerveSteerMotorCANIDs()[0],
-          RobotConfig.getInstance().getSwerveDriveMotorCANIDs()[0],
-          RobotConfig.getInstance().getSwerveSteerEncoderCANIDs()[0],
-          RobotConfig.getInstance().getSwerveSteerOffsets()[0],
-          RobotConfig.getInstance().getWheelbase() / 2.0,
-          RobotConfig.getInstance().getTrackwidth() / 2.0,
-          !SwerveConstants.MK4I_L2_DRIVE_MOTOR_INVERTED);
+      ConstantCreator.createModuleConstants(
+              kFrontLeftSteerMotorId,
+              kFrontLeftDriveMotorId,
+              kFrontLeftEncoderId,
+              kFrontLeftEncoderOffset,
+              Units.inchesToMeters(kFrontLeftXPosInches),
+              Units.inchesToMeters(kFrontLeftYPosInches),
+              kInvertLeftSide)
+          .withSteerMotorInverted(kFrontLeftSteerInvert);
   private static final SwerveModuleConstants frontRight =
-      constantCreator.createModuleConstants(
-          RobotConfig.getInstance().getSwerveSteerMotorCANIDs()[1],
-          RobotConfig.getInstance().getSwerveDriveMotorCANIDs()[1],
-          RobotConfig.getInstance().getSwerveSteerEncoderCANIDs()[1],
-          RobotConfig.getInstance().getSwerveSteerOffsets()[1],
-          RobotConfig.getInstance().getWheelbase() / 2.0,
-          -RobotConfig.getInstance().getTrackwidth() / 2.0,
-          SwerveConstants.MK4I_L2_DRIVE_MOTOR_INVERTED);
+      ConstantCreator.createModuleConstants(
+              kFrontRightSteerMotorId,
+              kFrontRightDriveMotorId,
+              kFrontRightEncoderId,
+              kFrontRightEncoderOffset,
+              Units.inchesToMeters(kFrontRightXPosInches),
+              Units.inchesToMeters(kFrontRightYPosInches),
+              kInvertRightSide)
+          .withSteerMotorInverted(kFrontRightSteerInvert);
   private static final SwerveModuleConstants backLeft =
-      constantCreator.createModuleConstants(
-          RobotConfig.getInstance().getSwerveSteerMotorCANIDs()[2],
-          RobotConfig.getInstance().getSwerveDriveMotorCANIDs()[2],
-          RobotConfig.getInstance().getSwerveSteerEncoderCANIDs()[2],
-          RobotConfig.getInstance().getSwerveSteerOffsets()[2],
-          -RobotConfig.getInstance().getWheelbase() / 2.0,
-          RobotConfig.getInstance().getTrackwidth() / 2.0,
-          !SwerveConstants.MK4I_L2_DRIVE_MOTOR_INVERTED);
+      ConstantCreator.createModuleConstants(
+              kBackLeftSteerMotorId,
+              kBackLeftDriveMotorId,
+              kBackLeftEncoderId,
+              kBackLeftEncoderOffset,
+              Units.inchesToMeters(kBackLeftXPosInches),
+              Units.inchesToMeters(kBackLeftYPosInches),
+              kInvertLeftSide)
+          .withSteerMotorInverted(kBackLeftSteerInvert);
   private static final SwerveModuleConstants backRight =
-      constantCreator.createModuleConstants(
-          RobotConfig.getInstance().getSwerveSteerMotorCANIDs()[3],
-          RobotConfig.getInstance().getSwerveDriveMotorCANIDs()[3],
-          RobotConfig.getInstance().getSwerveSteerEncoderCANIDs()[3],
-          RobotConfig.getInstance().getSwerveSteerOffsets()[3],
-          -RobotConfig.getInstance().getWheelbase() / 2.0,
-          -RobotConfig.getInstance().getTrackwidth() / 2.0,
-          SwerveConstants.MK4I_L2_DRIVE_MOTOR_INVERTED);
+      ConstantCreator.createModuleConstants(
+              kBackRightSteerMotorId,
+              kBackRightDriveMotorId,
+              kBackRightEncoderId,
+              kBackRightEncoderOffset,
+              Units.inchesToMeters(kBackRightXPosInches),
+              Units.inchesToMeters(kBackRightYPosInches),
+              kInvertRightSide)
+          .withSteerMotorInverted(kBackRightSteerInvert);
 
   // gyro signals
   private final StatusSignal<Double> pitchStatusSignal;
