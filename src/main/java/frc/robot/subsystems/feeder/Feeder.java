@@ -79,7 +79,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public boolean hasNote() {
-    return analog.getValue() > 300;
+    return analog.getValue() > 800;
   }
 
   public boolean checkStopped() {

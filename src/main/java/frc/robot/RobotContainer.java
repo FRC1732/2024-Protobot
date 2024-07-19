@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import frc.lib.team3061.RobotConfig;
@@ -142,7 +143,7 @@ public class RobotContainer {
     intake = new Intake();
     feeder = new Feeder();
     shooterWheels = new ShooterWheels();
-    shooterPose = new ShooterPose();
+   // shooterPose = new ShooterPose();
 
     //visionSubsystem = new VisionSubsystem();
 
@@ -197,21 +198,23 @@ public class RobotContainer {
 
   /** Use this method to define your button->command mappings. */
   private void configureButtonBindings() {
-    oi.groundIntakeButton().whileTrue(new IntakeNote(intake, feeder, shooterPose));
+    oi.groundIntakeButton().whileTrue(
+        new ConditionalCommand(new FeedShooterManual(intake, feeder), new IntakeNote(intake, feeder), () -> feeder.hasNote() && shooterWheels.getShooterSpeed() > .7)
+    );
 
-    oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose));
+   // oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder));
 
-    oi.ampScoreButton()
-        .whileTrue(
-            new RunShooterSlow(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.AMP)));
-    oi.ampScoreButton()
-        .onFalse(
-            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+   // oi.ampScoreButton()
+   //     .whileTrue(
+   //         new RunShooterSlow(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.AMP)));
+   // oi.ampScoreButton()
+   //     .onFalse(
+   //         new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
     oi.aimSpeakerButton()
         .whileTrue(
-            new RunShooterFast(shooterWheels)
-                .andThen(
+            new RunShooterFast(shooterWheels));
+                /* .andThen(
                     new SetShooterDistanceContinuous(
                             shooterPose,
                             () -> 105)
@@ -221,15 +224,16 @@ public class RobotContainer {
                                 drivetrain,
                                 oi::getTranslateX,
                                 oi::getTranslateY,
-                                oi::getRotate))));
+                                oi::getRotate))));*/
 
-    oi.aimSpeakerButton()
+   oi.aimSpeakerButton()
         .onFalse(
-            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+            new StopShooter(shooterWheels));
 
-    oi.smartFeedButton().whileTrue(new FeedShooterManual(feeder));
+    //oi.smartFeedButton().whileTrue(new FeedShooterManual(feeder));
 
-    oi.manualFeedButton().whileTrue(new FeedShooterManual(feeder));
+    oi.manualFeedButton().whileTrue(Commands.run(intake::runIntakeOut, intake));
+    oi.manualFeedButton().onFalse(Commands.run(intake::stopIntake, intake));
 
     // oi.ejectButton().onTrue(new Eject(feeder, intake, shooterWheels));
 
@@ -261,8 +265,8 @@ public class RobotContainer {
      */
     Command autoTest = new PathPlannerAuto("TestAuto");
     Command testLine = new PathPlannerAuto("DistanceTest");
-    autoChooser.addOption("Test Auto", autoTest);
-    autoChooser.addOption("Distance Test", testLine);
+    //autoChooser.addOption("Test Auto", autoTest);
+    //autoChooser.addOption("Distance Test", testLine);
 
     /************ Start Point ************
      *
@@ -276,14 +280,14 @@ public class RobotContainer {
                 drivetrain.resetPose(
                     PathPlannerPath.fromPathFile("StartPoint").getPreviewStartingHolonomicPose()),
             drivetrain);
-    autoChooser.addOption("Start Point", startPoint);
+    //autoChooser.addOption("Start Point", startPoint);
 
     /************ Drive Characterization ************
      *
      * useful for characterizing the swerve modules for driving (i.e, determining kS and kV)
      *
      */
-    autoChooser.addOption(
+    /*autoChooser.addOption(
         "Swerve Drive Characterization",
         new FeedForwardCharacterization(
             drivetrain,
@@ -291,14 +295,14 @@ public class RobotContainer {
             new FeedForwardCharacterizationData("drive"),
             drivetrain::runDriveCharacterizationVolts,
             drivetrain::getDriveCharacterizationVelocity,
-            drivetrain::getDriveCharacterizationAcceleration));
+            drivetrain::getDriveCharacterizationAcceleration));*/
 
     /************ Swerve Rotate Characterization ************
      *
      * useful for characterizing the swerve modules for rotating (i.e, determining kS and kV)
      *
      */
-    autoChooser.addOption(
+    /*autoChooser.addOption(
         "Swerve Rotate Characterization",
         new FeedForwardCharacterization(
             drivetrain,
@@ -306,23 +310,23 @@ public class RobotContainer {
             new FeedForwardCharacterizationData("rotate"),
             drivetrain::runRotateCharacterizationVolts,
             drivetrain::getRotateCharacterizationVelocity,
-            drivetrain::getRotateCharacterizationAcceleration));
+            drivetrain::getRotateCharacterizationAcceleration));*/
 
     /************ Distance Test ************
      *
      * used for empirically determining the wheel diameter
      *
      */
-    Command distanceTestPathCommand = new PathPlannerAuto("DistanceTest");
-    autoChooser.addOption("Distance Path", distanceTestPathCommand);
+    //Command distanceTestPathCommand = new PathPlannerAuto("DistanceTest");
+    //autoChooser.addOption("Distance Path", distanceTestPathCommand);
 
     /************ Auto Tuning ************
      *
      * useful for tuning the autonomous PID controllers
      *
      */
-    Command tuningCommand = new PathPlannerAuto("Tuning");
-    autoChooser.addOption("Auto Tuning", tuningCommand);
+    //Command tuningCommand = new PathPlannerAuto("Tuning");
+    //autoChooser.addOption("Auto Tuning", tuningCommand);
 
     /************ Drive Velocity Tuning ************
      *
@@ -330,42 +334,52 @@ public class RobotContainer {
      *
      */
     autoChooser.addOption(
-        "Drive Velocity Tuning",
+        "Shoot & Move",
         Commands.sequence(
             Commands.runOnce(drivetrain::disableFieldRelative, drivetrain),
-            Commands.repeatingSequence(
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(2.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(-0.5, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(1.0),
-                    Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(3.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(() -> drivetrain.drive(1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(() -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(0.5),
-                    Commands.run(() -> drivetrain.drive(-3.0, 0.0, 0.0, false, false), drivetrain)),
-                Commands.deadline(
-                    Commands.waitSeconds(2.0),
-                    Commands.run(
-                        () -> drivetrain.drive(-1.0, 0.0, 0.0, false, false), drivetrain)))));
+            Commands.deadline(
+                Commands.waitSeconds(5),
+                Commands.runOnce(shooterWheels::setShooterSpeedFast, shooterWheels)
+            ),
+            Commands.deadline(
+                Commands.waitSeconds(2),
+                Commands.runOnce(feeder::runFeeder, feeder),
+                Commands.runOnce(intake::runIntake, intake)
+            ),
+            Commands.runOnce(shooterWheels::stopShooter, shooterWheels),
+            Commands.runOnce(feeder::stopFeeder, feeder),
+            Commands.runOnce(intake::stopIntake, intake),
+
+            Commands.deadline(
+                Commands.waitSeconds(2.0),
+                new TeleopSwerve(drivetrain, ()->.5, ()->0,()->0)),
+
+            Commands.runOnce(drivetrain::enableFieldRelative, drivetrain)));
+    autoChooser.addOption(
+        "Shoot & Sit",
+        Commands.sequence(
+            Commands.runOnce(drivetrain::disableFieldRelative, drivetrain),
+            Commands.deadline(
+                Commands.waitSeconds(5),
+                Commands.runOnce(shooterWheels::setShooterSpeedFast, shooterWheels)
+            ),
+            Commands.deadline(
+                Commands.waitSeconds(2),
+                Commands.runOnce(feeder::runFeeder, feeder),
+                Commands.runOnce(intake::runIntake, intake)
+            ),
+            Commands.runOnce(shooterWheels::stopShooter, shooterWheels),
+            Commands.runOnce(feeder::stopFeeder, feeder),
+            Commands.runOnce(intake::stopIntake, intake),
+
+            Commands.runOnce(drivetrain::enableFieldRelative, drivetrain)));
 
     /************ Swerve Rotation Tuning ************
      *
      * useful for tuning the swerve module rotation PID controller
      *
      */
-    autoChooser.addOption(
+    /*autoChooser.addOption(
         "Swerve Rotation Tuning",
         Commands.sequence(
             Commands.runOnce(drivetrain::enableFieldRelative, drivetrain),
@@ -383,7 +397,7 @@ public class RobotContainer {
                     Commands.waitSeconds(0.5),
                     Commands.run(
                         () -> drivetrain.drive(0.1, -0.1, 0.0, true, false), drivetrain)))));
-
+*/
     Shuffleboard.getTab("MAIN").add(autoChooser.getSendableChooser());
   }
 
@@ -399,7 +413,7 @@ public class RobotContainer {
      * and the left joystick's x axis specifies the velocity in the y direction.
      */
     drivetrain.setDefaultCommand(
-        new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, oi::getRotate));
+        new TeleopSwerve(drivetrain, oi::getTranslateX, oi::getTranslateY, ()-> .8*oi.getRotate()));
 
     // @reference code
     // lock rotation to the nearest 180° while driving

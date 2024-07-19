@@ -20,8 +20,8 @@ public class Intake extends SubsystemBase {
   private CANSparkMax intakeMainMotor;
   private CANSparkMax intakeCentererMotor;
 
-  public static Double intakeMainMotorSpeed = 0.80;
-  public static Double intakeCentererMotorSpeed = 0.80;
+  public static Double intakeMainMotorSpeed = 0.50;
+  public static Double intakeCentererMotorSpeed = 0.50;
 
   /** Creates a new Intake. */
   public Intake() {
@@ -41,7 +41,7 @@ public class Intake extends SubsystemBase {
 
     intakeCentererMotor.restoreFactoryDefaults();
     Timer.delay(0.050);
-    intakeCentererMotor.setInverted(true);
+    intakeCentererMotor.setInverted(false);
     intakeCentererMotor.enableVoltageCompensation(12);
     intakeCentererMotor.setIdleMode(IdleMode.kCoast);
     intakeCentererMotor.stopMotor();

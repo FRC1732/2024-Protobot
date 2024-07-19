@@ -13,29 +13,29 @@ import frc.lib.team3061.drivetrain.swerve.SwerveConstants.SwerveType;
 public class DefaultRobotConfig extends RobotConfig {
 
   // REMINDER: offsets are in rotations
-  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 10;
-  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 11;
-  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12;
-  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT =
-      0.456787109375 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
+  private static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 20;
+  private static final int FRONT_LEFT_MODULE_STEER_MOTOR = 21;
+  private static final int FRONT_LEFT_MODULE_STEER_ENCODER = 22;
+  private static final double FRONT_LEFT_MODULE_STEER_OFFSET_ROT = 0.21435546875 + .5;
+      ;//0.456787109375 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 40;
-  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 41;
-  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 42;
-  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT =
-      -0.22607421875 + (0) / 360 * .01; // input degree values inside the parenthesis
+  private static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 30;
+  private static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 31;
+  private static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 32;
+  private static final double FRONT_RIGHT_MODULE_STEER_OFFSET_ROT =-0.435546875;
+      //-0.22607421875 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 20;
-  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 21;
-  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 22;
-  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT =
-      -0.031494140625 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
+  private static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 10;
+  private static final int BACK_LEFT_MODULE_STEER_MOTOR = 11;
+  private static final int BACK_LEFT_MODULE_STEER_ENCODER = 12;
+  private static final double BACK_LEFT_MODULE_STEER_OFFSET_ROT =0.205322265625+.5;
+     ;// -0.031494140625 + .5 + (0) / 360 * .01; // input degree values inside the parenthesis
 
-  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 30;
-  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 31;
-  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 32;
-  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT =
-      -0.186767578125 + (0) / 360 * .01; // input degree values inside the parenthesis
+  private static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 40;
+  private static final int BACK_RIGHT_MODULE_STEER_MOTOR = 41;
+  private static final int BACK_RIGHT_MODULE_STEER_ENCODER = 42;
+  private static final double BACK_RIGHT_MODULE_STEER_OFFSET_ROT =0.025634765625;
+      //-0.186767578125 + (0) / 360 * .01; // input degree values inside the parenthesis
 
   private static final int GYRO_ID = 7;
 
