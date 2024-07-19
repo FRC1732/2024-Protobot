@@ -104,6 +104,10 @@ public class RobotContainer {
         "SetShooterDistance125", new PrintCommand("Set Shooter Distance 125 Command"));
     NamedCommands.registerCommand(
         "SetShooterDistance150", new PrintCommand("Set Shooter Distance 150 Command"));
+
+    // FIXME: enable slow mode for demo mode (drive train only)
+    drivetrain.enableTranslationSlowMode();;
+    drivetrain.enableRotationSlowMode();
   }
 
   /**
