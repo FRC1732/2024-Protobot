@@ -37,7 +37,7 @@ import frc.robot.commands.shooterCommands.SetShooterDistanceContinuous;
 import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
-import frc.robot.limelightVision.VisionSubsystem;
+//import frc.robot.limelightVision.VisionSubsystem;
 import frc.robot.operator_interface.OISelector;
 import frc.robot.operator_interface.OperatorInterface;
 import frc.robot.subsystems.feeder.Feeder;
@@ -59,7 +59,7 @@ public class RobotContainer {
   private RobotConfig config;
   private Drivetrain drivetrain;
   private Alliance lastAlliance = DriverStation.Alliance.Red;
-  private VisionSubsystem visionSubsystem;
+  //private VisionSubsystem visionSubsystem;
   public Intake intake;
   public Feeder feeder;
   public ShooterWheels shooterWheels;
@@ -144,7 +144,7 @@ public class RobotContainer {
     shooterWheels = new ShooterWheels();
     shooterPose = new ShooterPose();
 
-    visionSubsystem = new VisionSubsystem();
+    //visionSubsystem = new VisionSubsystem();
 
     //   String[] cameraNames = config.getCameraNames(); //TODO: Uncomment Camera stuff
     //   Transform3d[] robotToCameraTransforms = config.getRobotToCameraTransforms();
@@ -214,21 +214,14 @@ public class RobotContainer {
                 .andThen(
                     new SetShooterDistanceContinuous(
                             shooterPose,
-                            () ->
-                                visionSubsystem.hasTarget()
-                                    ? visionSubsystem.getDistanceToTarget()
-                                    : 105)
+                            () -> 105)
                         .alongWith(
                             new BrakeFeeder(feeder, shooterWheels),
                             new RotateToAngle(
                                 drivetrain,
                                 oi::getTranslateX,
                                 oi::getTranslateY,
-                                oi::getRotate,
-                                () ->
-                                    drivetrain.getPose().getRotation().getDegrees()
-                                        + visionSubsystem.getTX(),
-                                () -> !visionSubsystem.hasTarget()))));
+                                oi::getRotate))));
 
     oi.aimSpeakerButton()
         .onFalse(
