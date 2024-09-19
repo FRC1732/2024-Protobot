@@ -11,6 +11,7 @@ import frc.robot.subsystems.intake.Intake;
 public class FeedShooterManual extends Command {
   /** Creates a new FeedShooterManual. */
   private Feeder feeder;
+
   private Intake intake;
 
   public FeedShooterManual(Intake intake, Feeder feeder) {
@@ -37,7 +38,6 @@ public class FeedShooterManual extends Command {
   public void end(boolean interrupted) {
     feeder.stopFeeder();
     intake.stopIntake();
-
   }
 
   // Returns true when the command should end.
