@@ -70,8 +70,8 @@ public class Drivetrain extends SubsystemBase {
 
   private boolean isFieldRelative;
 
-  private boolean isTranslationSlowMode = false;
-  private boolean isRotationSlowMode = false;
+  private boolean isTranslationSlowMode = true;
+  private boolean isRotationSlowMode = true;
 
   private boolean brakeMode;
   private Timer brakeModeTimer = new Timer();
@@ -346,7 +346,7 @@ public class Drivetrain extends SubsystemBase {
       }
 
       // if rotation is in slow mode, multiply the rotational velocity by the slow-mode multiplier
-      if (isRotationSlowMode) {
+      if (false) { // follies time
         rotationalVelocity *= slowModeMultiplier;
       }
 
@@ -392,7 +392,7 @@ public class Drivetrain extends SubsystemBase {
       }
 
       // if rotation is in slow mode, multiply the rotational velocity by the slow-mode multiplier
-      if (isRotationSlowMode) {
+      if (false) { // follies
         rotationalVelocity *= slowModeMultiplier;
       }
 

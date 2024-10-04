@@ -160,9 +160,9 @@ void loop() {
         climberColorsRainbow(&pixelsFront, NUMPIXELS_FRONT);
         climberColorsRainbow(&pixelsSides, NUMPIXELS_SIDES);
         break;
-      case 5:  // note seen by intake limelight
-        setColorInt(255, 50, 0, &pixelsFront, NUMPIXELS_FRONT);
-        setColorInt(255, 50, 0, &pixelsSides, NUMPIXELS_SIDES);
+      case 5:  // changed for follies
+        folliesRedFlash(&pixelsFront, NUMPIXELS_FRONT);
+        folliesRedFlash(&pixelsSides, NUMPIXELS_SIDES);
         break;
 
       default:
@@ -227,6 +227,20 @@ void flashFast(bool red, bool green, bool blue, Adafruit_NeoPixel *pixels, int s
   }
 }
 
+
+void folliesRedFlash(Adafruit_NeoPixel *pixels, int size) {
+  if (timer < 10) {
+    setColor(true, false, false, pixels, size);
+  }
+
+  if (timer < 20 && timer > 10) {
+    setColor(false, false, false, pixels, size);
+  }
+
+  if (timer > 21 || timer < 0) {
+    timer = 0;
+  }
+}
 int currentlyFlashingFront[NUMPIXELS_FRONT];
 int currentlyFlashingSide[NUMPIXELS_SIDES];
 

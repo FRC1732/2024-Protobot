@@ -28,6 +28,7 @@ public class StatusRgb extends SubsystemBase {
 
   private BooleanSupplier hasClearence;
   private boolean targetReady;
+  private boolean setFollies;
   private BooleanSupplier intaking;
   private BooleanSupplier whenClimbing;
   private BooleanSupplier noteTarget;
@@ -61,6 +62,10 @@ public class StatusRgb extends SubsystemBase {
     System.out.println("Started note special");
   }
 
+  public void changeFollies(boolean mode) {
+    setFollies = mode;
+  }
+
   public void targetReady(boolean targetReady) {
     this.targetReady = targetReady;
   }
@@ -92,16 +97,16 @@ public class StatusRgb extends SubsystemBase {
       out0.set(!false);
       out1.set(!false);
       out2.set(!false);
+    } else if (setFollies) {
+      // mode 5 - solid orange
+      out0.set(!true);
+      out1.set(!false);
+      out2.set(!true);
     } else if (targetReady && isAtSpeed.getAsBoolean()) {
       // mode 3 - solid green
       out0.set(!true);
       out1.set(!true);
       out2.set(!false);
-    } else if (noteTarget.getAsBoolean() && intaking.getAsBoolean()) {
-      // mode 5 - solid orange
-      out0.set(!true);
-      out1.set(!false);
-      out2.set(!true);
     } else if (whenClimbing.getAsBoolean()) {
       // mode 4 - sparkley
       out0.set(!false);
