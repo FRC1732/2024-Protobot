@@ -534,11 +534,8 @@ public class RobotContainer {
     // follies shenanigans
     oi.armClimberSwitch()
         .whileTrue(
-            new InstantCommand(() -> drivetrain.drive(0.0, 0.0, 1, false, false), drivetrain)
-                .deadlineWith(new FolliesSpin(shooterWheels, feeder, statusRgb))
-                .andThen(
-                    new InstantCommand(
-                        () -> drivetrain.drive(0.0, 0.0, 0, false, false), drivetrain)));
+           new FolliesSpin(shooterWheels, feeder, statusRgb, drivetrain));
+
 
     // new SetShooterPose(shooterPose, Pose.TRAP)
     // .andThen(new InstantCommand(() -> climber.ClimberDown())));
