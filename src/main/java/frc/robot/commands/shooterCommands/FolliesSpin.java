@@ -4,11 +4,15 @@
 
 package frc.robot.commands.shooterCommands;
 
+import java.util.Map;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.drivetrain.Drivetrain;
-import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.shooterWheels.ShooterWheels;
 import frc.robot.subsystems.statusrgb.StatusRgb;
 
 public class FolliesSpin extends Command {
@@ -19,12 +23,13 @@ public class FolliesSpin extends Command {
   private final Timer useTimer;
   private final Drivetrain drivetrain;
 
-  // private final double FIRE_TIME = 3;
-  // private final double END_TIME = 6;
-  private final double SPIN_AMOUNT = 120; // degrees
+  private final double FIRE_TIME = 4;
+  private final double SPIN_AMOUNT = 90; // degrees from start position
   private double startDegrees;
+  private boolean endOnSpin;
 
-  // private boolean startNote;
+  private GenericEntry spinTime;
+  private ShuffleboardTab shuffleTab;
 
   public FolliesSpin(StatusRgb statusRgb, Drivetrain drive) {
     addRequirements(drive);
@@ -33,7 +38,15 @@ public class FolliesSpin extends Command {
     this.statusRgb = statusRgb;
     this.useTimer = new Timer();
     this.drivetrain = drive;
-    // startNote = false;
+    endOnSpin = false;
+
+    // setup shuffleboard
+
+    shuffleTab = Shuffleboard.getTab("Follies");
+    spinTime = shuffleTab.add("Spin Time", FIRE_TIME)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 10))
+        .getEntry();
   }
 
   public void initialize() {
@@ -43,15 +56,15 @@ public class FolliesSpin extends Command {
     // startNote = false;
     startDegrees = drivetrain.getRotation().getDegrees();
     statusRgb.changeFollies(true);
+    endOnSpin = false;
   }
 
   public void execute() {
-    System.out.println("gyro degrees: " + drivetrain.getRotation().getDegrees());
-    drivetrain.drive(0, 0, 3, false, false);
-    // if (useTimer.hasElapsed(FIRE_TIME) && !startNote) {
-    // // feederSystem.runFeeder();
-    // startNote = true;
-    // }
+    // System.out.println("gyro degrees: " + drivetrain.getRotation().getDegrees());
+    drivetrain.drive(0, 0, 6, false, false);
+    if (useTimer.hasElapsed(spinTime.getDouble(FIRE_TIME)) && !endOnSpin) {
+      endOnSpin = true;
+    }
   }
 
   public void end(boolean isInterupted) {
@@ -63,8 +76,8 @@ public class FolliesSpin extends Command {
 
   public boolean isFinished() {
     // return useTimer.hasElapsed(END_TIME);
-    if (drivetrain.getRotation().getDegrees() > startDegrees + SPIN_AMOUNT
-        || drivetrain.getRotation().getDegrees() < startDegrees - SPIN_AMOUNT) {
+    if (endOnSpin && (drivetrain.getRotation().getDegrees() > startDegrees + SPIN_AMOUNT
+        || drivetrain.getRotation().getDegrees() < startDegrees - SPIN_AMOUNT)) {
       return true;
     }
     return false;
