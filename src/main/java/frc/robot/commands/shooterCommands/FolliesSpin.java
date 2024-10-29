@@ -4,8 +4,6 @@
 
 package frc.robot.commands.shooterCommands;
 
-import java.util.Map;
-
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -14,12 +12,14 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.team3061.drivetrain.Drivetrain;
 import frc.robot.subsystems.statusrgb.StatusRgb;
+import java.util.Map;
 
 public class FolliesSpin extends Command {
   /** Creates a new FolliesSpin. */
   // private final ShooterWheels shooterWheels;
   // private final Feeder feederSystem;
   private final StatusRgb statusRgb;
+
   private final Timer useTimer;
   private final Drivetrain drivetrain;
 
@@ -43,10 +43,12 @@ public class FolliesSpin extends Command {
     // setup shuffleboard
 
     shuffleTab = Shuffleboard.getTab("Follies");
-    spinTime = shuffleTab.add("Spin Time", FIRE_TIME)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 10))
-        .getEntry();
+    spinTime =
+        shuffleTab
+            .add("Spin Time", FIRE_TIME)
+            .withWidget(BuiltInWidgets.kNumberSlider)
+            .withProperties(Map.of("min", 0, "max", 10))
+            .getEntry();
   }
 
   public void initialize() {
@@ -76,8 +78,9 @@ public class FolliesSpin extends Command {
 
   public boolean isFinished() {
     // return useTimer.hasElapsed(END_TIME);
-    if (endOnSpin && (drivetrain.getRotation().getDegrees() > startDegrees + SPIN_AMOUNT
-        || drivetrain.getRotation().getDegrees() < startDegrees - SPIN_AMOUNT)) {
+    if (endOnSpin
+        && (drivetrain.getRotation().getDegrees() > startDegrees + SPIN_AMOUNT
+            || drivetrain.getRotation().getDegrees() < startDegrees - SPIN_AMOUNT)) {
       return true;
     }
     return false;

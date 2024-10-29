@@ -469,57 +469,56 @@ public class RobotContainer {
     // oi.sourceLoadButton().whileTrue(new IntakeSourceNote(feeder, shooterPose, statusRgb));
 
     oi.aimOrSourceButton()
-    .whileTrue(
-        new ConditionalCommand(
-            // Has note AND is in AMP scoring mode
-            new RunShooterSlow(shooterWheels)
-                .andThen(
-                    new WaitForNote(feeder)
-                        .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy())
-                        .alongWith(
-                            // new RotateToAngle(
-                            //         drivetrain,
-                            //         oi::getTranslateX,
-                            //         oi::getTranslateY,
-                            //         oi::getRotate,
-                            //         () -> -90,
-                            //         () -> false,
-                            //         statusRgb)
-                            new InstantCommand()
-                                .asProxy())),
-            // Has note AND is in SPEAKER scoring mode
-            new RunShooterTarget(shooterWheels, () -> getShooterTarget())
-                .andThen(
-                    new WaitForNote(feeder)
-                        .andThen(
-                            new SetShooterDistanceContinuous(
-                                    shooterPose,
-                                    () -> getDistanceToTargetInches(getRobotToTargetVector()),
-                                    () -> getShooterTarget(),
-                                    () -> popShotEnabled)
-                                .asProxy())
-                        .alongWith(
-                            // new BrakeFeeder(feeder, shooterWheels).asProxy(),
-                            // new RotateToAngle(
-                            //         drivetrain,
-                            //         oi::getTranslateX,
-                            //         oi::getTranslateY,
-                            //         oi::getRotate,
-                            //         () -> getRotationToTargetDegrees(getRobotToTargetVector()),
-                            //         (() -> false),
-                            //         statusRgb)
-                            new InstantCommand()
-                                .asProxy())),
-            // Check ScoringMode
-            () -> scoringMode == ScoringMode.AMP));
+        .whileTrue(
+            new ConditionalCommand(
+                // Has note AND is in AMP scoring mode
+                new RunShooterSlow(shooterWheels)
+                    .andThen(
+                        new WaitForNote(feeder)
+                            .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy())
+                            .alongWith(
+                                // new RotateToAngle(
+                                //         drivetrain,
+                                //         oi::getTranslateX,
+                                //         oi::getTranslateY,
+                                //         oi::getRotate,
+                                //         () -> -90,
+                                //         () -> false,
+                                //         statusRgb)
+                                new InstantCommand().asProxy())),
+                // Has note AND is in SPEAKER scoring mode
+                new RunShooterTarget(shooterWheels, () -> getShooterTarget())
+                    .andThen(
+                        new WaitForNote(feeder)
+                            .andThen(
+                                new SetShooterDistanceContinuous(
+                                        shooterPose,
+                                        () -> getDistanceToTargetInches(getRobotToTargetVector()),
+                                        () -> getShooterTarget(),
+                                        () -> popShotEnabled)
+                                    .asProxy())
+                            .alongWith(
+                                // new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                                // new RotateToAngle(
+                                //         drivetrain,
+                                //         oi::getTranslateX,
+                                //         oi::getTranslateY,
+                                //         oi::getRotate,
+                                //         () ->
+                                // getRotationToTargetDegrees(getRobotToTargetVector()),
+                                //         (() -> false),
+                                //         statusRgb)
+                                new InstantCommand().asProxy())),
+                // Check ScoringMode
+                () -> scoringMode == ScoringMode.AMP));
 
-oi.aimOrSourceButton()
-    .onFalse(
-        new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
+    oi.aimOrSourceButton()
+        .onFalse(
+            new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
-oi.sourceLoadButton()
-    .whileTrue(
-        new IntakeSourceNote(feeder, shooterPose, statusRgb)
+    oi.sourceLoadButton()
+        .whileTrue(
+            new IntakeSourceNote(feeder, shooterPose, statusRgb)
             // .alongWith(
             //     new RotateToAngle(
             //         drivetrain,
@@ -529,38 +528,39 @@ oi.sourceLoadButton()
             //         () -> lastAlliance == Alliance.Blue ? 120 : 60,
             //         () -> false,
             //         statusRgb))
-                    );
+            );
 
-oi.IntakeOrScoreButton()
-    .whileTrue(
-        new ConditionalCommand( // scores if feeder has note
-            (new FeedShooterManual(feeder).asProxy()),
-            new IntakeNote(intake, feeder, shooterPose, statusRgb)
-                .asProxy() // intakes with object detection
-                .deadlineWith(
-                    new ConditionalCommand(
-                        // new RotateToAngle(
-                        //         drivetrain,
-                        //         oi::getTranslateX,
-                        //         oi::getTranslateY,
-                        //         oi::getRotate,
-                        //         () -> noteDetectionAngleHelper(visionObjectDetectionSubsystem),
-                        //         // targetAngleHelper(
-                        //         // visionObjectDetectionSubsystem.getTX(),
-                        //         // visionObjectDetectionSubsystem.getLatencyPipeline()
-                        //         // + visionObjectDetectionSubsystem.getLatencyCapture()),
-                        //         () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
-                        //         statusRgb)
-                        //     .asProxy(),                        
-                        new InstantCommand(), // follies, we do not want this to do anything
-                        new InstantCommand(),
-                        () -> visionObjectDetectionSubsystem.isAssistEnabled()))
-                .andThen(
-                    new ConditionalCommand(
-                        new RunShooterFast(shooterWheels).asProxy(), // speed
-                        new InstantCommand(),
-                        () -> scoringMode == ScoringMode.SPEAKER)),
-            feeder::hasNote));
+    oi.IntakeOrScoreButton()
+        .whileTrue(
+            new ConditionalCommand( // scores if feeder has note
+                (new FeedShooterManual(feeder).asProxy()),
+                new IntakeNote(intake, feeder, shooterPose, statusRgb)
+                    .asProxy() // intakes with object detection
+                    .deadlineWith(
+                        new ConditionalCommand(
+                            // new RotateToAngle(
+                            //         drivetrain,
+                            //         oi::getTranslateX,
+                            //         oi::getTranslateY,
+                            //         oi::getRotate,
+                            //         () ->
+                            // noteDetectionAngleHelper(visionObjectDetectionSubsystem),
+                            //         // targetAngleHelper(
+                            //         // visionObjectDetectionSubsystem.getTX(),
+                            //         // visionObjectDetectionSubsystem.getLatencyPipeline()
+                            //         // + visionObjectDetectionSubsystem.getLatencyCapture()),
+                            //         () -> !visionObjectDetectionSubsystem.isAssistEnabled(),
+                            //         statusRgb)
+                            //     .asProxy(),
+                            new InstantCommand(), // follies, we do not want this to do anything
+                            new InstantCommand(),
+                            () -> visionObjectDetectionSubsystem.isAssistEnabled()))
+                    .andThen(
+                        new ConditionalCommand(
+                            new RunShooterFast(shooterWheels).asProxy(), // speed
+                            new InstantCommand(),
+                            () -> scoringMode == ScoringMode.SPEAKER)),
+                feeder::hasNote));
 
     oi.speakerModeButton()
         .onTrue(
@@ -603,8 +603,9 @@ oi.IntakeOrScoreButton()
     // follies shenanigans
     oi.armClimberSwitch()
         .whileTrue(
-           new FolliesSpin(statusRgb, drivetrain));
-
+            new RunShooterSlow(shooterWheels)
+                .andThen(
+                    new FolliesSpin(statusRgb, drivetrain).andThen(new FeedShooterManual(feeder))));
 
     // new SetShooterPose(shooterPose, Pose.TRAP)
     // .andThen(new InstantCommand(() -> climber.ClimberDown())));
