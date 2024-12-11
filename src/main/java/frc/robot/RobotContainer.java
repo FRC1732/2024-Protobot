@@ -11,6 +11,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.FloatArraySubscriber;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.IntegerSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -787,17 +793,46 @@ public class RobotContainer {
         && shooterWheels.isAtSpeed(); // @todo check if vision is aligned
   }
 
-  public void updateVisionPose() {
-    LimelightHelpers.PoseEstimate limelightMeasurement = visionApriltagSubsystem.getPoseEstimate();
-    if (limelightMeasurement.tagCount >= 2
-        || (limelightMeasurement.tagCount == 1 && limelightMeasurement.avgTagDist < 1.25)
-        || visionApriltagSubsystem.hasStageTarget()) {
-      RobotOdometry.getInstance()
-          .addVisionMeasurement(
-              limelightMeasurement.pose,
-              limelightMeasurement.timestampSeconds,
-              VecBuilder.fill(.6, .6, 9999999));
+  // oculus things copy pasted from their github, badly organized at the moment
+  NetworkTableInstance nt4Instance = NetworkTableInstance.getDefault();
+  NetworkTable nt4Table = nt4Instance.getTable("oculus");
+  private IntegerSubscriber questMiso = nt4Table.getIntegerTopic("miso").subscribe(0);
+  private IntegerPublisher questMosi = nt4Table.getIntegerTopic("mosi").publish();
+
+  // Subscribe to the Network Tables oculus data topics
+  private IntegerSubscriber questFrameCount = nt4Table.getIntegerTopic("frameCount").subscribe(0);
+  private DoubleSubscriber questTimestamp = nt4Table.getDoubleTopic("timestamp").subscribe(0.0f);
+  private FloatArraySubscriber questPosition = nt4Table.getFloatArrayTopic("position")
+      .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
+  private FloatArraySubscriber questEulerAngles = nt4Table.getFloatArrayTopic("eulerAngles")
+      .subscribe(new float[] { 0.0f, 0.0f, 0.0f });
+
+  // Local heading helper variables
+  private float yaw_offset = 0.0f;
+
+  // Get the yaw Euler angle of the headset
+  private float getOculusYaw() {
+    float[] eulerAngles = questEulerAngles.get();
+    float ret = eulerAngles[1] - yaw_offset;
+    ret %= 360;
+    if (ret < 0) {
+      ret += 360;
     }
+    return ret;
+  }
+
+  private Translation2d getOculusPosition() {
+    float[] oculusPosition = questPosition.get();
+    return new Translation2d(oculusPosition[2], -oculusPosition[0]);
+  }
+
+  private Pose2d getOculusPose() {
+    var oculousPositionCompensated = getOculusPosition().minus(new Translation2d(0, 0.1651)); // 6.5
+    return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
+  }
+
+  public void updateVisionPose() {
+    RobotOdometry.getInstance().addVisionMeasurement(getOculusPose(), questTimestamp.get(), VecBuilder.fill(0, 0, 0));
   }
 
   public double targetAngleHelper(double tx, double latency) {
