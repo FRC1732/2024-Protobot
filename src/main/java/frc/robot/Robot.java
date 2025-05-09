@@ -268,6 +268,9 @@ public class Robot extends LoggedRobot {
     // color based on FMS
     // data.
     robotContainer.checkAllianceColor();
+
+    // Force into feild centric
+    robotContainer.putIntoFieldCentric();
   }
 
   /** This method is invoked at the start of the test period. */

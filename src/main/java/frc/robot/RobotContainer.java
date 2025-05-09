@@ -1233,4 +1233,8 @@ public class RobotContainer {
   public DriverStation.Alliance getAllianceColor() {
     return lastAlliance;
   }
+
+  public void putIntoFieldCentric() {
+    drivetrain.enableFieldRelative();
+  }
 }
