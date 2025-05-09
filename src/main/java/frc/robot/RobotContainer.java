@@ -513,6 +513,19 @@ public class RobotContainer {
         .onFalse(
             new StopShooter(shooterWheels).andThen(new SetShooterPose(shooterPose, Pose.HANDOFF)));
 
+    oi.driverSourceLoadButton()
+        .whileTrue(
+            new IntakeSourceNote(feeder, shooterPose, statusRgb)
+                .alongWith(
+                    new RotateToAngle(
+                        drivetrain,
+                        oi::getTranslateX,
+                        oi::getTranslateY,
+                        oi::getRotate,
+                        () -> lastAlliance == Alliance.Blue ? 120 : 60,
+                        () -> false,
+                        statusRgb)));
+
     oi.sourceLoadButton()
         .whileTrue(
             new IntakeSourceNote(feeder, shooterPose, statusRgb)

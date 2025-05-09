@@ -49,6 +49,10 @@ public interface OperatorInterface {
   //   return new Trigger(() -> false);
   // }
 
+  public default Trigger driverSourceLoadButton() {
+    return new Trigger(() -> false);
+  }
+
   public default Trigger sourceLoadButton() {
     return new Trigger(() -> false);
   }
