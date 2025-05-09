@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.team3061.RobotConfig;
 import frc.lib.team3061.drivetrain.Drivetrain;
@@ -31,7 +30,6 @@ import frc.lib.team3061.util.RobotOdometry;
 import frc.robot.commands.ClimberCommands.ArmClimber;
 import frc.robot.commands.ClimberCommands.AutoClimb;
 import frc.robot.commands.ClimberCommands.DisarmClimber;
-import frc.robot.commands.DriveToPose;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.feederCommands.FeedShooterManual;
@@ -54,7 +52,6 @@ import frc.robot.commands.shooterCommands.SetShooterPose;
 import frc.robot.commands.shooterCommands.ShootThrough;
 import frc.robot.commands.shooterCommands.StopShooter;
 import frc.robot.configs.DefaultRobotConfig;
-import frc.robot.limelightVision.ApriltagVision.VisionApriltagConstants;
 import frc.robot.limelightVision.ApriltagVision.VisionApriltagSubsystem;
 import frc.robot.limelightVision.LimelightHelpers;
 import frc.robot.limelightVision.ObjectDetectionVision.VisionObjectDetectionSubsytem;
@@ -388,7 +385,8 @@ public class RobotContainer {
     //     .whileTrue(
     //         new InstantCommand(
     //                 () -> {
-    //                   visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
+    //
+    // visionApriltagSubsystem.setPipeline(VisionApriltagConstants.Pipelines.STAGE);
     //                 })
     //             .andThen(new WaitCommand(.02))
     //             .andThen(
@@ -497,17 +495,17 @@ public class RobotContainer {
                                         () -> getShooterTarget(),
                                         () -> popShotEnabled)
                                     .asProxy())),
-                            // .alongWith(
-                            //     // new BrakeFeeder(feeder, shooterWheels).asProxy(),
-                            //     new RotateToAngle(
-                            //             drivetrain,
-                            //             oi::getTranslateX,
-                            //             oi::getTranslateY,
-                            //             oi::getRotate,
-                            //             () -> getRotationToTargetDegrees(getRobotToTargetVector()),
-                            //             (() -> false),
-                            //             statusRgb)
-                            //         .asProxy())),
+                // .alongWith(
+                //     // new BrakeFeeder(feeder, shooterWheels).asProxy(),
+                //     new RotateToAngle(
+                //             drivetrain,
+                //             oi::getTranslateX,
+                //             oi::getTranslateY,
+                //             oi::getRotate,
+                //             () -> getRotationToTargetDegrees(getRobotToTargetVector()),
+                //             (() -> false),
+                //             statusRgb)
+                //         .asProxy())),
                 // Check ScoringMode
                 () -> scoringMode == ScoringMode.AMP));
 

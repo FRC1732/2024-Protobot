@@ -48,6 +48,7 @@ public class ShooterWheels extends SubsystemBase {
   private GenericEntry shooterI;
   private GenericEntry shooterD;
   private boolean wasFast;
+
   public ShooterWheels() {
     shooterHighMotor =
         new CANSparkFlex(ShooterWheelsConstants.SHOOTER_HIGH_MOTOR_CAN_ID, MotorType.kBrushless);
@@ -134,7 +135,7 @@ public class ShooterWheels extends SubsystemBase {
 
   public void setShooterSpeedMedium() {
     shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_MEDIUM);
-    
+
     wheelMode = WheelMode.MEDIUM;
   }
 
@@ -144,7 +145,7 @@ public class ShooterWheels extends SubsystemBase {
   }
 
   public void setShooterSpeedSpoil() {
-    if(wasFast){
+    if (wasFast) {
       shooterPidController.setP(ShooterWheelsConstants.SHOOTER_SLOW_SPEED_P);
       shooterPidController.setI(ShooterWheelsConstants.SHOOTER_SLOW_SPEED_I);
       shooterPidController.setD(ShooterWheelsConstants.SHOOTER_SLOW_SPEED_D);
