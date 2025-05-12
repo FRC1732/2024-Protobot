@@ -473,17 +473,7 @@ public class RobotContainer {
                 new RunShooterSlow(shooterWheels)
                     .andThen(
                         new WaitForNote(feeder)
-                            .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy())
-                            .alongWith(
-                                new RotateToAngle(
-                                        drivetrain,
-                                        oi::getTranslateX,
-                                        oi::getTranslateY,
-                                        oi::getRotate,
-                                        () -> -90,
-                                        () -> false,
-                                        statusRgb)
-                                    .asProxy())),
+                            .andThen(new SetShooterPose(shooterPose, Pose.AMP).asProxy())),
                 // Has note AND is in SPEAKER scoring mode
                 new RunShooterTarget(shooterWheels, () -> getShooterTarget(), () -> popShotEnabled)
                     .andThen(
@@ -515,17 +505,8 @@ public class RobotContainer {
 
     oi.driverSourceLoadButton()
         .whileTrue(
-            new IntakeSourceNote(feeder, shooterPose, statusRgb)
-                .alongWith(
-                    new RotateToAngle(
-                        drivetrain,
-                        oi::getTranslateX,
-                        oi::getTranslateY,
-                        oi::getRotate,
-                        () -> lastAlliance == Alliance.Blue ? 120 : 60,
-                        () -> false,
-                        statusRgb)));
-
+            new IntakeSourceNote(feeder, shooterPose, statusRgb));
+/*
     oi.sourceLoadButton()
         .whileTrue(
             new IntakeSourceNote(feeder, shooterPose, statusRgb)
@@ -538,7 +519,7 @@ public class RobotContainer {
                         () -> lastAlliance == Alliance.Blue ? 120 : 60,
                         () -> false,
                         statusRgb)));
-
+*/
     oi.IntakeOrScoreButton()
         .whileTrue(
             new ConditionalCommand( // scores if feeder has note
