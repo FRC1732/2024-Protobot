@@ -584,6 +584,9 @@ public class RobotContainer {
     oi.popShotToggleButton().onTrue(new InstantCommand(() -> popShotEnabled = true));
     oi.popShotToggleButton().onFalse(new InstantCommand(() -> popShotEnabled = false));
 
+    oi.maxSpeedToggle().onTrue(new InstantCommand(() -> {shooterWheels.toggleMaxSpeed(true);}).alongWith(new PrintCommand("activated OVERDRIVE :D")));
+    oi.maxSpeedToggle().onFalse(new InstantCommand(() -> {shooterWheels.toggleMaxSpeed(false);}).alongWith(new PrintCommand("deactivated overdrive :(")));
+
     oi.armClimberSwitch().onTrue(new ArmClimber(climber));
     oi.armClimberSwitch().onFalse(new DisarmClimber(climber));
     oi.autoClimbButton().whileTrue(new AutoClimb(climber, shooterPose, shooterWheels, feeder));

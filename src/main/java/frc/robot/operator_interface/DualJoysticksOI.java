@@ -91,10 +91,10 @@ public class DualJoysticksOI implements OperatorInterface {
     return rotateJoystickButtons[3];
   }
 
-  // @Override
-  // public Trigger groundIntakeButton() {
-  //   return rotateJoystickButtons[1];
-  // }
+  @Override
+  public Trigger maxSpeedToggle() {
+    return rotateJoystickButtons[4];
+  }
 
   // @Override
   // public Trigger smartFeedButton() {

@@ -481,7 +481,7 @@ public class ShooterPose extends SubsystemBase {
     //   }
     // }
     shooterHeightPID.setGoal(ShooterPoseConstants.SHOOTER_HEIGHT_HANDOFF_SETPOINT + 2);
-    shooterTiltPID.setGoal(-15);
+      shooterTiltPID.setGoal(-30);
   }
 
   private static double interpolate(double x, double x0, double x1, double y0, double y1) {

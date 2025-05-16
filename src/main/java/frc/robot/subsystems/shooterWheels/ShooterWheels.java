@@ -4,6 +4,7 @@ import static frc.robot.subsystems.shooterWheels.ShooterWheelsConstants.*;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.ctre.phoenix6.Orchestra;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
@@ -48,6 +49,7 @@ public class ShooterWheels extends SubsystemBase {
   private GenericEntry shooterI;
   private GenericEntry shooterD;
   private boolean wasFast;
+  private boolean maxSpeedMode;
 
   public ShooterWheels() {
     shooterHighMotor =
@@ -124,23 +126,48 @@ public class ShooterWheels extends SubsystemBase {
     // shooterPidController.setP(shooterP.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_P));
     // shooterPidController.setI(shooterI.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_I));
     // shooterPidController.setD(shooterD.getDouble(ShooterWheelsConstants.SHOOTER_SPEED_D));
-    wheelMode = WheelMode.FAST;
 
-    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
+      if (maxSpeedMode) {
+        shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_OVERDRIVE);
+      } else {
+        shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_FAST);
+      }
+    wheelMode = WheelMode.FAST;
+  }
+
+  public void toggleMaxSpeed(boolean mode) {
+    maxSpeedMode = mode;
+
+    if (shooterHighMotor.get() >= 0.1 && mode) {
+      shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_OVERDRIVE);
+    }
   }
 
   public void setShooterSpeedPop() {
-    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_POP);
+    if (maxSpeedMode) {
+      shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_OVERDRIVE);
+    } else {
+      shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_POP);
+    }
   }
 
   public void setShooterSpeedMedium() {
-    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_MEDIUM);
+    if (maxSpeedMode) {
+      shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_OVERDRIVE);
+    } else {
+      shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_MEDIUM);
+    }
 
     wheelMode = WheelMode.MEDIUM;
   }
 
   public void setShooterSpeedSlow() {
-    shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
+
+    if (maxSpeedMode) {
+      shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_OVERDRIVE);
+    } else {
+      shooterHighMotor.set(ShooterWheelsConstants.SHOOTER_SPEED_SLOW);
+    }
     wheelMode = WheelMode.SLOW;
   }
 

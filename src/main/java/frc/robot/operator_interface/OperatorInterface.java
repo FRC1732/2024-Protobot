@@ -53,6 +53,10 @@ public interface OperatorInterface {
     return new Trigger(() -> false);
   }
 
+  public default Trigger maxSpeedToggle() {
+    return new Trigger(() -> false);
+  }
+
   public default Trigger sourceLoadButton() {
     return new Trigger(() -> false);
   }
